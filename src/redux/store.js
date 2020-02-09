@@ -1,6 +1,6 @@
-import { createStore } from 'redux'
-import notesReducer from './notesApp'
+import { createStore } from 'redux';
+import messagesReducer from './messagesApp';
 
-const store = createStore(notesReducer)
+const store = createStore(messagesReducer);
 
-export default store
+export default store;

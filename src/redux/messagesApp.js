@@ -1,13 +1,13 @@
-import remove from 'lodash.remove'
+import remove from 'lodash.remove';
 
 // Action Types
 
-export const ADD_NOTE = 'ADD_NOTE'
-export const DELETE_NOTE = 'DELETE_NOTE'
+export const ADD_NOTE = 'ADD_NOTE';
+export const DELETE_NOTE = 'DELETE_NOTE';
 
 // Action Creators
 
-let noteID = 0
+let noteID = 0;
 
 export function addnote(note) {
   return {
@@ -15,20 +15,20 @@ export function addnote(note) {
     id: noteID++,
     note
   }
-}
+};
 
 export function deletenote(id) {
   return {
     type: DELETE_NOTE,
     payload: id
   }
-}
+};
 
 // reducer
 
-const initialState = []
+const initialState = [];
 
-function notesReducer(state = initialState, action) {
+function messagesReducer(state = initialState, action) {
   switch (action.type) {
     case ADD_NOTE:
       return [
@@ -48,6 +48,6 @@ function notesReducer(state = initialState, action) {
     default:
       return state
   }
-}
+};
 
-export default notesReducer
+export default messagesReducer;

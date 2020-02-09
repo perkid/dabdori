@@ -1,22 +1,55 @@
-import { createAppContainer } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack'
-import ViewNotes from '../screens/ViewNotes'
-import AddNotes from '../screens/AddNotes'
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import Main from '../screens/Main';
+import MyPage from '../screens/MyPage';
+import Order from '../screens/Order';
+import Login from '../screens/Login';
+import ResetPassword from '../screens/ResetPassword';
+import PasswordChange from '../screens/PasswordChange'
 
-const StackNavigator = createStackNavigator(
+const AppStack = createStackNavigator(
   {
-    ViewNotes: {
-      screen: ViewNotes
+    Main: {
+      screen: Main
     },
-    AddNotes: {
-      screen: AddNotes
+    MyPage: {
+      screen: MyPage
+    },
+    Order: {
+      screen: Order
+    },
+    PasswordChange: {
+      screen: PasswordChange
     }
   },
   {
-    initialRouteName: 'ViewNotes',
+    initialRouteName: 'Main',
     headerMode: 'none',
     mode: 'modal'
   }
-)
+);
 
-export default createAppContainer(StackNavigator)
+const AuthStack = createStackNavigator(
+  {
+    Auth: {
+      screen: Login
+    },
+    ResetPassword:{
+      screen: ResetPassword
+    }
+  },
+  {
+    initialRouteName: 'Auth',
+    headerMode: 'none',
+  }
+);
+
+export default createAppContainer(createSwitchNavigator(
+  {
+    Auth: AuthStack,
+    App: AppStack
+  },
+  {
+    initialRouteName: 'App'
+  }
+));

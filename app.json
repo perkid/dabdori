@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "JSJAN Hooks in React Native",
-    "slug": "jsjan-rnhooks",
+    "name": "Dapdori",
+    "slug": "Dapdori",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -11,9 +11,9 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/new.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/new.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
