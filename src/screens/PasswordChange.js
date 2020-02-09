@@ -3,7 +3,6 @@ import { View, StyleSheet, Keyboard, TouchableWithoutFeedback, Alert } from 'rea
 import { IconButton, TextInput, Button } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
-import { NavigationEvents } from 'react-navigation';
 
 function PasswordChange({ navigation }) {
   const handleChange = () => {

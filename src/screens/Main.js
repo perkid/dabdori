@@ -1,70 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Keyboard } from 'react-native';
-import { Text, FAB, List, Button } from 'react-native-paper';
+import { StyleSheet, View, Clipboard, Alert } from 'react-native';
+import { FAB } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { addnote, deletenote } from '../redux/messagesApp';
+import { sendMessage } from '../redux/messagesApp';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import QuickReplies from 'react-native-gifted-chat/lib/QuickReplies';
 
 function Main({ navigation }) {
-  const notes = useSelector(state => state)
+  const messages = useSelector(state => state.messages)
   const dispatch = useDispatch()
-  const addNote = note => dispatch(addnote(note))
-  const deleteNote = id => dispatch(deletenote(id))
+  const onSend = message => dispatch(sendMessage(message))
   const [fabState, setState] = useState(false);
   
   const handleFabState = () => {
     setState(!fabState);
   }
 
+  const user = {
+    _id: 1,
+    name: 'user',
+  }
   const dapuser = {
     id: 'perkid@youngwoo.co',
     name: '고유준',
     company: '영우',
-  }
-
-  const m = `안녕하세요! ${dapuser.company} ${dapuser.name}님
-인공지능 답돌이 입니다.
-
-이용 중 처음 단계로 돌아가고
-싶으시면 상단에 답돌이 아이콘
-을 클릭하세요!
-  `;
-
-  const [messages, setMessages] = useState([
-    {
-      _id: 1,
-      text: `${m}`,
-      createdAt: new Date(),
-      quickReplies: {
-        type: 'radio',
-        values: [
-          {
-            title: '현물조회',
-            value: 'inquiry',
-          },
-          {
-            title: '샘플신청',
-            value: 'sample',
-          },
-          {
-            title: '아이템 정보',
-            value: 'item',
-          },
-        ],
-      },
-      user: {
-        _id: 2,
-        name: 'GiftedChat',
-      },
-    }
-  ]);
-
-  const user = {
-    _id: 1,
-    name: 'Developer',
   }
 
   const onQuickReply = replies => {
@@ -126,45 +87,13 @@ function Main({ navigation }) {
     }
   }, [messages]);
 
-
-
   const reply = (r = []) => {
-    setMessages(GiftedChat.append(messages, r))
-  }
-
-  const onSend = (newMessages = []) => {
-    setMessages(GiftedChat.append(messages, newMessages));
-  }
-  const reset = () => {
-    let r = {
-      createdAt: new Date(),
-      _id: Math.round(Math.random() * 1000000),
-      text: '처음으로 돌아갑니다.',
-      quickReplies: {
-        type: 'radio',
-        values: [
-          {
-            title: '현물조회',
-            value: 'inquiry',
-          },
-          {
-            title: '샘플신청',
-            value: 'sample',
-          },
-          {
-            title: '아이템 정보',
-            value: 'item',
-          },
-        ],
-      },
-      user: 2,
-    }
-    setMessages(GiftedChat.append(messages, [r]));
+    onSend(GiftedChat.append(messages, r))
   }
 
   return (
     <>
-      <Header titleText='답  돌  이' navigation={navigation} main={true} reset={reset} />
+      <Header titleText='답  돌  이' navigation={navigation} main={true} />
       <View style={styles.container}>
         <GiftedChat
           {...{ messages, onSend }}
@@ -172,6 +101,11 @@ function Main({ navigation }) {
             _id: 1,
           }}
           alignTop={true}
+          onLongPress={(context, currentMessage)=>{
+            Alert.alert('복사되었습니다.')
+
+            Clipboard.setString(currentMessage.text)
+          }}
           onQuickReply={onQuickReply}
           quickReplyStyle={{ backgroundColor: '#1E388D', marginTop: 30 }}
           renderQuickReplies={(props) => <QuickReplies color='#FFF' {...props} />}
@@ -180,14 +114,24 @@ function Main({ navigation }) {
             return (
               <Bubble
                 {...props}
+                touchableProps={{ delayLongPress: 200 }}
                 textStyle={{
                   right: {
                     color: 'white',
+                    padding: 8,
+                    lineHeight: 23
                   },
+                  left: {
+                    padding: 8,
+                    lineHeight: 23
+                  }
                 }}
                 wrapperStyle={{
                   right: {
                     backgroundColor: '#1E388D',
+                  },
+                  left: {
+                    marginTop: 20
                   }
                 }}
               />
@@ -209,9 +153,6 @@ function Main({ navigation }) {
           onPress={setState}
         />
       </View>
-      <Button style={{backgroundColor:'red'}}
-        onPress={reset}
-      ></Button>
       <View style={{ flex: 1 }} />
       <Bottom />
     </>
