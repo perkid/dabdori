@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { reset } from '../redux/messagesApp';
+import { reset, clear } from '../redux/messagesApp';
 import { Appbar, Title } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function Header({ titleText, navigation, main,  }) {
   const dispatch = useDispatch()
   const first = () => dispatch(reset())
+  const clearChat = () => dispatch(clear())
 
   return (
     <Appbar.Header style={styles.headerContainer}>
@@ -19,7 +20,9 @@ function Header({ titleText, navigation, main,  }) {
         />
       </TouchableOpacity>
       <View style={styles.container}>
-        <Title style={styles.title}>{titleText}</Title>
+        <Title style={styles.title}
+          onPress={()=>clearChat()}
+        >{titleText}</Title>
       </View>
     </Appbar.Header>
   )
