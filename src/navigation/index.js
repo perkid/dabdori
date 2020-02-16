@@ -2,10 +2,13 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import Main from '../screens/Main';
 import MyPage from '../screens/MyPage';
-import Order from '../screens/Order';
+import OrderHistory from '../screens/OrderHistory';
 import Login from '../screens/Login';
 import ResetPassword from '../screens/ResetPassword';
-import PasswordChange from '../screens/PasswordChange'
+import PasswordChange from '../screens/PasswordChange';
+import Barcode from '../screens/Barcode';
+import Test from '../screens/Test';
+import OrderDetail from '../screens/OrderDetail';
 
 const AppStack = createStackNavigator(
   {
@@ -15,11 +18,20 @@ const AppStack = createStackNavigator(
     MyPage: {
       screen: MyPage
     },
-    Order: {
-      screen: Order
+    OrderHistory: {
+      screen: OrderHistory
+    },
+    OrderDetail:{
+      screen: OrderDetail
     },
     PasswordChange: {
       screen: PasswordChange
+    },
+    // Barcode: {
+    //   screen: Barcode
+    // },
+    Test: {
+      screen: Test
     }
   },
   {
@@ -53,3 +65,4 @@ export default createAppContainer(createSwitchNavigator(
     initialRouteName: 'App'
   }
 ));
+

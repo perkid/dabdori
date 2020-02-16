@@ -1,75 +1,86 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Keyboard } from 'react-native';
-import { Text, FAB, List, Button } from 'react-native-paper';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView } from 'react-native';
+import { FAB, Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { addnote, deletenote } from '../redux/messagesApp';
+import { sendMessage } from '../redux/messagesApp';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import QuickReplies from 'react-native-gifted-chat/lib/QuickReplies';
+import createMessage from '../libs/MessageFactory';
+
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 
 function Main({ navigation }) {
-  const notes = useSelector(state => state)
+  const user = useSelector(state => state.authentication.user);
+  const messages = useSelector(state => state.messagesApp.messages)
   const dispatch = useDispatch()
-  const addNote = note => dispatch(addnote(note))
-  const deleteNote = id => dispatch(deletenote(id))
+  const onSend = message => dispatch(sendMessage(message))
   const [fabState, setState] = useState(false);
-  
+  const [snackState, setSnackState] = useState(false);
+  const [option, setOption] = useState(3);
+  const [item, setItem] = useState('');
+  const [token, setToken] = useState('');
   const handleFabState = () => {
     setState(!fabState);
   }
 
-  const dapuser = {
-    id: 'perkid@youngwoo.co',
-    name: '고유준',
-    company: '영우',
+  const handleSnackState = () => {
+    setSnackState(!snackState);
   }
 
-  const m = `안녕하세요! ${dapuser.company} ${dapuser.name}님
-인공지능 답돌이 입니다.
+  // 토큰 저장 코드
+  const registerForPushNotificationsAsync = async () => {
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Permissions.getAsync(
+        Permissions.NOTIFICATIONS
+      );
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(
+          Permissions.NOTIFICATIONS
+        );
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      let token = await Notifications.getExpoPushTokenAsync();
+      setToken(token)
+      return true;
+    } else {
 
-이용 중 처음 단계로 돌아가고
-싶으시면 상단에 답돌이 아이콘
-을 클릭하세요!
-  `;
-
-  const [messages, setMessages] = useState([
-    {
-      _id: 1,
-      text: `${m}`,
-      createdAt: new Date(),
-      quickReplies: {
-        type: 'radio',
-        values: [
-          {
-            title: '현물조회',
-            value: 'inquiry',
-          },
-          {
-            title: '샘플신청',
-            value: 'sample',
-          },
-          {
-            title: '아이템 정보',
-            value: 'item',
-          },
-        ],
-      },
-      user: {
-        _id: 2,
-        name: 'GiftedChat',
-      },
     }
-  ]);
-
-  const user = {
-    _id: 1,
-    name: 'Developer',
   }
 
+  // 푸시 보내기
+  const sendPushNotification = async () => {
+    const message = {
+      to: 'ExponentPushToken[vr_REXM2D0OQj4I7PvdZjt]',
+      sound: 'default',
+      title: '',
+      body: 'Hi',
+      data: { data: '' },
+    };
+    const response = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+  };
+
+  registerForPushNotificationsAsync()
+
+  console.log(token)
   const onQuickReply = replies => {
     const createdAt = new Date();
-
     if (replies.length === 1) {
       onSend([
         {
@@ -79,8 +90,6 @@ function Main({ navigation }) {
           user,
         },
       ])
-
-
     } else if (replies.length > 1) {
       onSend([
         {
@@ -90,81 +99,24 @@ function Main({ navigation }) {
           user,
         },
       ])
-
     } else {
       console.warn('replies param is not set correctly')
     }
   }
 
   useEffect(() => {
-    if(messages[0].text==='현물조회'){
-      let r = {
-        createdAt: new Date(),
-        _id: Math.round(Math.random() * 1000000),
-        text: '아이템명(또는 아이템번호)과 칼라번호 입력',
-        user: 2,
+    if (messages[0] !== undefined) {
+      let r = createMessage(messages[0].text, option, item);
+      if (r !== undefined) {
+        onSend(GiftedChat.append(messages, [r]))
+        setOption(r.option);
+        setItem(r.item)
       }
-      reply(r)
-    }
-    if(messages[0].text==='샘플신청'){
-      let r = {
-        createdAt: new Date(),
-        _id: Math.round(Math.random() * 1000000),
-        text: '샘플신청 입니다.\n\n거래처 명을 입력하세요',
-        user: 2,
-      }
-      reply(r)
-    }
-    if(messages[0].text==='아이템 정보'){
-      let r = {
-        createdAt: new Date(),
-        _id: Math.round(Math.random() * 1000000),
-        text: '정보 조회를 원하는 아이템명을\n입력해주세요.',
-        user: 2,
-      }
-      reply(r)
     }
   }, [messages]);
-
-
-
-  const reply = (r = []) => {
-    setMessages(GiftedChat.append(messages, r))
-  }
-
-  const onSend = (newMessages = []) => {
-    setMessages(GiftedChat.append(messages, newMessages));
-  }
-  const reset = () => {
-    let r = {
-      createdAt: new Date(),
-      _id: Math.round(Math.random() * 1000000),
-      text: '처음으로 돌아갑니다.',
-      quickReplies: {
-        type: 'radio',
-        values: [
-          {
-            title: '현물조회',
-            value: 'inquiry',
-          },
-          {
-            title: '샘플신청',
-            value: 'sample',
-          },
-          {
-            title: '아이템 정보',
-            value: 'item',
-          },
-        ],
-      },
-      user: 2,
-    }
-    setMessages(GiftedChat.append(messages, [r]));
-  }
-
   return (
     <>
-      <Header titleText='답  돌  이' navigation={navigation} main={true} reset={reset} />
+      <Header titleText='답  돌  이' navigation={navigation} main={true} />
       <View style={styles.container}>
         <GiftedChat
           {...{ messages, onSend }}
@@ -172,6 +124,10 @@ function Main({ navigation }) {
             _id: 1,
           }}
           alignTop={true}
+          onLongPress={(context, currentMessage) => {
+            Clipboard.setString(currentMessage.text)
+            handleSnackState()
+          }}
           onQuickReply={onQuickReply}
           quickReplyStyle={{ backgroundColor: '#1E388D', marginTop: 30 }}
           renderQuickReplies={(props) => <QuickReplies color='#FFF' {...props} />}
@@ -180,28 +136,49 @@ function Main({ navigation }) {
             return (
               <Bubble
                 {...props}
+                touchableProps={{ delayLongPress: 200 }}
                 textStyle={{
                   right: {
                     color: 'white',
+                    padding: 5,
+                    lineHeight: 23
                   },
+                  left: {
+                    padding: 5,
+                    lineHeight: 23
+                  }
                 }}
                 wrapperStyle={{
                   right: {
                     backgroundColor: '#1E388D',
+                  },
+                  left: {
+                    marginTop: 20
                   }
                 }}
               />
             );
           }}
         />
+        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80} />
+        <Snackbar
+          visible={snackState}
+          duration={1300}
+          onDismiss={() => setSnackState(false)}
+          style={styles.snack}
+        >
+          메세지가 복사되었습니다.
+        </Snackbar>
         <FAB.Group
           open={fabState}
           icon='plus'
           actions={[
-            { icon: 'file-document-box-outline', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('Order') },
+            // { icon: 'barcode', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('Barcode') },
+            { icon: 'test-tube', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('Test') },
+            { icon: 'file-document-box-outline', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory') },
             {
               icon: 'account', style: { right: 10, bottom: 70 }, onPress: () =>
-                navigation.navigate('MyPage', dapuser)
+                navigation.navigate('MyPage', user)
             },
           ]}
           fabStyle={styles.fab}
@@ -209,9 +186,6 @@ function Main({ navigation }) {
           onPress={setState}
         />
       </View>
-      <Button style={{backgroundColor:'red'}}
-        onPress={reset}
-      ></Button>
       <View style={{ flex: 1 }} />
       <Bottom />
     </>
@@ -223,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 13,
     backgroundColor: '#fff',
     paddingHorizontal: 10,
-    paddingVertical: 20
+    paddingVertical: 20,
   },
   titleContainer: {
     alignItems: 'center',
@@ -247,6 +221,9 @@ const styles = StyleSheet.create({
     borderWidth: 0.2,
     borderRadius: 20,
   },
+  snack: {
+    width: '100%',
+  }
 })
 
 export default Main;

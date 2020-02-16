@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
-import { StyleSheet, View, Image, Text } from 'react-native';
+import { StyleSheet, View, Image, Text, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 
 function ResetPassword({ navigation }) {
+    const handleReset = () => {
+        Alert.alert('','메일이 발송 되었습니다.',[{text:'OK', onPress: ()=> navigation.goBack()}]);
+      }
     return (
         <>
             <Header titleText='비밀번호 재설정' navigation={navigation} />
@@ -27,7 +30,7 @@ function ResetPassword({ navigation }) {
                 <Button
                     mode='contained'
                     style={styles.button}
-                    onPress={() => alert('메일이 발송 되었습니다.')}
+                    onPress={()=>{handleReset()}}
                     labelStyle={{ fontWeight: 'bold', fontSize: 18 }}
                 >
                     비밀번호 재설정

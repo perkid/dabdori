@@ -1,9 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
-import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback, AsyncStorage, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
+import { useSelector, useDispatch } from 'react-redux';
+import { loginRequest, loginSuccess } from '../redux/authentication';
+
 function Login({ navigation }) {
+
+    const [id, SetID] = useState('');
+    const [password, SetPassword] = useState('');
+    const loginState = useSelector(state => state.authentication.login.status, []);
+    const dispatch = useDispatch();
+
+    const handleLogin = (id, password) => {
+        dispatch(loginRequest(id, password));
+    }
+
+    useEffect(() => {
+        if (loginState === 'SUCCESS' && id !== '') {
+            let user = {
+                email: id
+            }
+            let data = JSON.stringify(user);
+            AsyncStorage.setItem("AUTH", data, () => {
+                navigation.navigate('App');
+            })
+        }
+        if (loginState === 'FAILURE') {
+            Alert.alert('', '아이디 혹은 패스워드가 일치하지 않습니다.');
+        }
+    }, [loginState])
+
+    // 로컬 저장소에 저장된 아이//디가 있는지 체크하여 자동 로그인
+    AsyncStorage.getItem("AUTH", (err, data) => {
+        if (err == null) {
+            if (data !== null) {
+
+                let user = JSON.parse(data);
+                let email = user.email;
+                dispatch(loginSuccess(email))
+                
+                navigation.navigate('App', 'Main', {email:email});
+            }
+        }
+    });
+
+
     return (
         <>
             <Header titleText='로  그  인' navigation={navigation} />
@@ -17,17 +60,23 @@ function Login({ navigation }) {
                         label='아이디'
                         style={styles.input}
                         theme={{ colors }}
+                        value={id}
+                        autoCapitalize={'none'}
+                        onChangeText={text => SetID(text)}
 
                     />
                     <TextInput
                         label='패스워드'
                         style={styles.input}
                         theme={{ colors }}
+                        value={password}
+                        secureTextEntry={true}
+                        onChangeText={text => SetPassword(text)}
                     />
                     <Button
                         mode='contained'
                         style={styles.button}
-                        onPress={() => navigation.navigate('App')}
+                        onPress={() => handleLogin(id, password)}
                         labelStyle={{ fontWeight: 'bold', fontSize: 18 }}
                     >
                         로그인

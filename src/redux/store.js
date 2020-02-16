@@ -1,6 +1,12 @@
-import { createStore } from 'redux';
-import messagesReducer from './messagesApp';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import messagesApp from './messagesApp';
+import authentication from './authentication';
+import ReduxThunk from "redux-thunk";
 
-const store = createStore(messagesReducer);
+const appReducer = combineReducers({
+    messagesApp, authentication
+})
+
+const store = createStore(appReducer, applyMiddleware(ReduxThunk));
 
 export default store;

@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, AsyncStorage } from 'react-native';
 import { IconButton, DataTable } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
+import { useDispatch } from 'react-redux';
+import { clearMessage } from '../redux/messagesApp';
 
 function MyPage({ navigation }) {
   const dapuser = navigation.state.params;
+  const dispatch = useDispatch();
+  const clearChat = () => dispatch(clearMessage());
+  const handleLogout = () => {
+    clearChat();
+    AsyncStorage.clear()
+    navigation.navigate('Auth')
+  }
 
   return (
     <>
@@ -31,7 +40,7 @@ function MyPage({ navigation }) {
                 아이디
               </Text>
             </DataTable.Cell>
-            <DataTable.Title>{dapuser.id}</DataTable.Title>
+            <DataTable.Title>{dapuser.email}</DataTable.Title>
           </DataTable.Row>
           <DataTable.Row onPress={() => navigation.navigate('PasswordChange')}>
             <DataTable.Cell style={{ marginLeft: 5 }}>
@@ -43,7 +52,7 @@ function MyPage({ navigation }) {
               >
             </DataTable.Cell>
           </DataTable.Row>
-          <DataTable.Row onPress={() => navigation.navigate('Auth')}>
+          <DataTable.Row onPress={() => handleLogout()}>
             <DataTable.Cell style={{ marginLeft: 5 }}>
               <Text style={styles.tableText}>
                 로그아웃

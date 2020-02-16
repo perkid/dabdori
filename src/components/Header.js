@@ -1,12 +1,18 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { resetMessage, clearMessage } from '../redux/messagesApp';
 import { Appbar, Title } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function Header({ titleText, navigation, main,  }) {
+  const dispatch = useDispatch()
+  const first = () => dispatch(resetMessage())
+  const clearChat = () => dispatch(clearMessage())
+
   return (
     <Appbar.Header style={styles.headerContainer}>
-      <TouchableOpacity onPress={()=> {main ?  navigation.goBack() : navigation.goBack()}}>
+      <TouchableOpacity onPress={()=> {main ? first() : navigation.goBack()}}>
         <Image
           source={require('../../assets/dabdori-icon.png')}
           resizeMode="contain"
@@ -14,7 +20,9 @@ function Header({ titleText, navigation, main,  }) {
         />
       </TouchableOpacity>
       <View style={styles.container}>
-        <Title style={styles.title}>{titleText}</Title>
+        <Title style={styles.title}
+          onPress={()=>clearChat()}
+        >{titleText}</Title>
       </View>
     </Appbar.Header>
   )
