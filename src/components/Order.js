@@ -4,7 +4,7 @@ import { Card, Avatar, Title, Caption, Paragraph, Button } from 'react-native-pa
 
 function Order({ navigation, order }) {
   let company = order.company;
-  let orderItem = order.orderItem;
+  let orderItem = `${order.orderItem[0].name} / ${order.orderItem[0].color} / ${order.orderItem[0].quantity}`;
   let orderTime = order.orderTime;
   let orderNo = order.orderNo;
   let orderState;
@@ -47,14 +47,14 @@ function Order({ navigation, order }) {
           <Title></Title>
           <View style={{ marginLeft: '10%', alignItems: 'center' }}>
             <Caption>{orderNo}    ></Caption>
-            <Button
+            {(order.flagBtn ? <Button
               style={{ marginTop: 20, borderRadius: 90, width: 80 }}
               labelStyle={{ fontSize: 10 }}
               mode='contained'
               color='#1E388D'
             >
               단가입력
-              </Button>
+              </Button> : undefined )}
           </View>
         </Card.Content>
       </Card>

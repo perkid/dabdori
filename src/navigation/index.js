@@ -32,7 +32,7 @@ const AppStack = createStackNavigator(
     // },
     Test: {
       screen: Test
-    }
+    },
   },
   {
     initialRouteName: 'Main',

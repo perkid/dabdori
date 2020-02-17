@@ -12,7 +12,7 @@ function Header({ titleText, navigation, main,  }) {
 
   return (
     <Appbar.Header style={styles.headerContainer}>
-      <TouchableOpacity onPress={()=> {main ? first() : navigation.goBack()}}>
+      <TouchableOpacity onPress={()=> {main ? first() : navigation.navigate('Main')}}>
         <Image
           source={require('../../assets/dabdori-icon.png')}
           resizeMode="contain"
