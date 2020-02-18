@@ -25,6 +25,12 @@ function OrderHistory({ navigation }) {
       remarks: '답돌이 고객 등록 (김새이)',
       orderItem: [
         {
+          name: 'JERRY(제리) 2AFPP617',
+          color: '9920',
+          quantity: '4YD',
+          price: '7,500원',
+        },
+        {
           name: '미라클 4-712',
           color: '2662',
           quantity: '8YD',
@@ -75,7 +81,7 @@ function OrderHistory({ navigation }) {
               visible={visible}
               onDismiss={_hideDialog}>
               <Dialog.Title style={{ textAlign: 'center' }}>기간설정</Dialog.Title>
-              <DataTable style={{ marginVertical:10}}>
+              <DataTable style={{ marginVertical: 10 }}>
                 <DataTable.Row>
                   <DataTable.Cell style={{ marginLeft: 30 }}>시작일</DataTable.Cell>
                   <DataTable.Cell >2018-01-01</DataTable.Cell>
@@ -85,110 +91,115 @@ function OrderHistory({ navigation }) {
                   <DataTable.Cell>2020-02-02</DataTable.Cell>
                 </DataTable.Row>
                 <DataTable.Row>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="threeMonth"
-                      status={dateRange === 'threeMonth' ? 'checked' : 'unchecked'}
-                      onPress={() => setDateRange('threeMonth')}
-                    />
-                    <Text>3개월</Text>
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="sixMonth"
-                      status={dateRange === 'sixMonth' ? 'checked' : 'unchecked'}
-                      onPress={() => setDateRange('sixMonth')}
-                    /><Text>6개월</Text>
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="custom"
-                      status={dateRange === 'custom' ? 'checked' : 'unchecked'}
-                      onPress={() => setDateRange('custom')}
-                    /><Text>기간설정</Text>
-                  </DataTable.Cell>
+                  <View style={styles.radioContainer}>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="threeMonth"
+                        status={dateRange === 'threeMonth' ? 'checked' : 'unchecked'}
+                        onPress={() => setDateRange('threeMonth')}
+                      /><Text>3개월</Text>
+                    </View>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="sixMonth"
+                        status={dateRange === 'sixMonth' ? 'checked' : 'unchecked'}
+                        onPress={() => setDateRange('sixMonth')}
+                      /><Text>6개월</Text>
+                    </View>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="custom"
+                        status={dateRange === 'custom' ? 'checked' : 'unchecked'}
+                        onPress={() => setDateRange('custom')}
+                      /><Text>기간설정</Text>
+                    </View>
+                  </View>
                 </DataTable.Row>
               </DataTable>
               <Dialog.Title style={{ textAlign: 'center' }}>상태설정</Dialog.Title>
-              <DataTable style={{ marginVertical:10}}>
+              <DataTable style={{ marginVertical: 10 }}>
                 <DataTable.Row>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="1"
-                      status={status === '1' ? 'checked' : 'unchecked'}
-                      onPress={() => setStatus('1')}
-                    /><Text>접수</Text>
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="2"
-                      status={status === '2' ? 'checked' : 'unchecked'}
-                      onPress={() => setStatus('2')}
-                    /><Text>준비</Text>
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="3"
-                      status={status === '3' ? 'checked' : 'unchecked'}
-                      onPress={() => setStatus('3')}
-                    /><Text>완료</Text>
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="4"
-                      status={status === '4' ? 'checked' : 'unchecked'}
-                      onPress={() => setStatus('4')}
-                    /><Text>취소</Text>
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="all"
-                      status={status === 'all' ? 'checked' : 'unchecked'}
-                      onPress={() => setStatus('all')}
-                    /><Text>전체</Text>
-                  </DataTable.Cell>
+                  <View style={styles.radioContainer}>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="1"
+                        status={status === '1' ? 'checked' : 'unchecked'}
+                        onPress={() => setStatus('1')}
+                      /><Text>접수</Text>
+                    </View>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="2"
+                        status={status === '2' ? 'checked' : 'unchecked'}
+                        onPress={() => setStatus('2')}
+                      /><Text>준비</Text>
+                    </View>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="3"
+                        status={status === '3' ? 'checked' : 'unchecked'}
+                        onPress={() => setStatus('3')}
+                      /><Text>완료</Text>
+                    </View>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="4"
+                        status={status === '4' ? 'checked' : 'unchecked'}
+                        onPress={() => setStatus('4')}
+                      /><Text>취소</Text>
+                    </View>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="all"
+                        status={status === 'all' ? 'checked' : 'unchecked'}
+                        onPress={() => setStatus('all')}
+                      /><Text>전체</Text>
+                    </View>
+                  </View>
                 </DataTable.Row>
                 <DataTable.Row>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="1"
-                      status={role === '1' ? 'checked' : 'unchecked'}
-                      onPress={() => setRole('1')}
-                    /><Text>고객용</Text>
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="2"
-                      status={role === '2' ? 'checked' : 'unchecked'}
-                      onPress={() => setRole('2')}
-                    /><Text>직원용</Text>
-                  </DataTable.Cell>
-                  <DataTable.Cell>
-                    <RadioButton.Android
-                      color='#1E388D'
-                      value="all"
-                      status={role === 'all' ? 'checked' : 'unchecked'}
-                      onPress={() => setRole('all')}
-                    /><Text>전체</Text>
-                  </DataTable.Cell>
+                  <View style={styles.radioContainer}>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="1"
+                        status={role === '1' ? 'checked' : 'unchecked'}
+                        onPress={() => setRole('1')}
+                      /><Text>고객용</Text>
+                    </View>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="2"
+                        status={role === '2' ? 'checked' : 'unchecked'}
+                        onPress={() => setRole('2')}
+                      /><Text>직원용</Text>
+                    </View>
+                    <View style={styles.radio}>
+                      <RadioButton.Android
+                        color='#1E388D'
+                        value="all"
+                        status={role === 'all' ? 'checked' : 'unchecked'}
+                        onPress={() => setRole('all')}
+                      /><Text>전체</Text>
+                    </View>
+                  </View>
                 </DataTable.Row>
               </DataTable>
-              <Dialog.Actions style={{justifyContent:'center', marginVertical: 25}}>
+              <Dialog.Actions style={{ justifyContent: 'center', marginVertical: 25 }}>
                 <Button
                   mode='outlined'
                   color='#1E388D'
                   onPress={_hideDialog}
-                  style={{width: '40%', marginHorizontal: 10}}
+                  style={{ width: '40%', marginHorizontal: 10 }}
                 >
                   취소
                   </Button>
@@ -196,15 +207,15 @@ function OrderHistory({ navigation }) {
                   mode='contained'
                   color='#1E388D'
                   onPress={_hideDialog}
-                  style={{width: '40%', marginHorizontal: 10}}
+                  style={{ width: '40%', marginHorizontal: 10 }}
                 >
                   완료
                 </Button>
               </Dialog.Actions>
             </Dialog>
           </Portal>
+          {/* modal end */}
         </View>
-        {/* modal end */}
         <Divider style={{ padding: 1, backgroundColor: '#1E388D' }}></Divider>
         {orders.map((order, index) => (
           <Order
@@ -236,6 +247,14 @@ const styles = StyleSheet.create({
     right: 0,
     top: 40,
     margin: 10
+  }, radioContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%'
+  },
+  radio: {
+    alignItems: 'center',
+    flexDirection: 'row'
   }
 })
 

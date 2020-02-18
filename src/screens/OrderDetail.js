@@ -1,36 +1,62 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { Button, IconButton, Divider, Avatar, Paragraph, DataTable } from 'react-native-paper';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { IconButton, DataTable, Divider } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
-import Swipeout from 'rc-swipeout';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 function OrderDetail({ navigation }) {
 
     let order = navigation.state.params;
-    let rightButton = [
-        {
-            text: '수정',
-            onPress: () => console.log('수정'),
-            style: { backgroundColor: 'red', color: 'white', },
-        },
-        {
-            text: '확인',
-            onPress: () => console.log('확인'),
-            style: { backgroundColor: '#1E388D', color: 'white' }
-        }
-    ]
-    const orderItem = order.orderItem.map(
-        (item, index) => (
-            <Swipeout
-                right={rightButton}
-                style={styles.orderItem}
-                key={index}
-            >
-                <Text style={{ height: 44, marginLeft: 20, padding: 12 }}>{index+1}.  {item.name} / {item.color} / {item.quantity} / {item.price}</Text>
-            </Swipeout>
-        )
-    )
+
+    const orderItem =
+        <SwipeListView
+            data={Array(order.orderItem.length).fill(order.orderItem).map((item, i)=>({key:`${i}`, text: `${i+1}. ${item[i].name} / ${item[i].color} / ${item[i].quantity} / ${item[i].price}`, item:item[i]}))
+            }
+            rightOpenValue={-150}
+            disableRightSwipe={true}
+            renderItem={
+                data=>(
+                    <View style={styles.standaloneRowFront}>
+                        <Text style={styles.itemFont}>{data.item.text}</Text>
+                    </View>
+                )
+            }
+            renderHiddenItem={(data, rowMap) => (
+                // data.item.item 에 orderItem들어있음
+                <View style={styles.standaloneRowBack}>
+                        <TouchableOpacity
+                            style={[
+                                styles.backRightBtn,
+                                styles.backRightBtnLeft,
+                            ]}
+                            onPress={() =>{
+                                console.log('수정')
+                            }
+                            }
+                        >
+                            <Text style={{ color: 'black' }}>
+                                수정
+                        </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[
+                                styles.backRightBtn,
+                                styles.backRightBtnRight,
+                            ]}
+                            onPress={() =>
+                                console.log('확인')
+                            }
+                        >
+                            <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                                확인
+                        </Text>
+                        </TouchableOpacity>
+                    </View>
+            )
+                
+            }
+        ></SwipeListView>
 
     return (
         <>
@@ -99,7 +125,39 @@ const styles = StyleSheet.create({
     },
     orderItem: {
         backgroundColor: 'white',
-    }
+    },
+    standaloneRowFront: {
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        height: 50,
+    },
+    standaloneRowBack: {
+        alignItems: 'center',
+        backgroundColor: 'white',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 15,
+    },
+    itemFont: {
+        marginLeft: 30,
+    },
+    backRightBtn: {
+        alignItems: 'center',
+        bottom: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        top: 0,
+        width: 75,
+    },
+    backRightBtnLeft: {
+        backgroundColor: '#FFDC3C',
+        right: 75,
+    },
+    backRightBtnRight: {
+        backgroundColor: '#1E388D',
+        right: 0,
+    },
 })
 
 export default OrderDetail;

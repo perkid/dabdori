@@ -3,12 +3,12 @@ import { View, ScrollView } from 'react-native';
 import { Card, Avatar, Title, Caption, Paragraph, Button } from 'react-native-paper';
 
 function Order({ navigation, order }) {
+  let itemLength = order.orderItem.length;
   let company = order.company;
-  let orderItem = `${order.orderItem[0].name} / ${order.orderItem[0].color} / ${order.orderItem[0].quantity}`;
+  let orderItem = (itemLength>1) ?`${order.orderItem[0].name} / ${order.orderItem[0].color} 외 ${itemLength-1}건` : `${order.orderItem[0].name} / ${order.orderItem[0].color} / ${order.orderItem[0].quantity}`;
   let orderTime = order.orderTime;
   let orderNo = order.orderNo;
   let orderState;
-  
   switch (order.state) {
     case 1:
       
@@ -36,17 +36,18 @@ function Order({ navigation, order }) {
         onPress={() => navigation.navigate('OrderDetail', order)}
       >
         <Card.Content
-          style={{ marginTop: -15, flexDirection: 'row', justifyContent: 'space-between' }}
+          style={{ marginTop: -15, flexDirection: 'row', justifyContent: 'space-between'}}
         >
+         <View style={{justifyContent:'center' }}>
          {orderState}
-          <View style={{ marginLeft: 30 }}>
+         </View>
+          <View style={{ marginLeft: 10 ,width:"58%" }}>
             <Title style={{ fontSize: 15 }}>{company}</Title>
             <Caption style={{ fontSize: 10 }}>{orderItem}</Caption>
             <Caption style={{ fontSize: 10 }}>{orderTime}</Caption>
           </View>
-          <Title></Title>
-          <View style={{ marginLeft: '10%', alignItems: 'center' }}>
-            <Caption>{orderNo}    ></Caption>
+          <View style={{ alignItems: 'center'  }}>
+            <Caption>{orderNo} ></Caption>
             {(order.flagBtn ? <Button
               style={{ marginTop: 20, borderRadius: 90, width: 80 }}
               labelStyle={{ fontSize: 10 }}
