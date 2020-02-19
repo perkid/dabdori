@@ -1,20 +1,42 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Button, IconButton, Searchbar, Divider, Portal, Dialog, DataTable, RadioButton } from 'react-native-paper';
+import { Button, IconButton, Searchbar, Divider } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import Order from '../components/Order';
+import PerriodSetting from '../components/PeriodSetting';
 
 function OrderHistory({ navigation }) {
   const [firstQuery, setFirstQuery] = useState('');
   const [visible, setVisible] = useState(false);
-  const [dateRange, setDateRange] = useState('custom');
-  const [status, setStatus] = useState('all');
-  const [role, setRole] = useState('all');
+  const [startDate, setStartDate] = useState(new Date('2018-01-01'));
+  const [endDate, setEndDate] = useState(new Date());
   const _showDialog = () => setVisible(true)
   const _hideDialog = () => setVisible(false)
 
-  const date = '2020-01-31 ~ 2020-02-02';
+  const getFormatDate = (date) => {
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1
+    var day = date.getDate();
+    if (month < 10) {
+        month = "0" + month;
+    }
+    if (day < 10) {
+        day = "0" + day;
+    }
+    return `${year}-${month}-${day}`;
+  }
+
+  const period = `${getFormatDate(startDate)} ~ ${getFormatDate(endDate)}`;
+
+  const handleStartDate = (date) => {
+    setStartDate(date);
+  }
+
+  const handleEndDate = (date) => {
+    setEndDate(date);
+  } 
+
   const orders = [
     {
       state: 3,
@@ -43,6 +65,9 @@ function OrderHistory({ navigation }) {
     }
   ]
 
+
+
+
   return (
     <>
       <Header titleText='주문조회' navigation={navigation} />
@@ -65,7 +90,7 @@ function OrderHistory({ navigation }) {
           <Text
             style={{ flex: 1, textAlign: 'center', fontWeight: 'bold' }}
           >
-            {date}
+            {period}
           </Text>
           <Button
             style={{ marginRight: 10 }}
@@ -75,146 +100,15 @@ function OrderHistory({ navigation }) {
           >
             기간 설정
           </Button>
-          {/* 기간 설정 버튼 클릭시 modal */}
-          <Portal>
-            <Dialog
-              visible={visible}
-              onDismiss={_hideDialog}>
-              <Dialog.Title style={{ textAlign: 'center' }}>기간설정</Dialog.Title>
-              <DataTable style={{ marginVertical: 10 }}>
-                <DataTable.Row>
-                  <DataTable.Cell style={{ marginLeft: 30 }}>시작일</DataTable.Cell>
-                  <DataTable.Cell >2018-01-01</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row>
-                  <DataTable.Cell style={{ marginLeft: 30 }}>종료일</DataTable.Cell>
-                  <DataTable.Cell>2020-02-02</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row>
-                  <View style={styles.radioContainer}>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="threeMonth"
-                        status={dateRange === 'threeMonth' ? 'checked' : 'unchecked'}
-                        onPress={() => setDateRange('threeMonth')}
-                      /><Text>3개월</Text>
-                    </View>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="sixMonth"
-                        status={dateRange === 'sixMonth' ? 'checked' : 'unchecked'}
-                        onPress={() => setDateRange('sixMonth')}
-                      /><Text>6개월</Text>
-                    </View>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="custom"
-                        status={dateRange === 'custom' ? 'checked' : 'unchecked'}
-                        onPress={() => setDateRange('custom')}
-                      /><Text>기간설정</Text>
-                    </View>
-                  </View>
-                </DataTable.Row>
-              </DataTable>
-              <Dialog.Title style={{ textAlign: 'center' }}>상태설정</Dialog.Title>
-              <DataTable style={{ marginVertical: 10 }}>
-                <DataTable.Row>
-                  <View style={styles.radioContainer}>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="1"
-                        status={status === '1' ? 'checked' : 'unchecked'}
-                        onPress={() => setStatus('1')}
-                      /><Text>접수</Text>
-                    </View>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="2"
-                        status={status === '2' ? 'checked' : 'unchecked'}
-                        onPress={() => setStatus('2')}
-                      /><Text>준비</Text>
-                    </View>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="3"
-                        status={status === '3' ? 'checked' : 'unchecked'}
-                        onPress={() => setStatus('3')}
-                      /><Text>완료</Text>
-                    </View>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="4"
-                        status={status === '4' ? 'checked' : 'unchecked'}
-                        onPress={() => setStatus('4')}
-                      /><Text>취소</Text>
-                    </View>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="all"
-                        status={status === 'all' ? 'checked' : 'unchecked'}
-                        onPress={() => setStatus('all')}
-                      /><Text>전체</Text>
-                    </View>
-                  </View>
-                </DataTable.Row>
-                <DataTable.Row>
-                  <View style={styles.radioContainer}>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="1"
-                        status={role === '1' ? 'checked' : 'unchecked'}
-                        onPress={() => setRole('1')}
-                      /><Text>고객용</Text>
-                    </View>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="2"
-                        status={role === '2' ? 'checked' : 'unchecked'}
-                        onPress={() => setRole('2')}
-                      /><Text>직원용</Text>
-                    </View>
-                    <View style={styles.radio}>
-                      <RadioButton.Android
-                        color='#1E388D'
-                        value="all"
-                        status={role === 'all' ? 'checked' : 'unchecked'}
-                        onPress={() => setRole('all')}
-                      /><Text>전체</Text>
-                    </View>
-                  </View>
-                </DataTable.Row>
-              </DataTable>
-              <Dialog.Actions style={{ justifyContent: 'center', marginVertical: 25 }}>
-                <Button
-                  mode='outlined'
-                  color='#1E388D'
-                  onPress={_hideDialog}
-                  style={{ width: '40%', marginHorizontal: 10 }}
-                >
-                  취소
-                  </Button>
-                <Button
-                  mode='contained'
-                  color='#1E388D'
-                  onPress={_hideDialog}
-                  style={{ width: '40%', marginHorizontal: 10 }}
-                >
-                  완료
-                </Button>
-              </Dialog.Actions>
-            </Dialog>
-          </Portal>
-          {/* modal end */}
+          <PerriodSetting
+            visible={visible}
+            _hideDialog={_hideDialog}
+            startDate={startDate}
+            endDate={endDate}
+            getFormatDate={getFormatDate}
+            handleStartDate={handleStartDate}
+            handleEndDate={handleEndDate}
+          />
         </View>
         <Divider style={{ padding: 1, backgroundColor: '#1E388D' }}></Divider>
         {orders.map((order, index) => (
@@ -247,15 +141,8 @@ const styles = StyleSheet.create({
     right: 0,
     top: 40,
     margin: 10
-  }, radioContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%'
   },
-  radio: {
-    alignItems: 'center',
-    flexDirection: 'row'
-  }
+
 })
 
 export default OrderHistory;

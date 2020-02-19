@@ -17,8 +17,10 @@ function OrderDetail({ navigation }) {
             disableRightSwipe={true}
             renderItem={
                 data=>(
+                    <View>
                     <View style={styles.standaloneRowFront}>
                         <Text style={styles.itemFont}>{data.item.text}</Text>
+                    </View>
                     </View>
                 )
             }
@@ -70,7 +72,7 @@ function OrderDetail({ navigation }) {
             />
             <View style={styles.container}>
                 <DataTable>
-                    <DataTable.Row style={{ backgroundColor: 'white' }}>
+                    <DataTable.Row style={{ backgroundColor: 'white', height: 60 }}>
                         <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 20 }}>
                             <Text style={{ fontSize: 17 }}>배송상태</Text>
                         </View>
@@ -98,7 +100,7 @@ function OrderDetail({ navigation }) {
                             <Text style={{ lineHeight: 25 }}>{order.remarks}</Text>
                         </View>
                     </DataTable.Row>
-                    <DataTable.Row style={{ backgroundColor: 'white', flexDirection: 'row', alignItems: 'center' }}>
+                    <DataTable.Row style={{ backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', height: 60  }}>
                         <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 20 }}>
                             <Text style={{ fontSize: 17 }}>
                                 주문아이템
@@ -106,6 +108,7 @@ function OrderDetail({ navigation }) {
                         </View>
                     </DataTable.Row>
                 </DataTable>
+                <Divider style={{padding:0.3, backgroundColor:'black'}}/>
                 {orderItem}
             </View>
             <Bottom />
