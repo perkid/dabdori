@@ -1,33 +1,77 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { View, StyleSheet, Text } from 'react-native';
-import { Button, IconButton, Searchbar, Divider } from 'react-native-paper';
+import { Button, Searchbar, Divider } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import Order from '../components/Order';
 import PerriodSetting from '../components/PeriodSetting';
+import { ScrollView } from 'react-native-gesture-handler';
 
 function OrderHistory({ navigation }) {
+  const orders = useSelector(state => state.orderManagement.orders);
   const [firstQuery, setFirstQuery] = useState('');
   const [visible, setVisible] = useState(false);
   const [startDate, setStartDate] = useState(new Date('2018-01-01'));
   const [endDate, setEndDate] = useState(new Date());
+  const [role, setRole] = useState('all');
+  const [status, setStatus] = useState('all');
+
   const _showDialog = () => setVisible(true)
   const _hideDialog = () => setVisible(false)
 
+  const handleRole = (select) => {
+    setRole(select);
+  }
+  const handleStatus = (select) => {
+    setStatus(select);
+  }
+
   const getFormatDate = (date) => {
     var year = date.getFullYear();
-    var month = date.getMonth() + 1
+    var month = date.getMonth() + 1;
     var day = date.getDate();
+
     if (month < 10) {
-        month = "0" + month;
+      month = "0" + month;
     }
     if (day < 10) {
-        day = "0" + day;
+      day = "0" + day;
     }
     return `${year}-${month}-${day}`;
   }
 
   const period = `${getFormatDate(startDate)} ~ ${getFormatDate(endDate)}`;
+
+  let foundOrders = orders.filter(order =>
+    getFormatDate(startDate) <= order.orderTime.substring(0, 10) && getFormatDate(endDate) >= order.orderTime.substring(0, 10)
+  )
+
+
+  if (status !== 'all') {
+    foundOrders = foundOrders.filter(order =>
+      order.state == status
+    )
+  }
+  if (role === '1') {
+    foundOrders = foundOrders.filter(order =>
+      order.remarks === '답돌이 직원 등록'
+    )
+  }
+  if (role ==='2') {
+    foundOrders = foundOrders.filter(order => 
+      order.remarks !== '답돌이 직원 등록'
+      )
+  }
+  
+  if (firstQuery !== '') {
+    foundOrders = foundOrders.filter(order =>
+      order.company.indexOf(firstQuery) >= 0 ||
+      order.orderNo.indexOf(firstQuery) >= 0 ||
+      order.orderItem[0].name.indexOf(firstQuery) >= 0 ||
+      order.orderItem[0].color.indexOf(firstQuery) >= 0
+    )
+  }
 
   const handleStartDate = (date) => {
     setStartDate(date);
@@ -35,49 +79,11 @@ function OrderHistory({ navigation }) {
 
   const handleEndDate = (date) => {
     setEndDate(date);
-  } 
-
-  const orders = [
-    {
-      state: 3,
-      company: '디자인바이스퀘어 1팀',
-      orderer: '김새이',
-      ordererNum: '010-1111-1111',
-      addr: '동대문 매장 오전 10시 이후 수령',
-      remarks: '답돌이 고객 등록 (김새이)',
-      orderItem: [
-        {
-          name: 'JERRY(제리) 2AFPP617',
-          color: '9920',
-          quantity: '4YD',
-          price: '7,500원',
-        },
-        {
-          name: '미라클 4-712',
-          color: '2662',
-          quantity: '8YD',
-          price: '7,000원',
-        }
-      ],
-      orderTime: `2020.02.05 10:46`,
-      orderNo: 'OA20012-0514',
-      flagBtn: true
-    }
-  ]
-
-
-
+  }
 
   return (
     <>
       <Header titleText='주문조회' navigation={navigation} />
-      <IconButton
-        icon='close'
-        size={25}
-        color='white'
-        onPress={() => navigation.goBack()}
-        style={styles.iconButton}
-      />
       <View style={styles.container}>
         <Searchbar
           placeholder="거래처,주문번호,아이템,칼라 검색 가능"
@@ -108,16 +114,20 @@ function OrderHistory({ navigation }) {
             getFormatDate={getFormatDate}
             handleStartDate={handleStartDate}
             handleEndDate={handleEndDate}
+            handleRole={handleRole}
+            handleStatus={handleStatus}
           />
         </View>
         <Divider style={{ padding: 1, backgroundColor: '#1E388D' }}></Divider>
-        {orders.map((order, index) => (
-          <Order
-            key={index}
-            navigation={navigation}
-            order={order}
-          />
-        ))}
+        <ScrollView>
+          {foundOrders.map((order, index) => (
+            <Order
+              key={index}
+              navigation={navigation}
+              order={order}
+            />
+          ))}
+        </ScrollView>
       </View>
       <Bottom />
     </>
@@ -128,20 +138,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingVertical: 20
+    paddingVertical: 20,
+    marginBottom: 40
   },
   dateSetup: {
     flexDirection: "row",
     justifyContent: 'space-between',
     alignItems: 'center',
     margin: 5
-  },
-  iconButton: {
-    position: 'absolute',
-    right: 0,
-    top: 40,
-    margin: 10
-  },
+  }
 
 })
 

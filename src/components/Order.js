@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Card, Avatar, Title, Caption, Paragraph, Button } from 'react-native-paper';
 
 function Order({ navigation, order }) {
@@ -9,30 +9,40 @@ function Order({ navigation, order }) {
   let orderTime = order.orderTime;
   let orderNo = order.orderNo;
   let orderState;
+  let style = (order.remarks==='답돌이 직원 등록') ? styles.style2 : styles.style1;
   switch (order.state) {
     case 1:
-      
+      orderState= <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+      <Avatar.Icon size={40} style={{backgroundColor:'#F9E920'}}></Avatar.Icon>
+        <Paragraph>접수</Paragraph>
+      </View>
       break;
   
     case 2:
-
+      orderState= <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+      <Avatar.Icon size={40} style={{backgroundColor:'#98BE4E'}}></Avatar.Icon>
+        <Paragraph>준비</Paragraph>
+      </View>
       break;
     case 3:
-      orderState= <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <Avatar.Icon size={40}></Avatar.Icon>
+      orderState= <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+      <Avatar.Icon size={40} style={{backgroundColor:'#1E388D'}}></Avatar.Icon>
         <Paragraph>완료</Paragraph>
       </View>
       break;
     case 4:
-
+      orderState= <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+      <Avatar.Icon size={40} style={{backgroundColor:'gray'}}></Avatar.Icon>
+        <Paragraph>취소</Paragraph>
+      </View>
       break;
     default:
       break;
   }
   return (
-    <ScrollView>
+    <View>
       <Card
-        style={{ height: 85, marginTop: 20, borderLeftWidth: 5, borderLeftColor: '#1E388D' }}
+        style={style}
         onPress={() => navigation.navigate('OrderDetail', order)}
       >
         <Card.Content
@@ -59,8 +69,22 @@ function Order({ navigation, order }) {
           </View>
         </Card.Content>
       </Card>
-    </ScrollView>
+    </View>
   )
 }
 
+const styles = StyleSheet.create({
+  style1 : {
+    height: 85,
+    marginTop: 6,
+    borderLeftWidth: 5,
+    borderLeftColor: '#1E388D'
+  },
+  style2 : {
+    height: 85,
+    marginTop: 6,
+    borderLeftWidth: 5,
+    borderLeftColor: 'white'
+  }
+})
 export default Order;

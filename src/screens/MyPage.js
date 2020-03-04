@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, AsyncStorage } from 'react-native';
-import { IconButton, DataTable } from 'react-native-paper';
+import { DataTable } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import { useDispatch } from 'react-redux';
 import { clearMessage } from '../redux/messagesApp';
 
 function MyPage({ navigation }) {
-  const dapuser = navigation.state.params;
+  const user = navigation.state.params;
   const dispatch = useDispatch();
   const clearChat = () => dispatch(clearMessage());
   const handleLogout = () => {
@@ -15,21 +15,18 @@ function MyPage({ navigation }) {
     AsyncStorage.clear()
     navigation.navigate('Auth')
   }
+  let last_login_date = user.last_login_date.split(' ');
+  let lastLogin = last_login_date[0];
 
   return (
     <>
       <Header titleText='마이페이지' navigation={navigation} />
-      <IconButton
-        icon='close'
-        size={25}
-        color='white'
-        onPress={() => navigation.goBack()}
-        style={styles.iconButton}
-      />
       <View style={styles.container}>
         <Text style={styles.info}>
-          안녕하세요 {dapuser.company}{'\n'}
-          {dapuser.name} 님{'\n'}
+          안녕하세요 {user.company_name}{'\n'}
+          {user.user_name} 님{'\n'}
+          {user.counter}번째 방문을 환영합니다.{'\n'}
+          최근 접속일 : {lastLogin}
         </Text>
       </View>
       <View style={styles.menu}>
@@ -40,7 +37,7 @@ function MyPage({ navigation }) {
                 아이디
               </Text>
             </DataTable.Cell>
-            <DataTable.Title>{dapuser.email}</DataTable.Title>
+            <DataTable.Title>{user.user_id}</DataTable.Title>
           </DataTable.Row>
           <DataTable.Row onPress={() => navigation.navigate('PasswordChange')}>
             <DataTable.Cell style={{ marginLeft: 5 }}>
@@ -87,12 +84,6 @@ const styles = StyleSheet.create({
   menu: {
     flex: 4,
     backgroundColor: '#FFF'
-  },
-  iconButton: {
-    position: 'absolute',
-    right: 0,
-    top: 40,
-    margin: 10
   },
   tableText: {
     fontSize: 17

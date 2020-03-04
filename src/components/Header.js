@@ -2,17 +2,22 @@ import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { resetMessage, clearMessage } from '../redux/messagesApp';
-import { Appbar, Title } from 'react-native-paper';
+import { Appbar, Title, IconButton } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function Header({ titleText, navigation, main,  }) {
+function Header({ titleText, navigation, main, handleOptionReset }) {
   const dispatch = useDispatch()
-  const first = () => dispatch(resetMessage())
-  const clearChat = () => dispatch(clearMessage())
-
+  const first = () => {
+    handleOptionReset()
+    dispatch(resetMessage())
+  }
+  const clearChat = () => {
+    handleOptionReset()
+    dispatch(clearMessage())
+  }
   return (
     <Appbar.Header style={styles.headerContainer}>
-      <TouchableOpacity onPress={()=> {main ? first() : navigation.navigate('Main')}}>
+      <TouchableOpacity onPress={() => { main ? first() : navigation.navigate('Main') }}>
         <Image
           source={require('../../assets/dabdori-icon.png')}
           resizeMode="contain"
@@ -20,10 +25,16 @@ function Header({ titleText, navigation, main,  }) {
         />
       </TouchableOpacity>
       <View style={styles.container}>
-        <Title style={styles.title}
-          onPress={()=>clearChat()}
+        <Title style={main?styles.mainTitle:styles.title}
+          onPress={() => { main ? clearChat() : navigation.navigate('Main') }}
         >{titleText}</Title>
       </View>
+      {main ? undefined : <IconButton
+        icon='close'
+        size={25}
+        color='white'
+        onPress={() => navigation.goBack()}
+      />}
     </Appbar.Header>
   )
 };
@@ -37,9 +48,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  mainTitle: {
+    color: '#FFF',
+    fontSize: 23,
+    marginLeft: -45,
+    fontWeight: 'bold'
+  },
   title: {
     color: '#FFF',
-    marginLeft: -45,
     fontSize: 23,
     fontWeight: 'bold'
   },

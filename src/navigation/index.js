@@ -6,8 +6,6 @@ import OrderHistory from '../screens/OrderHistory';
 import Login from '../screens/Login';
 import ResetPassword from '../screens/ResetPassword';
 import PasswordChange from '../screens/PasswordChange';
-import Barcode from '../screens/Barcode';
-import Test from '../screens/Test';
 import OrderDetail from '../screens/OrderDetail';
 
 const AppStack = createStackNavigator(
@@ -26,13 +24,7 @@ const AppStack = createStackNavigator(
     },
     PasswordChange: {
       screen: PasswordChange
-    },
-    // Barcode: {
-    //   screen: Barcode
-    // },
-    Test: {
-      screen: Test
-    },
+    }
   },
   {
     initialRouteName: 'Main',
@@ -62,7 +54,7 @@ export default createAppContainer(createSwitchNavigator(
     App: AppStack
   },
   {
-    initialRouteName: 'App'
+    initialRouteName: 'Auth'
   }
 ));
 

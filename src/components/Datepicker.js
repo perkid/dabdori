@@ -3,7 +3,7 @@ import { View, StyleSheet, Platform } from 'react-native';
 import { Portal, Dialog, Button } from "react-native-paper"
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-function Datepicker({setCustom, minimumDate, date, getFormatDate, handleDate }) {
+function Datepicker({setCustom, minimumDate, maximumDate, date, getFormatDate, handleDate }) {
     const [show, setShow] = useState(false);
     const [initDate, setInitDate] = useState(date);
 
@@ -56,6 +56,7 @@ function Datepicker({setCustom, minimumDate, date, getFormatDate, handleDate }) 
                                 timeZoneOffsetInMinutes={0}
                                 value={date}
                                 minimumDate={minimumDate}
+                                maximumDate={maximumDate}
                                 mode={'date'}
                                 display="spinner"
                                 onChange={onChange}

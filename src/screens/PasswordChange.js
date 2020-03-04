@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
-import { IconButton, TextInput, Button } from 'react-native-paper';
+import { TextInput, Button } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 
@@ -12,13 +12,6 @@ function PasswordChange({ navigation }) {
   return (
     <>
       <Header titleText='비밀번호 변경' navigation={navigation}/>
-      <IconButton
-        icon='close'
-        size={25}
-        color='white'
-        onPress={() => navigation.goBack()}
-        style={styles.iconButton}
-      />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View
           style={{ backgroundColor: '#fff', flex: 1 }}
@@ -69,12 +62,6 @@ const styles = StyleSheet.create({
     flex: 5,
     backgroundColor: '#FFF',
     alignItems: 'center'
-  },
-  iconButton: {
-    position: 'absolute',
-    right: 0,
-    top: 40,
-    margin: 10
   },
   input: {
     width: '85%',

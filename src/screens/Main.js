@@ -1,34 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Clipboard, KeyboardAvoidingView } from 'react-native';
-import { FAB, Snackbar } from 'react-native-paper';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform} from 'react-native';
+import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage } from '../redux/messagesApp';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
+import Company from '../components/Company';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import QuickReplies from 'react-native-gifted-chat/lib/QuickReplies';
-import createMessage from '../libs/MessageFactory';
-
+import createMessage from '../libs/createMessage';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
 function Main({ navigation }) {
-  const user = useSelector(state => state.authentication.user);
+  const userInfo = useSelector(state => state.authentication.user);
   const messages = useSelector(state => state.messagesApp.messages)
   const dispatch = useDispatch()
   const onSend = message => dispatch(sendMessage(message))
   const [fabState, setState] = useState(false);
   const [snackState, setSnackState] = useState(false);
-  const [option, setOption] = useState(3);
+  const [option, setOption] = useState(0);
+  const [subOption, setSubOption] = useState(0);
   const [item, setItem] = useState('');
   const [token, setToken] = useState('');
+
+  const handleOptionReset = () => {
+    setOption(0);
+    setSubOption(0);
+  }
   const handleFabState = () => {
     setState(!fabState);
   }
 
   const handleSnackState = () => {
     setSnackState(!snackState);
+  }
+
+  const [visible, setVisible] = useState(false);
+  const [checked, setChecked] = useState('');
+  const [companyList, setCompanyList] = useState(undefined);
+  
+  const _showDialog = () => {
+    setVisible(true);
+  }
+  const _hideDialog = () => {
+    setVisible(false);
+  }
+  const selcet = () => {
+    let r = {
+      createdAt: new Date(),
+      _id: Math.round(Math.random() * 1000000),
+      text: checked,
+      user: {
+          _id: 1
+      },
+    }
+    onSend(GiftedChat.append(messages, [r]))
+    r = createMessage(checked, 2, 1);
+    onSend(GiftedChat.append(messages,[r]))
+    setSubOption(2)
+    _hideDialog()
   }
 
   // 토큰 저장 코드
@@ -79,6 +111,7 @@ function Main({ navigation }) {
   registerForPushNotificationsAsync()
 
   console.log(token)
+
   const onQuickReply = replies => {
     const createdAt = new Date();
     if (replies.length === 1) {
@@ -87,7 +120,9 @@ function Main({ navigation }) {
           createdAt,
           _id: Math.round(Math.random() * 1000000),
           text: replies[0].title,
-          user,
+          user:{
+            _id: 1
+          },
         },
       ])
     } else if (replies.length > 1) {
@@ -96,7 +131,9 @@ function Main({ navigation }) {
           createdAt,
           _id: Math.round(Math.random() * 1000000),
           text: replies.map(reply => reply.title).join(', '),
-          user,
+          user: {
+            _id: 1
+          },
         },
       ])
     } else {
@@ -106,17 +143,28 @@ function Main({ navigation }) {
 
   useEffect(() => {
     if (messages[0] !== undefined) {
-      let r = createMessage(messages[0].text, option, item);
+      let r = createMessage(messages[0].text, option, subOption, item, userInfo.role, userInfo.company_name);
       if (r !== undefined) {
+        if (r.list !== undefined) {
+            setCompanyList(r.list.map((company, index) =>
+              (<Company
+                key = {index}
+                setChecked={setChecked}
+                name={company}
+              />)))
+          _showDialog()
+        }
         onSend(GiftedChat.append(messages, [r]))
         setOption(r.option);
-        setItem(r.item)
+        setSubOption(r.subOption);
+        setItem(r.item);
       }
     }
   }, [messages]);
+
   return (
     <>
-      <Header titleText='답  돌  이' navigation={navigation} main={true} />
+      <Header titleText='답  돌  이' navigation={navigation} main={true} handleOptionReset={handleOptionReset}/>
       <View style={styles.container}>
         <GiftedChat
           {...{ messages, onSend }}
@@ -160,7 +208,37 @@ function Main({ navigation }) {
             );
           }}
         />
-        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80} />
+        <Portal>
+          <Dialog
+            visible={visible}
+            onDismiss={_hideDialog}
+          >
+            <Dialog.Title
+              style={{ textAlign: 'center' }}
+            >
+              업체명 선택
+                    </Dialog.Title>
+            <Divider />
+            <Dialog.Content>
+              <RadioButton.Group
+                onValueChange={value => setChecked(value)}
+                value={checked}
+              >
+                <DataTable>
+                  {companyList}
+                </DataTable>
+              </RadioButton.Group>
+            </Dialog.Content>
+            <Divider />
+            <Dialog.Actions>
+              <Button
+                color='#1E388D'
+                style={{ backgroundColor: '#1E388D', width: '80%', marginRight: '10%' }}
+                labelStyle={{ fontSize: 18, color: "#fff" }} onPress={selcet}>선택</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        {Platform.OS==='ios'?undefined:<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={90} />}
         <Snackbar
           visible={snackState}
           duration={1300}
@@ -173,12 +251,11 @@ function Main({ navigation }) {
           open={fabState}
           icon='plus'
           actions={[
-            // { icon: 'barcode', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('Barcode') },
-            { icon: 'test-tube', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('Test') },
+            { style: { right: 10, bottom: 15 }},
             { icon: 'file-document-box-outline', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory') },
             {
               icon: 'account', style: { right: 10, bottom: 70 }, onPress: () =>
-                navigation.navigate('MyPage', user)
+                navigation.navigate('MyPage', userInfo)
             },
           ]}
           fabStyle={styles.fab}

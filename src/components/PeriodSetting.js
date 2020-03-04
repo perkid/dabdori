@@ -3,13 +3,15 @@ import { View, StyleSheet, Text } from 'react-native';
 import { Button, Portal, Dialog, DataTable, RadioButton } from 'react-native-paper';
 import Datepicker from '../components/Datepicker';
 
-function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate, handleStartDate, handleEndDate }) {
+function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate, handleStartDate, handleEndDate, handleRole, handleStatus }) {
     const [dateRange, setDateRange] = useState('custom');
     const [status, setStatus] = useState('all');
     const [role, setRole] = useState('all');
 
     const [initStartDate, setInitStartDate] = useState(startDate);
     const [initEndDate, setInitEndDate] = useState(endDate);
+
+    const today = new Date()
 
     const setCustom = () => {
         setDateRange('custom')
@@ -42,6 +44,8 @@ function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate
         setInitStartDate(startDate)
         setInitEndDate(endDate)
         setDateRange('custom')
+        handleRole(role)
+        handleStatus(status)
         setStatus('all')
         setRole('all')
         _hideDialog()
@@ -58,6 +62,7 @@ function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate
                         <Datepicker
                             setCustom={setCustom}
                             date={startDate}
+                            maximumDate={endDate}
                             getFormatDate={getFormatDate}
                             handleDate={handleStartDate}
                             />

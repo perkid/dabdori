@@ -20,7 +20,8 @@ function Login({ navigation }) {
     useEffect(() => {
         if (loginState === 'SUCCESS' && id !== '') {
             let user = {
-                email: id
+                email: id,
+                pass:password
             }
             let data = JSON.stringify(user);
             AsyncStorage.setItem("AUTH", data, () => {
@@ -39,9 +40,10 @@ function Login({ navigation }) {
 
                 let user = JSON.parse(data);
                 let email = user.email;
-                dispatch(loginSuccess(email))
+                let password = user.pass;
+                dispatch(loginRequest(email, password))
                 
-                navigation.navigate('App', 'Main', {email:email});
+                navigation.navigate('App', 'Main');
             }
         }
     });

@@ -1,82 +1,110 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { IconButton, DataTable, Divider } from 'react-native-paper';
+import { DataTable, Divider, Avatar, Paragraph } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import { useSelector, useDispatch } from 'react-redux';
+import { prcieConfirm } from '../redux/orderManagement';
 
 function OrderDetail({ navigation }) {
 
+    const orders = useSelector(state => state.orderManagement.orders);
+    const dispatch = useDispatch();
     let order = navigation.state.params;
+    const handleFlgbtn = () => {
+        dispatch(prcieConfirm(order.orderNo))
+        order.flagBtn=false
+    };
 
     const orderItem =
         <SwipeListView
-            data={Array(order.orderItem.length).fill(order.orderItem).map((item, i)=>({key:`${i}`, text: `${i+1}. ${item[i].name} / ${item[i].color} / ${item[i].quantity} / ${item[i].price}`, item:item[i]}))
+            data={Array(order.orderItem.length).fill(order.orderItem).map((item, i) => ({ key: `${i}`, text: `${i + 1}. ${item[i].name} / ${item[i].color} / ${item[i].quantity} / ${item[i].price}`, item: item[i] }))
             }
-            rightOpenValue={-150}
+            rightOpenValue={(order.flagBtn)?-150:-75}
             disableRightSwipe={true}
             renderItem={
-                data=>(
+                data => (
                     <View>
-                    <View style={styles.standaloneRowFront}>
-                        <Text style={styles.itemFont}>{data.item.text}</Text>
-                    </View>
+                        <View style={styles.standaloneRowFront}>
+                            <Text style={styles.itemFont}>{data.item.text}</Text>
+                        </View>
                     </View>
                 )
             }
-            renderHiddenItem={(data, rowMap) => (
+            renderHiddenItem={(order.state == 3 || order.state == 4) ? undefined : (data, rowMap) => (
                 // data.item.item 에 orderItem들어있음
                 <View style={styles.standaloneRowBack}>
-                        <TouchableOpacity
-                            style={[
-                                styles.backRightBtn,
-                                styles.backRightBtnLeft,
-                            ]}
-                            onPress={() =>{
-                                console.log('수정')
-                            }
-                            }
-                        >
-                            <Text style={{ color: 'black' }}>
-                                수정
+                    <TouchableOpacity
+                        style={(order.flagBtn)?[
+                            styles.backRightBtn,
+                            styles.backRightBtnLeft1,
+                        ]:[
+                            styles.backRightBtn,
+                            styles.backRightBtnLeft2,
+                        ]}
+                        onPress={() => {
+                            console.log('수정')
+                        }
+                        }
+                    >
+                        <Text style={{ color: 'black' }}>
+                            수정
                         </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                styles.backRightBtn,
-                                styles.backRightBtnRight,
-                            ]}
-                            onPress={() =>
-                                console.log('확인')
-                            }
-                        >
-                            <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                                확인
+                    </TouchableOpacity>
+                    {
+                        (order.flagBtn)?
+                    <TouchableOpacity
+                        style={[
+                            styles.backRightBtn,
+                            styles.backRightBtnRight,
+                        ]}
+                        onPress={() =>{
+                            console.log('확인')
+                            handleFlgbtn()
+                        }
+                        }
+                    >
+                        <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                            확인
                         </Text>
-                        </TouchableOpacity>
-                    </View>
+                    </TouchableOpacity> : undefined
+                    }
+                </View>
             )
-                
+
             }
         ></SwipeListView>
 
     return (
         <>
             <Header titleText='주문조회' navigation={navigation} />
-            <IconButton
-                icon='close'
-                size={25}
-                color='white'
-                onPress={() => navigation.goBack()}
-                style={styles.iconButton}
-            />
+
             <View style={styles.container}>
                 <DataTable>
                     <DataTable.Row style={{ backgroundColor: 'white', height: 60 }}>
                         <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 20 }}>
                             <Text style={{ fontSize: 17 }}>배송상태</Text>
                         </View>
-                        <View style={{ flex: 5 }}>
+                        <View style={{ flex: 7, alignContent: 'center', justifyContent: 'center' }}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                                <View style={styles.deliveryStatus}>
+                                    <Avatar.Icon size={30} style={order.state === 1 ? { backgroundColor: '#F9E920' } : { backgroundColor: '#EAEAEA' }}></Avatar.Icon>
+                                    <Paragraph>접수</Paragraph>
+                                </View>
+                                <View style={styles.deliveryStatus}>
+                                    <Avatar.Icon size={30} style={order.state === 2 ? { backgroundColor: '#98BE4E' } : { backgroundColor: '#EAEAEA' }}></Avatar.Icon>
+                                    <Paragraph>준비</Paragraph>
+                                </View>
+                                <View style={styles.deliveryStatus}>
+                                    <Avatar.Icon size={30} style={order.state === 3 ? { backgroundColor: '#1E388D' } : { backgroundColor: '#EAEAEA' }}></Avatar.Icon>
+                                    <Paragraph>완료</Paragraph>
+                                </View>
+                                <View style={styles.deliveryStatus}>
+                                    <Avatar.Icon size={30} style={order.state === 4 ? { backgroundColor: 'gray' } : { backgroundColor: '#EAEAEA' }}></Avatar.Icon>
+                                    <Paragraph>취소</Paragraph>
+                                </View>
+                            </View>
                         </View>
                     </DataTable.Row>
                     <DataTable.Row style={{ height: 80, backgroundColor: '#1E388D', flexDirection: 'row', alignItems: 'center' }}>
@@ -95,12 +123,12 @@ function OrderDetail({ navigation }) {
                             <Text style={{ lineHeight: 25 }}>3. 비고사항</Text>
                         </View>
                         <View style={{ flex: 5 }}>
-                            <Text style={{ lineHeight: 25 }}>{order.orderer} / {order.ordererNum}</Text>
+                            <Text style={{ lineHeight: 25 }}>{order.orderer} {order.ordererNum !== '' ? `/ ${order.ordererNum}` : undefined}</Text>
                             <Text style={{ lineHeight: 25 }}>{order.addr}</Text>
                             <Text style={{ lineHeight: 25 }}>{order.remarks}</Text>
                         </View>
                     </DataTable.Row>
-                    <DataTable.Row style={{ backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', height: 60  }}>
+                    <DataTable.Row style={{ backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', height: 60 }}>
                         <View style={{ flex: 4, justifyContent: 'center', paddingHorizontal: 20 }}>
                             <Text style={{ fontSize: 17 }}>
                                 주문아이템
@@ -108,7 +136,7 @@ function OrderDetail({ navigation }) {
                         </View>
                     </DataTable.Row>
                 </DataTable>
-                <Divider style={{padding:0.3, backgroundColor:'black'}}/>
+                <Divider style={{ padding: 0.3, backgroundColor: 'black' }} />
                 {orderItem}
             </View>
             <Bottom />
@@ -119,12 +147,12 @@ function OrderDetail({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginBottom: 55
     },
-    iconButton: {
-        position: 'absolute',
-        right: 0,
-        top: 40,
-        margin: 10
+    deliveryStatus: {
+        paddingHorizontal: 15,
+        paddingTop: 5,
+        alignItems: 'center'
     },
     orderItem: {
         backgroundColor: 'white',
@@ -153,9 +181,13 @@ const styles = StyleSheet.create({
         top: 0,
         width: 75,
     },
-    backRightBtnLeft: {
+    backRightBtnLeft1: {
         backgroundColor: '#FFDC3C',
         right: 75,
+    },
+    backRightBtnLeft2: {
+        backgroundColor: '#FFDC3C',
+        right: 0,
     },
     backRightBtnRight: {
         backgroundColor: '#1E388D',

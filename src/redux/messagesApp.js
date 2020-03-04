@@ -1,5 +1,4 @@
 import { GiftedChat } from 'react-native-gifted-chat';
-import Axios from 'axios';
 // Action Types
 
 export const SEND_MESSAGE = 'SEND_MESSAGE';
@@ -98,7 +97,6 @@ function messagesReducer(state = initialState, action) {
     case SEND_MESSAGE:
       return {
           messages: GiftedChat.append(state.messages, action.message[0]),
-          option: 1
       }
     case RESET_MESSAGE:
       return {

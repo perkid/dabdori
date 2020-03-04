@@ -20,10 +20,19 @@ export function loginRequest(email, password) {
         // Inform Login API is starting
         dispatch(login());
         // API REQUEST
-        return axios.post('http://127.0.0.1:4000/api/account/signin', { email, password })
+        return axios.get('http://admin.youngwoo.co/dabdori-admin/login/dabdoriCheck.dab', 
+            {params:{user_id: email,
+                pass_word: password} })
             .then((response) => {
                 // SUCCEED
-                dispatch(loginSuccess(response.data.account.email));
+                dispatch(loginSuccess(response.data))
+                if(response.data.checkBoolean){
+                    console.log(response.data)
+                    dispatch(loginSuccess(response.data.user_id));
+                }
+                else {
+                    dispatch(loginFailure())
+                }
             }).catch((error) => {
                 console.log(error)
                 // FAILED
@@ -34,7 +43,7 @@ export function loginRequest(email, password) {
 
 export const login = () => ({ type: AUTH_LOGIN });
 
-export const loginSuccess = (email) => ({ type: AUTH_LOGIN_SUCCESS, email});
+export const loginSuccess = (userInfo) => ({ type: AUTH_LOGIN_SUCCESS, userInfo });
 
 export const loginFailure = () => ({ type: AUTH_LOGIN_FAILURE });
 
@@ -123,9 +132,7 @@ export default function authentication(state = initialState, action) {
             });
         case AUTH_LOGIN_SUCCESS:
             return update(state, {
-                user: {
-                    email: { $set: action.email}
-                },
+                user: { $set: action.userInfo },
                 login: {
                     status: { $set: 'SUCCESS' }
                 },
