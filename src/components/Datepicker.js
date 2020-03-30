@@ -38,7 +38,7 @@ function Datepicker({setCustom, minimumDate, maximumDate, date, getFormatDate, h
         setInitDate(date)
         setShow(false)
     }
-
+    
     const formatDate = getFormatDate(date);
 
     return (

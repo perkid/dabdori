@@ -3,6 +3,7 @@ import { DataTable, RadioButton } from 'react-native-paper';
 
 function Company({ setChecked, name }){
     let companyName = name;
+    
     return (
         <DataTable.Row
             onPress={() => setChecked(companyName)}

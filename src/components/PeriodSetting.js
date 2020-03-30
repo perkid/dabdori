@@ -3,15 +3,12 @@ import { View, StyleSheet, Text } from 'react-native';
 import { Button, Portal, Dialog, DataTable, RadioButton } from 'react-native-paper';
 import Datepicker from '../components/Datepicker';
 
-function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate, handleStartDate, handleEndDate, handleRole, handleStatus }) {
+function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate, handleStartDate, handleEndDate, handleStatus }) {
     const [dateRange, setDateRange] = useState('custom');
     const [status, setStatus] = useState('all');
-    const [role, setRole] = useState('all');
 
     const [initStartDate, setInitStartDate] = useState(startDate);
     const [initEndDate, setInitEndDate] = useState(endDate);
-
-    const today = new Date()
 
     const setCustom = () => {
         setDateRange('custom')
@@ -37,17 +34,14 @@ function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate
         handleEndDate(initEndDate)
         setDateRange('custom')
         setStatus('all')
-        setRole('all')
         _hideDialog()
     }
     const apply = () => {
         setInitStartDate(startDate)
         setInitEndDate(endDate)
         setDateRange('custom')
-        handleRole(role)
         handleStatus(status)
         setStatus('all')
-        setRole('all')
         _hideDialog()
     }
     return (
@@ -154,7 +148,7 @@ function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate
                             </View>
                         </View>
                     </DataTable.Row>
-                    <DataTable.Row>
+                    {/* <DataTable.Row>
                         <View style={styles.radioContainer}>
                             <View style={styles.radio}>
                                 <RadioButton.Android
@@ -181,7 +175,7 @@ function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate
                                 /><Text>전체</Text>
                             </View>
                         </View>
-                    </DataTable.Row>
+                    </DataTable.Row> */}
                 </DataTable>
                 <Dialog.Actions style={{ justifyContent: 'center', marginVertical: 25 }}>
                     <Button

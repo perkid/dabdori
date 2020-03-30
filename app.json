@@ -11,9 +11,9 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/new.png",
+    "icon": "./assets/dabicon.png",
     "splash": {
-      "image": "./assets/new.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -24,7 +24,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.youngwoo.dabdori"
+    },
+    "android": {
+      "package": "com.youngwoo.dabdori"
+    },
+    "notification": {
+      "icon": "./assets/dabicon.png"
     }
   }
 }

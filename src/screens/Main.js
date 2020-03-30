@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform} from 'react-native';
+import axios from 'axios';
+import getUrl from '../config/environment';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { sendMessage } from '../redux/messagesApp';
+import { sendMessage, setText } from '../redux/messagesApp';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import Company from '../components/Company';
@@ -14,6 +16,7 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
 function Main({ navigation }) {
+  const url = getUrl();
   const userInfo = useSelector(state => state.authentication.user);
   const messages = useSelector(state => state.messagesApp.messages)
   const dispatch = useDispatch()
@@ -23,45 +26,8 @@ function Main({ navigation }) {
   const [option, setOption] = useState(0);
   const [subOption, setSubOption] = useState(0);
   const [item, setItem] = useState('');
+  const [company, setCompany] = useState('');
   const [token, setToken] = useState('');
-
-  const handleOptionReset = () => {
-    setOption(0);
-    setSubOption(0);
-  }
-  const handleFabState = () => {
-    setState(!fabState);
-  }
-
-  const handleSnackState = () => {
-    setSnackState(!snackState);
-  }
-
-  const [visible, setVisible] = useState(false);
-  const [checked, setChecked] = useState('');
-  const [companyList, setCompanyList] = useState(undefined);
-  
-  const _showDialog = () => {
-    setVisible(true);
-  }
-  const _hideDialog = () => {
-    setVisible(false);
-  }
-  const selcet = () => {
-    let r = {
-      createdAt: new Date(),
-      _id: Math.round(Math.random() * 1000000),
-      text: checked,
-      user: {
-          _id: 1
-      },
-    }
-    onSend(GiftedChat.append(messages, [r]))
-    r = createMessage(checked, 2, 1);
-    onSend(GiftedChat.append(messages,[r]))
-    setSubOption(2)
-    _hideDialog()
-  }
 
   // 토큰 저장 코드
   const registerForPushNotificationsAsync = async () => {
@@ -87,14 +53,13 @@ function Main({ navigation }) {
 
     }
   }
-
   // 푸시 보내기
-  const sendPushNotification = async () => {
+  const sendPushNotification = async (pushToken, pushMessage) => {
     const message = {
-      to: 'ExponentPushToken[vr_REXM2D0OQj4I7PvdZjt]',
+      to: pushToken,
       sound: 'default',
-      title: '',
-      body: 'Hi',
+      title: '신규오더',
+      body: pushMessage,
       data: { data: '' },
     };
     const response = await fetch('https://exp.host/--/api/v2/push/send', {
@@ -109,8 +74,85 @@ function Main({ navigation }) {
   };
 
   registerForPushNotificationsAsync()
+  
+  useEffect(() => {
+    if (userInfo.status === undefined) {
+      if (userInfo.role === 'employee') {
+        axios.post(url + `/api/setToken.dab`,
+          {
+            user_id: userInfo.user_id,
+            firebase_token: token
+          }).then((response) => {
+            console.log(token)
+          })
 
-  console.log(token)
+      }
+      dispatch(setText(userInfo.dabdoriText.welcome_text))
+    }
+  }, [userInfo])
+
+  const handleOptionReset = () => {
+    setOption(0);
+    setSubOption(0);
+  }
+  const handleFabState = () => {
+    setState(!fabState);
+  }
+
+  const handleSnackState = () => {
+    setSnackState(!snackState);
+  }
+
+  const [visible, setVisible] = useState(false);
+  const [checked, setChecked] = useState('');
+  const [companyList, setCompanyList] = useState(undefined);
+
+  const _showDialog = () => {
+    setVisible(true);
+  }
+  const _hideDialog = () => {
+    setVisible(false);
+  }
+  const selcet = () => {
+    let r = {
+      createdAt: new Date(),
+      _id: Math.round(Math.random() * 1000000),
+      text: checked,
+      user: {
+        _id: 1
+      },
+    }
+    onSend(GiftedChat.append(messages, [r]))
+    r = createMessage(checked, 2, 5, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany);
+    onSend(GiftedChat.append(messages, [r]))
+    setSubOption(2)
+    _hideDialog()
+  }
+
+  const messageSend = (message) => {
+    onSend(GiftedChat.append(messages, [message]))
+  }
+  const handleOption = (op) => {
+    setOption(op)
+  }
+  const handleSubOption = (op) => {
+    setSubOption(op)
+  }
+  const handleItem = (i) => {
+    setItem(i)
+  }
+  const handleCompany = (c) => {
+    setCompany(c)
+  }
+  const selectCompany = (list) => {
+    setCompanyList(list.map((company, index) =>
+      (<Company
+        key={index}
+        setChecked={setChecked}
+        name={company.custName}
+      />)))
+    _showDialog()
+  }
 
   const onQuickReply = replies => {
     const createdAt = new Date();
@@ -120,7 +162,7 @@ function Main({ navigation }) {
           createdAt,
           _id: Math.round(Math.random() * 1000000),
           text: replies[0].title,
-          user:{
+          user: {
             _id: 1
           },
         },
@@ -143,17 +185,8 @@ function Main({ navigation }) {
 
   useEffect(() => {
     if (messages[0] !== undefined) {
-      let r = createMessage(messages[0].text, option, subOption, item, userInfo.role, userInfo.company_name);
+      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification);
       if (r !== undefined) {
-        if (r.list !== undefined) {
-            setCompanyList(r.list.map((company, index) =>
-              (<Company
-                key = {index}
-                setChecked={setChecked}
-                name={company}
-              />)))
-          _showDialog()
-        }
         onSend(GiftedChat.append(messages, [r]))
         setOption(r.option);
         setSubOption(r.subOption);
@@ -164,7 +197,7 @@ function Main({ navigation }) {
 
   return (
     <>
-      <Header titleText='답  돌  이' navigation={navigation} main={true} handleOptionReset={handleOptionReset}/>
+      <Header titleText='답  돌  이' navigation={navigation} main={true} handleOptionReset={handleOptionReset} />
       <View style={styles.container}>
         <GiftedChat
           {...{ messages, onSend }}
@@ -176,15 +209,17 @@ function Main({ navigation }) {
             Clipboard.setString(currentMessage.text)
             handleSnackState()
           }}
+          scrollToBottom={true}
+          scrollToBottomStyle={{ right: '45%' }}
           onQuickReply={onQuickReply}
-          quickReplyStyle={{ backgroundColor: '#1E388D', marginTop: 30 }}
+          quickReplyStyle={{ backgroundColor: '#1E388D', marginTop: 1, height: 35 }}
           renderQuickReplies={(props) => <QuickReplies color='#FFF' {...props} />}
           renderAvatar={null}
           renderBubble={props => {
             return (
               <Bubble
                 {...props}
-                touchableProps={{ delayLongPress: 200 }}
+                touchableProps={{ delayLongPress: 300 }}
                 textStyle={{
                   right: {
                     color: 'white',
@@ -201,7 +236,8 @@ function Main({ navigation }) {
                     backgroundColor: '#1E388D',
                   },
                   left: {
-                    marginTop: 20
+                    marginTop: 20,
+                    marginBottom: 20
                   }
                 }}
               />
@@ -219,16 +255,18 @@ function Main({ navigation }) {
               업체명 선택
                     </Dialog.Title>
             <Divider />
-            <Dialog.Content>
-              <RadioButton.Group
-                onValueChange={value => setChecked(value)}
-                value={checked}
-              >
-                <DataTable>
-                  {companyList}
-                </DataTable>
-              </RadioButton.Group>
-            </Dialog.Content>
+            <ScrollView style={{ maxHeight: 400 }}>
+              <Dialog.Content>
+                <RadioButton.Group
+                  onValueChange={value => setChecked(value)}
+                  value={checked}
+                >
+                  <DataTable>
+                    {companyList}
+                  </DataTable>
+                </RadioButton.Group>
+              </Dialog.Content>
+            </ScrollView>
             <Divider />
             <Dialog.Actions>
               <Button
@@ -238,7 +276,7 @@ function Main({ navigation }) {
             </Dialog.Actions>
           </Dialog>
         </Portal>
-        {Platform.OS==='ios'?undefined:<KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={90} />}
+        {Platform.OS === 'ios' ? undefined : <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={90} />}
         <Snackbar
           visible={snackState}
           duration={1300}
@@ -251,8 +289,8 @@ function Main({ navigation }) {
           open={fabState}
           icon='plus'
           actions={[
-            { style: { right: 10, bottom: 15 }},
-            { icon: 'file-document-box-outline', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory') },
+            { style: { right: 10, bottom: 15 } },
+            { icon: 'file-document-box-outline', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
             {
               icon: 'account', style: { right: 10, bottom: 70 }, onPress: () =>
                 navigation.navigate('MyPage', userInfo)

@@ -1,13 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { forgotPassRequest } from '../redux/authentication';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import { StyleSheet, View, Image, Text, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 
 function ResetPassword({ navigation }) {
+    const [user_id, setUser_id] = useState('');
+    const forgotPass = useSelector(state => state.authentication.forgotPass)
+    const dispatch = useDispatch()
     const handleReset = () => {
-        Alert.alert('','메일이 발송 되었습니다.',[{text:'OK', onPress: ()=> navigation.goBack()}]);
-      }
+        if (user_id === '') {
+            Alert.alert('', '이메일 주소를 입력해 주세요.')
+        } else {
+            dispatch(forgotPassRequest(user_id))
+        }
+    }
+    useEffect(()=>{
+        if(forgotPass.text.includes('완료')){
+            Alert.alert('', forgotPass.text, [{ text: 'OK', onPress: () => navigation.goBack() }]);
+        }
+        if(forgotPass.text.includes('찾으시려고')){
+            Alert.alert('', forgotPass.text);
+        }
+    },[forgotPass.text])
+    
     return (
         <>
             <Header titleText='비밀번호 재설정' navigation={navigation} />
@@ -24,13 +42,15 @@ function ResetPassword({ navigation }) {
                     label='아이디'
                     selectionColor='#1E388D'
                     style={styles.input}
+                    value={user_id}
                     theme={{ colors }}
-
+                    autoCapitalize={'none'}
+                    onChangeText={text => setUser_id(text)}
                 />
                 <Button
                     mode='contained'
                     style={styles.button}
-                    onPress={()=>{handleReset()}}
+                    onPress={() => { handleReset() }}
                     labelStyle={{ fontWeight: 'bold', fontSize: 18 }}
                 >
                     비밀번호 재설정

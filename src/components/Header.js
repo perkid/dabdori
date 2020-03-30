@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { resetMessage, clearMessage } from '../redux/messagesApp';
 import { Appbar, Title, IconButton } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function Header({ titleText, navigation, main, handleOptionReset }) {
+function Header({ titleText, navigation, main, handleOptionReset, auth }) {
+  const userInfo = useSelector(state => state.authentication.user);
   const dispatch = useDispatch()
   const first = () => {
     handleOptionReset()
@@ -13,11 +14,12 @@ function Header({ titleText, navigation, main, handleOptionReset }) {
   }
   const clearChat = () => {
     handleOptionReset()
-    dispatch(clearMessage())
+    dispatch(clearMessage(userInfo.dabdoriText.welcome_text))
   }
+  
   return (
     <Appbar.Header style={styles.headerContainer}>
-      <TouchableOpacity onPress={() => { main ? first() : navigation.navigate('Main') }}>
+      <TouchableOpacity onPress={() => { main ? first() : navigation.goBack() }}>
         <Image
           source={require('../../assets/dabdori-icon.png')}
           resizeMode="contain"
@@ -25,11 +27,11 @@ function Header({ titleText, navigation, main, handleOptionReset }) {
         />
       </TouchableOpacity>
       <View style={styles.container}>
-        <Title style={main?styles.mainTitle:styles.title}
-          onPress={() => { main ? clearChat() : navigation.navigate('Main') }}
+        <Title style={auth?styles.mainTitle:main?styles.mainTitle:styles.title}
+          onPress={() => { main ? clearChat() : navigation.goBack() }}
         >{titleText}</Title>
       </View>
-      {main ? undefined : <IconButton
+      {auth? undefined : main ? undefined : <IconButton
         icon='close'
         size={25}
         color='white'

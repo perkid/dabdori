@@ -5,28 +5,28 @@ import { Button, Searchbar, Divider } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import Order from '../components/Order';
+import { setOrder } from '../redux/orderManagement';
 import PerriodSetting from '../components/PeriodSetting';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useEffect } from 'react';
 
 function OrderHistory({ navigation }) {
+  const user = navigation.state.params;
   const orders = useSelector(state => state.orderManagement.orders);
   const [firstQuery, setFirstQuery] = useState('');
   const [visible, setVisible] = useState(false);
-  const [startDate, setStartDate] = useState(new Date('2018-01-01'));
+  const [startDate, setStartDate] = useState(new Date('2019-01-01'));
   const [endDate, setEndDate] = useState(new Date());
-  const [role, setRole] = useState('all');
   const [status, setStatus] = useState('all');
+  const dispatch = useDispatch();
 
   const _showDialog = () => setVisible(true)
   const _hideDialog = () => setVisible(false)
 
-  const handleRole = (select) => {
-    setRole(select);
-  }
   const handleStatus = (select) => {
     setStatus(select);
   }
-
+  
   const getFormatDate = (date) => {
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
@@ -40,36 +40,67 @@ function OrderHistory({ navigation }) {
     }
     return `${year}-${month}-${day}`;
   }
+  const getEndDate = (date) => {
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate() + 1;
+
+    if (month < 10) {
+      month = "0" + month;
+    }
+    if (day < 10) {
+      day = "0" + day;
+    }
+    return `${year}-${month}-${day}`;
+  }
 
   const period = `${getFormatDate(startDate)} ~ ${getFormatDate(endDate)}`;
 
-  let foundOrders = orders.filter(order =>
-    getFormatDate(startDate) <= order.orderTime.substring(0, 10) && getFormatDate(endDate) >= order.orderTime.substring(0, 10)
-  )
-
-
-  if (status !== 'all') {
-    foundOrders = foundOrders.filter(order =>
-      order.state == status
-    )
-  }
-  if (role === '1') {
-    foundOrders = foundOrders.filter(order =>
-      order.remarks === '답돌이 직원 등록'
-    )
-  }
-  if (role ==='2') {
-    foundOrders = foundOrders.filter(order => 
-      order.remarks !== '답돌이 직원 등록'
-      )
-  }
+  let foundOrders = orders;
   
+  if (status !== 'all') {
+    let state;
+    let sub;
+    switch (status) {
+      case '1':
+        state = '진행중';
+        sub = 'AMEND중';
+        break;
+      case '2':
+        state = '진행중';
+        break;
+      case '3':
+        state = '출고완료';
+        break;
+      case '4':
+        state = 'CANCEL';
+      default:
+        break;
+    }
+
+    foundOrders = foundOrders.filter(order =>
+      order.orderStatusNm == state ||
+      order.orderStatusNm == sub
+    )
+  }
+
+  // if (role === '1') {
+  //   foundOrders = foundOrders.filter(order =>
+  //     order.remarks.includes('답돌이 직원 등록')
+  //     )
+  //   }
+  //   if (role ==='2') {
+  //     foundOrders = foundOrders.filter(order => 
+  //       !order.remarks.includes('답돌이 직원 등록')
+  //     )
+  // }
+
   if (firstQuery !== '') {
     foundOrders = foundOrders.filter(order =>
-      order.company.indexOf(firstQuery) >= 0 ||
+      order.custName.indexOf(firstQuery) >= 0 ||
       order.orderNo.indexOf(firstQuery) >= 0 ||
-      order.orderItem[0].name.indexOf(firstQuery) >= 0 ||
-      order.orderItem[0].color.indexOf(firstQuery) >= 0
+      order.itemName.indexOf(firstQuery) >= 0 ||
+      order.colorYW.indexOf(firstQuery) >= 0
     )
   }
 
@@ -80,6 +111,16 @@ function OrderHistory({ navigation }) {
   const handleEndDate = (date) => {
     setEndDate(date);
   }
+
+  useEffect(() => {
+    let id = user.role === 'employee' ? user.erp_id : user.object_id;
+    let data = {
+      erp_id: id,
+      start_date: getFormatDate(startDate),
+      end_date: getEndDate(endDate)
+    }
+    dispatch(setOrder(data))
+  }, [period])
 
   return (
     <>
@@ -114,7 +155,6 @@ function OrderHistory({ navigation }) {
             getFormatDate={getFormatDate}
             handleStartDate={handleStartDate}
             handleEndDate={handleEndDate}
-            handleRole={handleRole}
             handleStatus={handleStatus}
           />
         </View>

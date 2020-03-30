@@ -1,5 +1,6 @@
 import axios from 'axios';
 import update from 'react-addons-update';
+import getUrl from '../config/environment';
 
 export const AUTH_LOGIN = "AUTH_LOGIN";
 export const AUTH_LOGIN_SUCCESS = "AUTH_LOGIN_SUCCESS";
@@ -15,20 +16,22 @@ export const AUTH_FORGOT_PASSWORD_FAILURE = "AUTH_FORGOT_PASSWORD_FAILURE";
 
 /* LOGIN */
 
+const url = getUrl();
+
 export function loginRequest(email, password) {
     return (dispatch) => {
         // Inform Login API is starting
         dispatch(login());
         // API REQUEST
-        return axios.get('http://admin.youngwoo.co/dabdori-admin/login/dabdoriCheck.dab', 
-            {params:{user_id: email,
-                pass_word: password} })
+        return axios.post(url+'/api/dabdoriCheck.dab',
+            {
+                    user_id: email,
+                    pass_word: password
+            })
             .then((response) => {
                 // SUCCEED
-                dispatch(loginSuccess(response.data))
-                if(response.data.checkBoolean){
-                    console.log(response.data)
-                    dispatch(loginSuccess(response.data.user_id));
+                if (response.data.checkBoolean) {
+                    dispatch(loginSuccess(response.data));
                 }
                 else {
                     dispatch(loginFailure())
@@ -49,16 +52,20 @@ export const loginFailure = () => ({ type: AUTH_LOGIN_FAILURE });
 
 /* CHANGE PASSWORD */
 
-export function changePassRequest(email, password, newPassword1, newPassword2) {
+export function changePassRequest(user_id, password) {
     return (dispatch) => {
         // Inform Change Password API is starting
         dispatch(changePass());
 
         // API REQUEST
-        return axios.put('/api/account/password/change', { email, password, newPassword1, newPassword2 })
+        return axios.post(url+'/api/changePassword.dab', {
+            user_id: user_id,
+            pass_word: password })
             .then((response) => {
                 //SUCCEED
-                dispatch(changePassSuccess());
+                if(response.data==='success'){
+                    dispatch(changePassSuccess());
+                }
                 //FAILED
             }).catch((error) => {
                 dispatch(changePassFailure(error.response.data.code));
@@ -74,16 +81,22 @@ export const changePassFailure = () => ({ type: AUTH_CHANGE_PASSWORD_FAILURE });
 
 /* FORGOT PASSWORD */
 
-export function forgotPassRequest(email, password, newPassword1, newPassword2) {
+export function forgotPassRequest(email) {
     return (dispatch) => {
         // Inform forgot Password API is starting
         dispatch(forgotPass());
 
         // API REQUEST
-        return axios.put('/api/account/password/forgot', { email, password, newPassword1, newPassword2 })
+        return axios.post(url+`/api/forgotPassword.dab`,
+            {
+                    user_id:email
+            }
+        )
             .then((response) => {
-                //SUCCEED
-                dispatch(forgotPassSuccess());
+                //SUCCE
+                let text = response.data;
+                console.log(text)
+                dispatch(forgotPassSuccess(text));
                 //FAILED
             }).catch((error) => {
                 dispatch(forgotPassFailure(error.response.data.code));
@@ -91,18 +104,15 @@ export function forgotPassRequest(email, password, newPassword1, newPassword2) {
     };
 }
 
-export const forgotPass = () => ({ type: AUTH__PASSWORD });
+export const forgotPass = () => ({ type: AUTH_FORGOT_PASSWORD });
 
-export const forgotPassSuccess = () => ({ type: AUTH__PASSWORD_SUCCESS });
+export const forgotPassSuccess = (text) => ({ type: AUTH_FORGOT_PASSWORD_SUCCESS, text });
 
-export const forgotPassFailure = () => ({ type: AUTH__PASSWORD_FAILURE });
+export const forgotPassFailure = () => ({ type: AUTH_FORGOT_PASSWORD_FAILURE });
 
 const initialState = {
     user: {
-        _id: 1,
-        email: 'INIT',
-        name: '고유준',
-        company: '영우',
+        status: 'WAITING'
     },
     login: {
         status: 'INIT',
@@ -114,7 +124,8 @@ const initialState = {
     },
     forgotPass: {
         status: 'INIT',
-        error: -1
+        error: -1,
+        text:'',
     }
 }
 
@@ -175,7 +186,8 @@ export default function authentication(state = initialState, action) {
         case AUTH_FORGOT_PASSWORD_SUCCESS:
             return update(state, {
                 forgotPass: {
-                    status: { $set: 'SUCCESS' }
+                    status: { $set: 'SUCCESS' },
+                    text: { $set: action.text}
                 }
             });
         case AUTH_FORGOT_PASSWORD_FAILURE:

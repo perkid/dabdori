@@ -4,24 +4,26 @@ import Bottom from '../components/Bottom';
 import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback, AsyncStorage, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { loginRequest, loginSuccess } from '../redux/authentication';
+import { loginRequest } from '../redux/authentication';
 
 function Login({ navigation }) {
 
-    const [id, SetID] = useState('');
+    const [id, setID] = useState('');
     const [password, SetPassword] = useState('');
     const loginState = useSelector(state => state.authentication.login.status, []);
     const dispatch = useDispatch();
+    const [test, setTest] = useState(false);
 
     const handleLogin = (id, password) => {
         dispatch(loginRequest(id, password));
+        setTest(!test)
     }
 
     useEffect(() => {
         if (loginState === 'SUCCESS' && id !== '') {
             let user = {
                 email: id,
-                pass:password
+                pass: password
             }
             let data = JSON.stringify(user);
             AsyncStorage.setItem("AUTH", data, () => {
@@ -33,25 +35,27 @@ function Login({ navigation }) {
         }
     }, [loginState])
 
-    // 로컬 저장소에 저장된 아이//디가 있는지 체크하여 자동 로그인
-    AsyncStorage.getItem("AUTH", (err, data) => {
-        if (err == null) {
-            if (data !== null) {
+    // 로컬 저장소에 저장된 아이디가 있는지 체크하여 자동 로그인
+    useEffect(()=>{
+          AsyncStorage.getItem("AUTH", (err, data) => {
+            if (err == null) {
+                if (data !== null) {
 
-                let user = JSON.parse(data);
-                let email = user.email;
-                let password = user.pass;
-                dispatch(loginRequest(email, password))
-                
-                navigation.navigate('App', 'Main');
+                    let user = JSON.parse(data);
+                    let email = user.email;
+                    let password = user.pass;
+                    dispatch(loginRequest(email, password))
+
+                    navigation.navigate('App', 'Main');
+                }
             }
-        }
-    });
+        });
+    }, [])
 
 
     return (
         <>
-            <Header titleText='로  그  인' navigation={navigation} />
+            <Header titleText='로  그  인' navigation={navigation} auth={true}/>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
                     <Image
@@ -64,7 +68,7 @@ function Login({ navigation }) {
                         theme={{ colors }}
                         value={id}
                         autoCapitalize={'none'}
-                        onChangeText={text => SetID(text)}
+                        onChangeText={text => setID(text)}
 
                     />
                     <TextInput

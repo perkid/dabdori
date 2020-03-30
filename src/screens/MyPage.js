@@ -8,6 +8,11 @@ import { clearMessage } from '../redux/messagesApp';
 
 function MyPage({ navigation }) {
   const user = navigation.state.params;
+  if(user.status==='WAITING'){
+    clearChat();
+    AsyncStorage.clear()
+    navigation.navigate('Auth')
+  }
   const dispatch = useDispatch();
   const clearChat = () => dispatch(clearMessage());
   const handleLogout = () => {
@@ -17,7 +22,6 @@ function MyPage({ navigation }) {
   }
   let last_login_date = user.last_login_date.split(' ');
   let lastLogin = last_login_date[0];
-
   return (
     <>
       <Header titleText='마이페이지' navigation={navigation} />
@@ -39,7 +43,7 @@ function MyPage({ navigation }) {
             </DataTable.Cell>
             <DataTable.Title>{user.user_id}</DataTable.Title>
           </DataTable.Row>
-          <DataTable.Row onPress={() => navigation.navigate('PasswordChange')}>
+          <DataTable.Row onPress={() => navigation.navigate('PasswordChange', user)}>
             <DataTable.Cell style={{ marginLeft: 5 }}>
               <Text style={styles.tableText}>
                 비밀번호 변경
@@ -60,6 +64,44 @@ function MyPage({ navigation }) {
             </DataTable.Cell>
           </DataTable.Row>
         </DataTable>
+      <View style={{flex: 1.3}}>
+      </View>
+      {user.role==='client'?
+      <View style={{flex:1, backgroundColor:'#1E388D'}}>
+        <DataTable>
+          <DataTable.Row>
+            <DataTable.Cell>
+              <Text style={{color:'white', fontSize:17}}>
+                담당 영업 사원
+              </Text>
+            </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={{color:'white', fontSize:17}}>
+                {user.manager_name}
+              </Text>
+            </DataTable.Cell>
+          </DataTable.Row>
+          <DataTable.Row>
+            <DataTable.Cell>
+            </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={{color:'white', fontSize:17}}>
+               {user.manager_phone_number}
+              </Text>
+            </DataTable.Cell>
+          </DataTable.Row>
+          <DataTable.Row>
+            <DataTable.Cell>
+            </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={{color:'white', fontSize:17}}>
+               {user.manager_erp_id+'@youngwoo.co'}
+              </Text>
+            </DataTable.Cell>
+          </DataTable.Row>
+        </DataTable>
+      </View>
+      :undefined}
       </View>
       <Bottom />
     </>
