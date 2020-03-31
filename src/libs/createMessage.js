@@ -10,8 +10,8 @@ function createMessage(text, option, subOption, item, userInfo, company, message
     const url = getUrl();
 
     // userInfo.role='client'
-    userInfo.specGB='Y'
-    userInfo.priceGB='Y'
+    // userInfo.specGB='Y'
+    // userInfo.priceGB='Y'
     if (userInfo.role !== 'employee') {
         handleCompany([{
             custName: userInfo.company_name,
@@ -245,8 +245,86 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 subOption: 0,
                             }
                             messageSend(message)
+                            //로그입력
+                            axios.post(url+`/api/insertLog.dab`,{
+                                log_gb:'01',
+                                item_code:r.itemcode,
+                                item_name:r.itemname,
+                                color_name:r.coloryw,
+                                hq_cnt:r.jaeqty,
+                                deagu_cnt:r.gayoungqty,
+                                prod_cnt:r.productqty,
+                                hold_cnt:r.holdqty,
+                                user_name:userInfo.user_name,
+                                role: userInfo.role,
+                                cust_name:userInfo.company_name,
+                            })
                         }
+                    }).catch((err)=>{
+                        text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                        handleOption(0)
+                        handleSubOption(0);
+                        message = {
+                            createdAt: new Date(),
+                            _id: Math.round(Math.random() * 1000000),
+                            text: text,
+                            user: {
+                                _id: 2
+                            },
+                            quickReplies : {
+                                type: 'radio',
+                                values: [
+                                    {
+                                        title: '현물조회',
+                                        value: '현물조회',
+                                    },
+                                    {
+                                        title: '샘플신청',
+                                        value: '샘플신청',
+                                    },
+                                    {
+                                        title: '아이템 정보',
+                                        value: '아이템 정보',
+                                    },
+                                ],
+                            },
+                            option: 0,
+                            subOption: 0,
+                        }
+                        messageSend(message)
                     })
+                }).catch((err)=>{
+                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                    handleOption(0)
+                    handleSubOption(0);
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
+                    messageSend(message)
                 })
             Keyboard.dismiss()
         }
@@ -304,7 +382,49 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         subOption: 0,
                     }
                     messageSend(message)
+                    //로그입력
+                    axios.post(url+`/api/insertLog.dab`,{
+                        log_gb:'01',
+                        item_code:r[0].itemcode,
+                        item_name:r[0].itemname,
+                        color_name:'전칼라',
+                        user_name:userInfo.user_name,
+                        role: userInfo.role,
+                        cust_name:userInfo.company_name,
+                    })
                 }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
         Keyboard.dismiss()
     }
@@ -363,7 +483,49 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         subOption: 0,
                     }
                     messageSend(message)
+                    //로그입력
+                    axios.post(url+`/api/insertLog.dab`,{
+                        log_gb:'01',
+                        item_code:r[0].itemcode,
+                        item_name:r[0].itemname,
+                        color_name:'전칼라',
+                        user_name:userInfo.user_name,
+                        role: userInfo.role,
+                        cust_name:userInfo.company_name,
+                    })
                 }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
     }
 
@@ -414,7 +576,49 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         subOption: 0,
                     }
                     messageSend(message)
+                    //로그입력
+                    axios.post(url+`/api/insertLog.dab`,{
+                        log_gb:'01',
+                        item_code:r[0].itemcode,
+                        item_name:r[0].itemname,
+                        color_name:'전칼라',
+                        user_name:userInfo.user_name,
+                        role: userInfo.role,
+                        cust_name:userInfo.company_name,
+                    })
                 }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
     }
 
@@ -450,6 +654,38 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     handleItem(item)
                     messageSend(message)
                 }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
         Keyboard.dismiss()
     }
@@ -579,8 +815,54 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         }
                         messageSend(message)
                     }
+                    //로그입력
+                    axios.post(url+`/api/insertLog.dab`,{
+                        log_gb:'01',
+                        item_code:r[0].itemcode,
+                        item_name:r[0].itemname,
+                        color_name:r[0].coloryw,
+                        hq_cnt:r[0].jaeqty,
+                        deagu_cnt:r[0].gayoungqty,
+                        prod_cnt:r[0].productqty,
+                        hold_cnt:r[0].holdqty,
+                        user_name:userInfo.user_name,
+                        role: userInfo.role,
+                        cust_name:userInfo.company_name,
+                    })
                 }
             }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
         Keyboard.dismiss()
     }
@@ -625,6 +907,38 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     handleItem(item)
                     messageSend(message)
                 }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
         Keyboard.dismiss()
     }
@@ -718,6 +1032,38 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     }
                     messageSend(message)
                 }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
     }
 
@@ -785,6 +1131,38 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                     itemCode: item.item_code
                                             }).then((response)=>{
                                                 item.price=response.data.priceC
+                                            }).catch((err)=>{
+                                                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                                                handleOption(0)
+                                                handleSubOption(0);
+                                                message = {
+                                                    createdAt: new Date(),
+                                                    _id: Math.round(Math.random() * 1000000),
+                                                    text: text,
+                                                    user: {
+                                                        _id: 2
+                                                    },
+                                                    quickReplies : {
+                                                        type: 'radio',
+                                                        values: [
+                                                            {
+                                                                title: '현물조회',
+                                                                value: '현물조회',
+                                                            },
+                                                            {
+                                                                title: '샘플신청',
+                                                                value: '샘플신청',
+                                                            },
+                                                            {
+                                                                title: '아이템 정보',
+                                                                value: '아이템 정보',
+                                                            },
+                                                        ],
+                                                    },
+                                                    option: 0,
+                                                    subOption: 0,
+                                                }
+                                                messageSend(message)
                                             })
                                         }
                                         itemList.push(item)
@@ -833,6 +1211,38 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                         }
                                         messageSend(message)
                                     }
+                                }).catch((err)=>{
+                                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                                    handleOption(0)
+                                    handleSubOption(0);
+                                    message = {
+                                        createdAt: new Date(),
+                                        _id: Math.round(Math.random() * 1000000),
+                                        text: text,
+                                        user: {
+                                            _id: 2
+                                        },
+                                        quickReplies : {
+                                            type: 'radio',
+                                            values: [
+                                                {
+                                                    title: '현물조회',
+                                                    value: '현물조회',
+                                                },
+                                                {
+                                                    title: '샘플신청',
+                                                    value: '샘플신청',
+                                                },
+                                                {
+                                                    title: '아이템 정보',
+                                                    value: '아이템 정보',
+                                                },
+                                            ],
+                                        },
+                                        option: 0,
+                                        subOption: 0,
+                                    }
+                                    messageSend(message)
                                 })
                         }
                         if (response.data.itemCode === null) {
@@ -848,6 +1258,38 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                             }
                             messageSend(message)
                         }
+                    }).catch((err)=>{
+                        text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                        handleOption(0)
+                        handleSubOption(0);
+                        message = {
+                            createdAt: new Date(),
+                            _id: Math.round(Math.random() * 1000000),
+                            text: text,
+                            user: {
+                                _id: 2
+                            },
+                            quickReplies : {
+                                type: 'radio',
+                                values: [
+                                    {
+                                        title: '현물조회',
+                                        value: '현물조회',
+                                    },
+                                    {
+                                        title: '샘플신청',
+                                        value: '샘플신청',
+                                    },
+                                    {
+                                        title: '아이템 정보',
+                                        value: '아이템 정보',
+                                    },
+                                ],
+                            },
+                            option: 0,
+                            subOption: 0,
+                        }
+                        messageSend(message)
                     })
             })
         }
@@ -968,6 +1410,38 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+
+                let deliType = (item.deli_type===20)?'02':'01';
+                let deliTime='0';
+                
+                switch (item.deli_type) {
+                    case 10:
+                        deliTime='1';
+                    case 11:
+                        deliTime='2';
+                        break;
+                    default:
+                        break;
+                }
+                //로그입력
+                item.detailList.forEach((i)=>{
+                    axios.post(url+`/api/insertLog.dab`,{
+                        log_gb:'02',
+                        item_code:i.item_code,
+                        item_name:i.item_name,
+                        color_name:i.colorYW,
+                        user_name:userInfo.user_name,
+                        role: userInfo.role,
+                        cust_name:userInfo.company_name,
+                        order_no:response.data.cause,
+                        order_cnt:i.amount,
+                        deli_gb:deliType,
+                        deli_time:deliTime,
+                        deli_memo:item.remark
+                    })
+                })
+
+
                 //푸시메세지
                 if(userInfo.role==='client'){
                     let pushToken = userInfo.manager_firebase_token;
@@ -1095,6 +1569,37 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+
+                let deliType = (item.deli_type===20)?'02':'01';
+                let deliTime='0';
+                
+                switch (item.deli_type) {
+                    case 10:
+                        deliTime='1';
+                    case 11:
+                        deliTime='2';
+                        break;
+                    default:
+                        break;
+                }
+                //로그입력
+                item.detailList.forEach((i)=>{
+                    axios.post(url+`/api/insertLog.dab`,{
+                        log_gb:'02',
+                        item_code:i.item_code,
+                        item_name:i.item_name,
+                        color_name:i.colorYW,
+                        user_name:userInfo.user_name,
+                        role: userInfo.role,
+                        cust_name:userInfo.company_name,
+                        order_no:response.data.cause,
+                        order_cnt:i.amount,
+                        deli_gb:deliType,
+                        deli_time:deliTime,
+                        deli_memo:item.remark
+                    })
+                })
+
                 //푸시메세지
                 if(userInfo.role==='client'){
                     let pushToken = userInfo.manager_firebase_token;
@@ -1168,6 +1673,7 @@ ${method} ${time === undefined ? '' : time}
                 }
                 messageSend(message)
         })
+        Keyboard.dismiss()
     }
 
     if(text === '아니요, 다시입력') {
@@ -1199,7 +1705,7 @@ ${method} ${time === undefined ? '' : time}
 
                 let price = spec.prodList[0].price.split('.')
                 let check = spec.dry_friction===null
-                text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},   습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},   드라이 : ${spec.dry}\n땀 : ${spec.sweat}\n\n`}${userInfo.priceGB==='Y'?`매입단가\n${spec.prodList[0].custName} : ${price[0]}원`:''}`
+                text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원`:''}`
                 
                 handleOption(0)
                 handleSubOption(0)
@@ -1232,7 +1738,80 @@ ${method} ${time === undefined ? '' : time}
                 }
                 messageSend(message)
                 Keyboard.dismiss()
+                //로그입력
+                axios.post(url+`/api/insertLog.dab`,{
+                    log_gb:'03',
+                    item_code:itemCode,
+                    item_name:response.data.itemName,
+                    user_name:userInfo.user_name,
+                    role: userInfo.role,
+                    cust_name:userInfo.company_name
+                })
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
+        }).catch((err)=>{
+            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
         })
     }
 
@@ -1331,7 +1910,71 @@ ${method} ${time === undefined ? '' : time}
                 }
                 messageSend(message)
                 Keyboard.dismiss()
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
+        }).catch((err)=>{
+            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+            handleOption(0)
+            handleSubOption(0);
+            message = {
+                createdAt: new Date(),
+                _id: Math.round(Math.random() * 1000000),
+                text: text,
+                user: {
+                    _id: 2
+                },
+                quickReplies : {
+                    type: 'radio',
+                    values: [
+                        {
+                            title: '현물조회',
+                            value: '현물조회',
+                        },
+                        {
+                            title: '샘플신청',
+                            value: '샘플신청',
+                        },
+                        {
+                            title: '아이템 정보',
+                            value: '아이템 정보',
+                        },
+                    ],
+                },
+                option: 0,
+                subOption: 0,
+            }
+            messageSend(message)
         })
     }
 
@@ -1349,7 +1992,8 @@ ${method} ${time === undefined ? '' : time}
                 let spec = response.data;
 
                 let price = spec.prodList[0].price.split('.')
-                text = `${item} 스펙\n\n염색 : ${spec.dyeingGbn}\n사용폭 : ${spec.width}±2%\n중량 : ${spec.weight} g /yd\n혼용률 : ${spec.composition}\n조직도 : ${spec.organization}\nFINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/변수 :\n${spec.ksajong}\n위사사종/변수 :\n${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}*견뢰도*\n건마찰 : ${spec.dry_friction}\n습마찰 : ${spec.swrat_friction}\n세탁 : ${spec.cleaning}\n드라이 : ${spec.dry}\n땀 : ${spec.sweat}${userInfo.priceGB==='Y'?`\n\n매입단가\n\n${spec.prodList[0].custName} : ${price[0]}원`:''}`
+                let check = spec.dry_friction===null
+                text = `${item} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원`:''}`
                 
                 handleOption(3)
                 handleSubOption(2)
@@ -1382,7 +2026,81 @@ ${method} ${time === undefined ? '' : time}
                 }
                 messageSend(message)
                 Keyboard.dismiss()
+
+                //로그입력
+                axios.post(url+`/api/insertLog.dab`,{
+                    log_gb:'03',
+                    item_code:itemCode,
+                    item_name:item,
+                    user_name:userInfo.user_name,
+                    role: userInfo.role,
+                    cust_name:userInfo.company_name
+                })
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
             })
+        }).catch((err)=>{
+            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+            handleOption(0)
+            handleSubOption(0);
+            message = {
+                createdAt: new Date(),
+                _id: Math.round(Math.random() * 1000000),
+                text: text,
+                user: {
+                    _id: 2
+                },
+                quickReplies : {
+                    type: 'radio',
+                    values: [
+                        {
+                            title: '현물조회',
+                            value: '현물조회',
+                        },
+                        {
+                            title: '샘플신청',
+                            value: '샘플신청',
+                        },
+                        {
+                            title: '아이템 정보',
+                            value: '아이템 정보',
+                        },
+                    ],
+                },
+                option: 0,
+                subOption: 0,
+            }
+            messageSend(message)
         })
     }
 

@@ -25,7 +25,9 @@ function ResetPassword({ navigation }) {
             Alert.alert('', forgotPass.text);
         }
     },[forgotPass.text])
-    
+    if(forgotPass.status==='FAILURE'){
+        Alert.alert('','문제가 발생했습니다. 관리자에게 문의하세요')
+    }
     return (
         <>
             <Header titleText='비밀번호 재설정' navigation={navigation} />

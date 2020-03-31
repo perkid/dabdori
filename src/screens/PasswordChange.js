@@ -35,6 +35,9 @@ function PasswordChange({ navigation }) {
       Alert.alert('', '비밀번호가 변경되었습니다.', [{ text: 'OK', onPress: () => navigation.goBack() }]);
     })
   }
+  if (status==='FAILURE') {
+    Alert.alert('','문제가 발생했습니다. 관리자에게 문의하세요.')
+  }
   return (
     <>
       <Header titleText='비밀번호 변경' navigation={navigation} />
