@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { useSelector, useDispatch } from 'react-redux';
-import { priceConfirmRequest, setPriceFlag, setDetail, setPriceCnt } from '../redux/orderManagement';
+import { priceConfirmRequest, setPriceFlag, setDetailRequest, setPriceCnt } from '../redux/orderManagement';
 
 function OrderDetail({ navigation }) {
     function toCommaStringF( number ) {
@@ -22,7 +22,7 @@ function OrderDetail({ navigation }) {
     const confirmStatus = useSelector(state => state.orderManagement.confirm);
     const orders = useSelector(state => state.orderManagement.orders);
     const detail = useSelector(state => state.orderManagement.detail);
-
+    const detailStatus = useSelector(state => state.orderManagement.detailStatus);
     const dispatch = useDispatch();
 
     const [ visible, setVisible ] = useState(false)
@@ -89,6 +89,12 @@ function OrderDetail({ navigation }) {
                 detail[index].priceFlag=true
             }
         }
+        if(confirmStatus.result==='FAIL'){
+            Alert.alert('',`${confirmStatus.cause}`)
+        }
+        if(confirmStatus.result===`FAILURE`){
+            Alert.alert('','문제가 발생하였습니다. 담당자에게 문의하세요.')
+        }
 
     }, [confirmStatus])
 
@@ -116,7 +122,7 @@ function OrderDetail({ navigation }) {
     };
     
     useEffect(()=>{
-        dispatch(setDetail(order.orderNo))
+        dispatch(setDetailRequest(order.orderNo))
     },[order])
 
     if(detail.length!==0){
@@ -125,6 +131,9 @@ function OrderDetail({ navigation }) {
         phone_number=detail[0].phone_number
         user_name=detail[0].user_name
         jungsan=detail.filter(item=>item.jungsan_yn==='0')
+    }
+    if(detailStatus==='FAILURE'){
+        Alert.alert('','문제가 발생하였습니다. 담당자에게 문의하세요.')
     }
     const orderItem =
         <SwipeListView

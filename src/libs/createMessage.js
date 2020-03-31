@@ -450,9 +450,9 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                     r.map((i, index) => {
                         index === lastIndex ?
-                            text += `${i.coloryw}\n(${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD`
+                            text += `${i.coloryw} (${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD`
                             :
-                            text += `${i.coloryw}\n(${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD\n\n`
+                            text += `${i.coloryw} (${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD\n\n`
                     })
 
                     message = {
@@ -543,9 +543,9 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     r.map((i, index) => {
                         index === lastIndex ?
 
-                            text += `${i.coloryw}\n(${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD`
+                            text += `${i.coloryw} (${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD`
                             :
-                            text += `${i.coloryw}\n(${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD\n\n`
+                            text += `${i.coloryw} (${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD\n\n`
                     })
 
                     message = {

@@ -5,7 +5,7 @@ import { Button, Searchbar, Divider } from 'react-native-paper';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import Order from '../components/Order';
-import { setOrder } from '../redux/orderManagement';
+import { setOrderRequest } from '../redux/orderManagement';
 import PerriodSetting from '../components/PeriodSetting';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useEffect } from 'react';
@@ -19,7 +19,7 @@ function OrderHistory({ navigation }) {
   const [endDate, setEndDate] = useState(new Date());
   const [status, setStatus] = useState('all');
   const dispatch = useDispatch();
-
+  const orderStatus = useSelector(state => state.orderManagement.orderStatus);
   const _showDialog = () => setVisible(true)
   const _hideDialog = () => setVisible(false)
 
@@ -119,9 +119,11 @@ function OrderHistory({ navigation }) {
       start_date: getFormatDate(startDate),
       end_date: getEndDate(endDate)
     }
-    dispatch(setOrder(data))
+    dispatch(setOrderRequest(data))
   }, [period])
-
+  if(orderStatus==='FAILURE'){
+    Alert.alert('','문제가 발생하였습니다. 담당자에게 문의하세요.')
+}
   return (
     <>
       <Header titleText='주문조회' navigation={navigation} />

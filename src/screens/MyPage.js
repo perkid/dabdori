@@ -9,7 +9,6 @@ import { clearMessage } from '../redux/messagesApp';
 function MyPage({ navigation }) {
   const user = navigation.state.params;
   if(user.status==='WAITING'){
-    clearChat();
     AsyncStorage.clear()
     navigation.navigate('Auth')
   }

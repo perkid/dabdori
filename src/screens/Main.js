@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import getUrl from '../config/environment';
-import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage, setText } from '../redux/messagesApp';
 import Header from '../components/Header';
-import Bottom from '../components/Bottom';
 import Company from '../components/Company';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import QuickReplies from 'react-native-gifted-chat/lib/QuickReplies';
@@ -29,7 +28,7 @@ function Main({ navigation }) {
   const [company, setCompany] = useState('');
   const [token, setToken] = useState('');
 
-  // 토큰 저장 코드
+  // 토큰 생성 코드
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
       const { status: existingStatus } = await Permissions.getAsync(
@@ -84,6 +83,8 @@ function Main({ navigation }) {
             firebase_token: token
           }).then((response) => {
             console.log(token)
+          }).catch((err)=>{
+            Alert.alert('','문제가 발생하였습니다. 담당자에게 문의하세요.')
           })
 
       }
@@ -289,10 +290,10 @@ function Main({ navigation }) {
           open={fabState}
           icon='plus'
           actions={[
-            { style: { right: 10, bottom: 15 } },
-            { icon: 'file-document-box-outline', style: { right: 10, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
+            { style: { right: -5, bottom: 15 } },
+            { icon: 'file-document-box-outline', style: { right: -5, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
             {
-              icon: 'account', style: { right: 10, bottom: 70 }, onPress: () =>
+              icon: 'account', style: { right: -5, bottom: 70 }, onPress: () =>
                 navigation.navigate('MyPage', userInfo)
             },
           ]}
@@ -301,8 +302,8 @@ function Main({ navigation }) {
           onPress={setState}
         />
       </View>
-      <View style={{ flex: 1 }} />
-      <Bottom />
+      {/* <View style={{ flex: 1 }} />
+      <Bottom /> */}
     </>
   )
 };
@@ -324,8 +325,12 @@ const styles = StyleSheet.create({
   },
   fab: {
     backgroundColor: '#1E388D',
-    right: 11,
-    bottom: 70
+    right: 0,
+    bottom: 70,
+    height:45,
+    width:45,
+    justifyContent:'center',
+    alignItems:'center'
   },
   listTitle: {
     fontSize: 20
