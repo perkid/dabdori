@@ -178,7 +178,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
             subOption = 1;
             create(text, option, subOption);
         }
-        if (userInfo.role === 'client') {
+        if (userInfo.role === 'client'||userInfo.role==='partner') {
             text = `아이템명(또는 아이템번호) 조\n회 후 칼라번호 조회\n예) ${userInfo.promotion_Item}`;
             option = 1;
             subOption = 4;
@@ -945,7 +945,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
 
     // 샘플신청
     if (text === '샘플신청') {
-        if (userInfo.role === 'client') {
+        if (userInfo.role === 'client' || userInfo.role==='partner') {
             option = 2;
             subOption = 2;
             create(text, option, subOption)
@@ -1077,6 +1077,11 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                 textArr = false;
             }
             if (userInfo.role==="client" && strArr.length > 3) {
+                text = `잘못 입력 하셨습니다. 다시 입력해 주세요.`
+                create(text, 2, 2)
+                textArr = false;
+            }
+            if (userInfo.role==='partner' && strArr.length >3){
                 text = `잘못 입력 하셨습니다. 다시 입력해 주세요.`
                 create(text, 2, 2)
                 textArr = false;
@@ -1691,6 +1696,130 @@ ${method} ${time === undefined ? '' : time}
     }
 
     if (option === 3 && subOption === 1 && userInfo.role === 'client' && text.length < 10) {
+        axios.post(url+`/api/searchItem.dab`,
+        {
+                itemName:text
+        }).then((response)=>{
+            let itemCode = response.data.itemCode;
+            axios.post(url+`/api/itemSpecInfo.dab`,
+                {
+                        itemCode:itemCode
+                }
+            ).then((response)=>{
+                let spec = response.data;
+
+                let price = spec.prodList[0].price.split('.')
+                let check = spec.dry_friction===null
+                text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원`:''}`
+                
+                handleOption(0)
+                handleSubOption(0)
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies: {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0
+                }
+                messageSend(message)
+                Keyboard.dismiss()
+                //로그입력
+                axios.post(url+`/api/insertLog.dab`,{
+                    log_gb:'03',
+                    item_code:itemCode,
+                    item_name:response.data.itemName,
+                    user_name:userInfo.user_name,
+                    role: userInfo.role,
+                    cust_name:userInfo.company_name
+                })
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
+            })
+        }).catch((err)=>{
+            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
+        })
+    }
+    if (option === 3 && subOption === 1 && userInfo.role === 'partner' && text.length < 10) {
         axios.post(url+`/api/searchItem.dab`,
         {
                 itemName:text

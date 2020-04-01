@@ -28,7 +28,7 @@ export function resetMessage() {
       _id: Math.round(Math.random() * 1000000),
       text: '처음으로 돌아갑니다.',
       quickReplies: {
-        type: 'radio',
+        type: 'radio',
         values: [
           {
             title: '현물조회',

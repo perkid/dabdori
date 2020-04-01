@@ -83,10 +83,7 @@ function Main({ navigation }) {
             firebase_token: token
           }).then((response) => {
             console.log(token)
-          }).catch((err)=>{
-            Alert.alert('','문제가 발생하였습니다. 담당자에게 문의하세요.')
           })
-
       }
       dispatch(setText(userInfo.dabdoriText.welcome_text))
     }
