@@ -18,8 +18,8 @@ function OrderDetail({ navigation }) {
            return number_string.replace( regexp, ',' );
         } 
     }
-
     const confirmStatus = useSelector(state => state.orderManagement.confirm);
+    const user = useSelector(state => state.authentications.user);
     const orders = useSelector(state => state.orderManagement.orders);
     const detail = useSelector(state => state.orderManagement.detail);
     const detailStatus = useSelector(state => state.orderManagement.detailStatus);
@@ -107,7 +107,7 @@ function OrderDetail({ navigation }) {
     let phone_number;
     let user_name;
     let jungsan=[];
-
+    let userRole;
     if(order.orderStatusNm==='진행중'){
         if(order.muljisino_print_yn!==0){
             order.orderStatusNm='AMEND중';
@@ -132,6 +132,9 @@ function OrderDetail({ navigation }) {
         user_name=detail[0].user_name
         jungsan=detail.filter(item=>item.jungsan_yn==='0')
     }
+    if(user.status === undefined){
+        userRole=user.role;
+    }
     if(detailStatus==='FAILURE'){
         Alert.alert('','문제가 발생하였습니다. 담당자에게 문의하세요.')
     }
@@ -150,7 +153,7 @@ function OrderDetail({ navigation }) {
                     </View>
                 )
             }
-            renderHiddenItem={(order.state == 3 || order.state == 4) ? undefined : (data, rowMap) => (
+            renderHiddenItem={(order.state == 3 || order.state == 4 || userRole !== 'employee') ? undefined : (data, rowMap) => (
                 // data.item.item 에 orderItem들어있음
                 <View style={styles.standaloneRowBack}>
                     {data.item.item.jungsan_yn==='0'? <TouchableOpacity
