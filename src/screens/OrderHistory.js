@@ -162,7 +162,7 @@ function OrderHistory({ navigation }) {
         </View>
         <Divider style={{ padding: 1, backgroundColor: '#1E388D' }}></Divider>
         <ScrollView>
-          {foundOrders.map((order, index) => (
+          {foundOrders.length===0 ? <View style={{width:'100%', alignItems:'center', marginTop: 20}}><Text>검색된 결과가 없습니다.</Text></View> : foundOrders.map((order, index) => (
             <Order
               key={index}
               navigation={navigation}

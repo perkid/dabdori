@@ -19,7 +19,7 @@ function OrderDetail({ navigation }) {
         } 
     }
     const confirmStatus = useSelector(state => state.orderManagement.confirm);
-    const user = useSelector(state => state.authentications.user);
+    const user = useSelector(state => state.authentication.user);
     const orders = useSelector(state => state.orderManagement.orders);
     const detail = useSelector(state => state.orderManagement.detail);
     const detailStatus = useSelector(state => state.orderManagement.detailStatus);

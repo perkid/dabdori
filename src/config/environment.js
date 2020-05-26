@@ -1,8 +1,8 @@
 export default function getUrl(){
-    const currentENV = 'DEV';
+    const currentENV = 'PROD';
     switch(currentENV){
         case 'DEV':
-            return 'http://192.168.0.153:8080/dabdori-admin'
+            return 'http://192.168.0.82:8080/dabdori-admin'
         case 'PROD':
             return 'http://admin.youngwoo.co/dabdori-admin'
     }

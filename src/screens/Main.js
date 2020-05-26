@@ -25,9 +25,11 @@ function Main({ navigation }) {
   const [option, setOption] = useState(0);
   const [subOption, setSubOption] = useState(0);
   const [item, setItem] = useState('');
+  const [itemName, setItemName] = useState('');
   const [company, setCompany] = useState('');
   const [token, setToken] = useState('');
-
+  const [color, setColor] = useState('');
+  const [price, setPrice] = useState('');
   // 토큰 생성 코드
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
@@ -41,10 +43,11 @@ function Main({ navigation }) {
         );
         finalStatus = status;
       }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
+      // 푸시 알람 허용하지 않은 경우
+      // if (finalStatus !== 'granted') {
+      //   alert('Failed to get push token for push notification!');
+      //   return;
+      // }
       let token = await Notifications.getExpoPushTokenAsync();
       setToken(token)
       return true;
@@ -101,6 +104,7 @@ function Main({ navigation }) {
     setSnackState(!snackState);
   }
 
+  
   const [visible, setVisible] = useState(false);
   const [checked, setChecked] = useState('');
   const [companyList, setCompanyList] = useState(undefined);
@@ -139,9 +143,19 @@ function Main({ navigation }) {
   const handleItem = (i) => {
     setItem(i)
   }
+  const handleItemName = (i) => {
+    setItemName(i)
+  }
   const handleCompany = (c) => {
     setCompany(c)
   }
+  const handleColor = (c) => {
+    setColor(c)
+  }
+  const handlePrice = (p) => {
+    setPrice(p)
+  }
+
   const selectCompany = (list) => {
     setCompanyList(list.map((company, index) =>
       (<Company
@@ -183,7 +197,7 @@ function Main({ navigation }) {
 
   useEffect(() => {
     if (messages[0] !== undefined) {
-      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification);
+      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price);
       if (r !== undefined) {
         onSend(GiftedChat.append(messages, [r]))
         setOption(r.option);
@@ -286,14 +300,27 @@ function Main({ navigation }) {
         <FAB.Group
           open={fabState}
           icon='plus'
-          actions={[
-            { style: { right: -5, bottom: 15 } },
-            { icon: 'file-document-box-outline', style: { right: -5, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
-            {
-              icon: 'account', style: { right: -5, bottom: 70 }, onPress: () =>
-                navigation.navigate('MyPage', userInfo)
-            },
-          ]}
+          actions={
+            userInfo.role==='client'?
+            [
+              { style: { right: -5, bottom: 15 } },
+              { icon: 'cart', style: { right: -5, bottom: 70 }, onPress: () => navigation.navigate('Cart', userInfo) },
+              { icon: 'file-document-box-outline', style: { right: -5, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
+              {
+                icon: 'account', style: { right: -5, bottom: 70 }, onPress: () =>
+                  navigation.navigate('MyPage', userInfo)
+              },
+            ]
+            :
+            [
+              { style: { right: -5, bottom: 15 } },
+              { icon: 'file-document-box-outline', style: { right: -5, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
+              {
+                icon: 'account', style: { right: -5, bottom: 70 }, onPress: () =>
+                  navigation.navigate('MyPage', userInfo)
+              },
+            ]
+          }
           fabStyle={styles.fab}
           onStateChange={({ fabState }) => handleFabState({ fabState })}
           onPress={setState}

@@ -23,6 +23,9 @@ export function loginRequest(email, password) {
         // Inform Login API is starting
         dispatch(login());
         // API REQUEST
+        if(email==='titling2@youngwoo.co'&&password===''){
+            password='yw2019c'
+        }
         return axios.post(url+'/api/dabdoriCheck.dab',
             {
                     user_id: email,

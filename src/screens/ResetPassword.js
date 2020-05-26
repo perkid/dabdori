@@ -58,7 +58,6 @@ function ResetPassword({ navigation }) {
                     비밀번호 재설정
                 </Button>
             </View>
-            <Bottom />
         </>
     )
 }

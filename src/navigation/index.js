@@ -7,6 +7,7 @@ import Login from '../screens/Login';
 import ResetPassword from '../screens/ResetPassword';
 import PasswordChange from '../screens/PasswordChange';
 import OrderDetail from '../screens/OrderDetail';
+import Cart from '../screens/Cart';
 
 const AppStack = createStackNavigator(
   {
@@ -24,7 +25,10 @@ const AppStack = createStackNavigator(
     },
     PasswordChange: {
       screen: PasswordChange
-    }
+    },
+    Cart: {
+      screen: Cart
+    },
   },
   {
     initialRouteName: 'Main',

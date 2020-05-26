@@ -98,7 +98,7 @@ function Login({ navigation }) {
                 </Button>
                 </View>
             </TouchableWithoutFeedback>
-            <Bottom />
+            {/* <Bottom /> */}
         </>
     )
 }

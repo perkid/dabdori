@@ -24,6 +24,7 @@ function MyPage({ navigation }) {
   return (
     <>
       <Header titleText='마이페이지' navigation={navigation} />
+      <View style={{flex:1}}>
       <View style={styles.container}>
         <Text style={styles.info}>
           안녕하세요 {user.company_name}{'\n'}
@@ -63,10 +64,9 @@ function MyPage({ navigation }) {
             </DataTable.Cell>
           </DataTable.Row>
         </DataTable>
-      <View style={{flex: 1.3}}>
       </View>
       {user.role==='client'?
-      <View style={{flex:1, backgroundColor:'#1E388D'}}>
+      <View style={{backgroundColor:'#1E388D'}}>
         <DataTable>
           <DataTable.Row>
             <DataTable.Cell>
@@ -102,7 +102,6 @@ function MyPage({ navigation }) {
       </View>
       :undefined}
       </View>
-      <Bottom />
     </>
   )
 };
