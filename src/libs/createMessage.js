@@ -3,7 +3,7 @@ import { callNumber } from './calling';
 import axios from 'axios';
 import getUrl from '../config/environment';
 
-function createMessage(text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price) {
+function createMessage(text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, scroll) {
     let message;
     let quick;
 
@@ -630,6 +630,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
         subOption = 4;
         create(text, option, subOption);
     }
+
     if (option === 1 && subOption === 4 && text.length < 15) {
         let item = text;
         axios.post(url + '/api/currentInventory.dab',
@@ -678,6 +679,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     messageSend(message)
                 } 
             }).catch((err)=>{
+                console.log(err)
                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
                 handleOption(0)
                 handleSubOption(0);
@@ -715,6 +717,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
 
     if (option === 1 && subOption === 5 && text.length < 15) {
         let color = text;
+        scroll()
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
@@ -766,6 +769,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 option: 0,
                                 subOption: 0,
                             }
+                            
                             messageSend(message)
                         }
                         if(colorList.length>0){

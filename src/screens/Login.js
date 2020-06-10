@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
-import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback, AsyncStorage, Alert } from 'react-native';
+import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback, AsyncStorage, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginRequest } from '../redux/authentication';
@@ -12,11 +12,9 @@ function Login({ navigation }) {
     const [password, SetPassword] = useState('');
     const loginState = useSelector(state => state.authentication.login.status, []);
     const dispatch = useDispatch();
-    const [test, setTest] = useState(false);
 
     const handleLogin = (id, password) => {
         dispatch(loginRequest(id, password));
-        setTest(!test)
     }
 
     useEffect(() => {
@@ -55,9 +53,19 @@ function Login({ navigation }) {
 
     return (
         <>
-            <Header titleText='로  그  인' navigation={navigation} auth={true}/>
+            {/* <Header titleText='로  그  인' navigation={navigation} auth={true}/> */}
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            
                 <View style={styles.container}>
+            
+                <KeyboardAvoidingView
+                    behavior={Platform.OS == "ios" ? "padding" : "height"}
+                    style={{flex:1, width:'100%'}}
+                    keyboardVerticalOffset={64}
+                >
+                
+                
+                <View style={{flex:1,widht:'100%',alignItems:'center', justifyContent:'center'}}>
                     <Image
                         source={require('../../assets/new.png')}
                         style={styles.logo}
@@ -97,8 +105,10 @@ function Login({ navigation }) {
                         비밀번호가 기억이 나지 않으세요?
                 </Button>
                 </View>
+                {/* <View style={{ flex : 0.1 }} /> */}
+             </KeyboardAvoidingView>
+                </View>
             </TouchableWithoutFeedback>
-            {/* <Bottom /> */}
         </>
     )
 }
@@ -111,12 +121,15 @@ const colors = {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex:1,
         backgroundColor: '#FFF',
         alignItems: 'center',
+        justifyContent:'flex-end'
     },
     logo: {
-        marginTop: '14%'
+        marginTop: '14%',
+        width:250,
+        height:250
     },
     input: {
         width: '85%',

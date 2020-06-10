@@ -33,6 +33,7 @@ export function loginRequest(email, password) {
             })
             .then((response) => {
                 // SUCCEED
+
                 if (response.data.checkBoolean) {
                     dispatch(loginSuccess(response.data));
                 }

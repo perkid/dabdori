@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import getUrl from '../config/environment';
-import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, anmiated } from 'react-native';
 import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage, setText } from '../redux/messagesApp';
@@ -13,6 +13,7 @@ import createMessage from '../libs/createMessage';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
+
 
 function Main({ navigation }) {
   const url = getUrl();
@@ -194,10 +195,14 @@ function Main({ navigation }) {
       console.warn('replies param is not set correctly')
     }
   }
+  const ref = useRef(null)
+  const scroll = () => {
+    ref.current.scrollToBottom()
+  }
 
   useEffect(() => {
     if (messages[0] !== undefined) {
-      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price);
+      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, scroll) ;
       if (r !== undefined) {
         onSend(GiftedChat.append(messages, [r]))
         setOption(r.option);
@@ -221,6 +226,7 @@ function Main({ navigation }) {
             Clipboard.setString(currentMessage.text)
             handleSnackState()
           }}
+          ref={ref}
           scrollToBottom={true}
           scrollToBottomStyle={{ right: '45%' }}
           onQuickReply={onQuickReply}
