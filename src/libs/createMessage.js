@@ -192,13 +192,90 @@ function createMessage(text, option, subOption, item, userInfo, company, message
         let strArr = text.split(' ');
         //아이템 명만 입력한 경우
         if (strArr.length === 1) {
-            item = strArr[0];
-            text = `용도를 선택해 주세요`;
-            option = 1;
-            subOption = 2;
-            quick = 5;
-            create(text, option, subOption, quick, item)
-            Keyboard.dismiss()
+            axios.post(url + '/api/currentInventory.dab',
+            {
+                    itemName: strArr[0],
+                    includeYN: 0
+            }).then((response)=>{
+                if(response.data.length===0){
+                    text = `${strArr[0]}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`
+                    handleOption(1)
+                    handleSubOption(1)
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        option: 1,
+                        subOption: 1,
+                    }
+                    messageSend(message)
+                } else {
+                    text = `용도를 선택해 주세요.`;
+                    handleOption(1)
+                    handleSubOption(2)
+                    handleItem(strArr[0])
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '업체용',
+                                    value: '업체용',
+                                },
+                                {
+                                    title: '직원용',
+                                    value: '직원용'
+                                }
+                            ]
+                        },
+                        option: 1,
+                        subOption: 2,
+                    }
+                    messageSend(message)
+                    Keyboard.dismiss()
+                }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                    handleOption(0)
+                    handleSubOption(0);
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
+                    messageSend(message)
+            })
         }
         //칼라 번호도 입력한 경우
         if (strArr.length === 2) {
@@ -209,7 +286,8 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         includeYN: 1
                 }).then((resoponse) => {
                     let r = resoponse.data[0];
-                    axios.post(url + `/api/currentLotInventory.dab`,
+                    if(r!==undefined){
+                        axios.post(url + `/api/currentLotInventory.dab`,
                     {
                         itemName: strArr[0],
                         colorYW: strArr[1]
@@ -264,8 +342,8 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         }
                     }).catch((err)=>{
                         text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                        handleOption(0)
-                        handleSubOption(0);
+                        handleOption(1)
+                        handleSubOption(1);
                         message = {
                             createdAt: new Date(),
                             _id: Math.round(Math.random() * 1000000),
@@ -295,6 +373,22 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         }
                         messageSend(message)
                     })
+                } else {
+                    text = `${strArr[0]}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`
+                    handleOption(1)
+                    handleSubOption(1)
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        option: 1,
+                        subOption: 1,
+                    }
+                    messageSend(message)
+                }
                 }).catch((err)=>{
                     text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
                     handleOption(0)
@@ -679,7 +773,6 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     messageSend(message)
                 } 
             }).catch((err)=>{
-                console.log(err)
                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
                 handleOption(0)
                 handleSubOption(0);
@@ -865,7 +958,6 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                 }
             }
             }).catch((err)=>{
-                console.log(err)
                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
                 handleOption(0)
                 handleSubOption(0);
@@ -1395,7 +1487,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                 create(text, 2, 2)
                 textArr = false;
             }
-            if (qty === 0 || qty > 19) {
+            if (qty === 0 || qty >= 20) {
                 text = `샘플신청 수량은 20YD 미만만 가능합니다..`
                 create(text, 2, 2)
                 textArr = false
@@ -2056,9 +2148,10 @@ ${method} ${time === undefined ? '' : time}
                     cust_name:userInfo.company_name
                 })
             }).catch((err)=>{
-                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                handleOption(0)
-                handleSubOption(0);
+                if(err.message.includes('spec.prodList[0]')){
+                    text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+                handleOption(3)
+                handleSubOption(1);
                 message = {
                     createdAt: new Date(),
                     _id: Math.round(Math.random() * 1000000),
@@ -2066,27 +2159,43 @@ ${method} ${time === undefined ? '' : time}
                     user: {
                         _id: 2
                     },
-                    quickReplies : {
-                        type: 'radio',
-                        values: [
-                            {
-                                title: '현물조회',
-                                value: '현물조회',
-                            },
-                            {
-                                title: '샘플신청',
-                                value: '샘플신청',
-                            },
-                            {
-                                title: '아이템 정보',
-                                value: '아이템 정보',
-                            },
-                        ],
-                    },
-                    option: 0,
-                    subOption: 0,
+                    option: 3,
+                    subOption: 1,
                 }
                 messageSend(message)
+                } else{
+                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                    handleOption(0)
+                    handleSubOption(0);
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
+                    messageSend(message)
+                }
             })
         }).catch((err)=>{
             text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -2180,9 +2289,10 @@ ${method} ${time === undefined ? '' : time}
                     cust_name:userInfo.company_name
                 })
             }).catch((err)=>{
-                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                handleOption(0)
-                handleSubOption(0);
+                if(err.message.includes('spec.prodList[0]')){
+                    text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+                handleOption(3)
+                handleSubOption(1);
                 message = {
                     createdAt: new Date(),
                     _id: Math.round(Math.random() * 1000000),
@@ -2190,27 +2300,43 @@ ${method} ${time === undefined ? '' : time}
                     user: {
                         _id: 2
                     },
-                    quickReplies : {
-                        type: 'radio',
-                        values: [
-                            {
-                                title: '현물조회',
-                                value: '현물조회',
-                            },
-                            {
-                                title: '샘플신청',
-                                value: '샘플신청',
-                            },
-                            {
-                                title: '아이템 정보',
-                                value: '아이템 정보',
-                            },
-                        ],
-                    },
-                    option: 0,
-                    subOption: 0,
+                    option: 3,
+                    subOption: 1,
                 }
                 messageSend(message)
+                } else{
+                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                    handleOption(0)
+                    handleSubOption(0);
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
+                    messageSend(message)
+                }
             })
         }).catch((err)=>{
             text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -2248,13 +2374,116 @@ ${method} ${time === undefined ? '' : time}
     }
 
     if (option === 3 && subOption === 1 && userInfo.role === 'employee' && text.length < 10) {
-        let item = text;
-        text = '조회 항목을 선택해 주세요.';
-        option = 3;
-        subOption = 2;
-        quick = 2;
-        create(text, option, subOption, quick, item)
-        Keyboard.dismiss()
+        axios.post(url+`/api/searchItem.dab`,
+        {
+                itemName:text
+        }).then((response)=>{
+
+            if(response.data.itemName===null){
+                text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+                handleOption(3)
+                handleSubOption(1);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    option: 3,
+                    subOption: 1,
+                }
+                messageSend(message)
+            } else {
+                let item = text;
+                text = '조회 항목을 선택해 주세요.';
+                quick = 2;
+                handleOption(3)
+                handleSubOption(2);
+                handleItem(item)
+                message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies: {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '업차지',
+                                    value: '업차지',
+                                },
+                                {
+                                    title: '스펙과 단가',
+                                    value: '스펙과 단가',
+                                },
+                                {
+                                    title: '처음 단계로',
+                                    value: '처음 단계로',
+                                },
+                            ],
+                        },
+                        option: 3,
+                        subOption: 2,
+                        item:item
+                    }
+                    messageSend(message)
+               
+                    Keyboard.dismiss()
+            }
+            
+            }).catch((err)=>{
+                if(err.message.includes('spec.prodList[0]')){
+                    text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+                handleOption(3)
+                handleSubOption(1);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    option: 3,
+                    subOption: 1,
+                }
+                messageSend(message)
+                } else{
+                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                    handleOption(0)
+                    handleSubOption(0);
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
+                    messageSend(message)
+                }
+            })
     }
 
     if (text === '업차지' && option === 3 && subOption === 2) {
