@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import getUrl from '../config/environment';
-import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, anmiated } from 'react-native';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage, setText } from '../redux/messagesApp';
@@ -11,7 +11,7 @@ import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import QuickReplies from 'react-native-gifted-chat/lib/QuickReplies';
 import createMessage from '../libs/createMessage';
 import { Notifications } from 'expo';
-
+import Fab from 'rn-fab';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
@@ -32,7 +32,53 @@ function Main({ navigation }) {
   const [pToken, setToken] = useState('');
   const [color, setColor] = useState('');
   const [price, setPrice] = useState('');
-  const [notification, setNotification] = useState({});
+
+  
+  const actions = (userInfo.role==='client')?
+  [
+    // Main button - does not need to receive the "text" property.
+    {
+      icon: <Image source={require('../../assets/plus.png')} style={{width:25, height:25}}/>,
+      name: "btn_plus",
+      color: '#1E388D'
+    },
+    // Action Buttons - will be displayed when you tap the main button.
+    {
+      icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
+      name: "btn_user",
+      color: '#ffffff'
+    },
+    {
+      icon: <Image source={require('../../assets/list.png')} style={{width:20, height: 20}}/>,
+      name: "btn_order",
+      color: '#ffffff'
+    },
+    {
+      icon: <Image source={require('../../assets/cart.png')} style={styles.icon}/>,
+      name: "btn_cart",
+      color: '#ffffff'
+    }
+  ] :
+  [
+    // Main button - does not need to receive the "text" property.
+    {
+      icon: <Image source={require('../../assets/plus.png')} style={{width:25, height:25}}/>,
+      name: "btn_plus",
+      color: '#1E388D'
+    },
+    // Action Buttons - will be displayed when you tap the main button.
+    {
+      icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
+      name: "btn_user",
+      color: '#ffffff'
+    },
+    {
+      icon: <Image source={require('../../assets/list.png')} style={{width:20, height: 20}}/>,
+      name: "btn_order",
+      color: '#ffffff'
+    }
+  ]
+  
   // 토큰 생성 코드
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
@@ -313,7 +359,7 @@ function Main({ navigation }) {
         >
           메세지가 복사되었습니다.
         </Snackbar>
-        <FAB.Group
+        {/* <FAB.Group
           open={fabState}
           icon='plus'
           actions={
@@ -343,6 +389,22 @@ function Main({ navigation }) {
           fabStyle={styles.fab}
           onStateChange={({ fabState }) => handleFabState({ fabState })}
           onPress={setState}
+        /> */}
+        <Fab
+          actions={actions}
+          style={{right: 40, bottom: 140}}
+          rotation={"45deg"}
+          onPress={name => {
+            if(name == "btn_cart"){
+              navigation.navigate('Cart', userInfo)
+            }
+            if(name == "btn_order"){
+              navigation.navigate('OrderHistory', userInfo)
+            }
+            if(name == "btn_user"){
+              navigation.navigate('MyPage', userInfo)
+            }
+          }}
         />
       </View>
       {/* <View style={{ flex: 1 }} />
@@ -374,6 +436,10 @@ const styles = StyleSheet.create({
     width:45,
     justifyContent:'center',
     alignItems:'center'
+  },
+  icon:{
+    height:25,
+    width:25
   },
   listTitle: {
     fontSize: 20
