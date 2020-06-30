@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, AsyncStorage } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import Header from '../components/Header';
-import Bottom from '../components/Bottom';
 import { useDispatch } from 'react-redux';
 import { clearMessage } from '../redux/messagesApp';
+import { login } from '../redux/authentication';
 
 function MyPage({ navigation }) {
   const user = navigation.state.params;
@@ -15,7 +15,8 @@ function MyPage({ navigation }) {
   const dispatch = useDispatch();
   const clearChat = () => dispatch(clearMessage());
   const handleLogout = () => {
-    clearChat();
+    dispatch(login())
+    clearChat()
     AsyncStorage.clear()
     navigation.navigate('Auth')
   }
@@ -53,7 +54,9 @@ function MyPage({ navigation }) {
               >
             </DataTable.Cell>
           </DataTable.Row>
-          <DataTable.Row onPress={() => handleLogout()}>
+          <DataTable.Row onPress={() => {
+            handleLogout()
+          }}>
             <DataTable.Cell style={{ marginLeft: 5 }}>
               <Text style={styles.tableText}>
                 로그아웃

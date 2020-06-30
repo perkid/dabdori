@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import Bottom from '../components/Bottom';
 import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback, AsyncStorage, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { loginRequest } from '../redux/authentication';
+import { loginRequest, login } from '../redux/authentication';
 
 function Login({ navigation }) {
 
@@ -35,6 +33,8 @@ function Login({ navigation }) {
 
     // 로컬 저장소에 저장된 아이디가 있는지 체크하여 자동 로그인
     useEffect(()=>{
+        if(loginState!=='WAITING'){
+
           AsyncStorage.getItem("AUTH", (err, data) => {
             if (err == null) {
                 if (data !== null) {
@@ -48,6 +48,7 @@ function Login({ navigation }) {
                 }
             }
         });
+    }
     }, [])
 
 
@@ -59,7 +60,7 @@ function Login({ navigation }) {
                 <View style={styles.container}>
             
                 <KeyboardAvoidingView
-                    behavior={Platform.OS == "ios" ? "padding" : "height"}
+                    behavior={Platform.OS == "ios" ? "padding" : 'padding'}
                     style={{flex:1, width:'100%'}}
                     keyboardVerticalOffset={64}
                 >
@@ -84,6 +85,7 @@ function Login({ navigation }) {
                         style={styles.input}
                         theme={{ colors }}
                         value={password}
+                        autoCapitalize={'none'}
                         secureTextEntry={true}
                         onChangeText={text => SetPassword(text)}
                     />

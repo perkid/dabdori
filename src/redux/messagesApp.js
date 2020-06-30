@@ -75,16 +75,20 @@ function messagesReducer(state = initialState, action) {
             values: [
               {
                 title: '현물조회',
-                value: 'red',
+                value: '현물조회',
               },
               {
                 title: '샘플신청',
-                value: 'white',
+                value: '샘플신청',
               },
               {
                 title: '아이템 정보',
-                value: 'green',
+                value: '아이템 정보',
               },
+              // {
+              //   title: '푸시 테스트',
+              //   value: '푸시 테스트'
+              // }
             ],
           },
           user: {

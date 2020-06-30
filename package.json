@@ -12,6 +12,7 @@
     "@react-native-community/masked-view": "0.1.5",
     "axios": "^0.19.2",
     "expo": "~36.0.0",
+    "expo-notifications": "^0.4.0",
     "lodash.remove": "4.7.0",
     "react": "~16.9.0",
     "react-addons-update": "^15.6.2",

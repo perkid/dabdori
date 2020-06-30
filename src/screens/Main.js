@@ -11,6 +11,7 @@ import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import QuickReplies from 'react-native-gifted-chat/lib/QuickReplies';
 import createMessage from '../libs/createMessage';
 import { Notifications } from 'expo';
+
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
@@ -28,9 +29,10 @@ function Main({ navigation }) {
   const [item, setItem] = useState('');
   const [itemName, setItemName] = useState('');
   const [company, setCompany] = useState('');
-  const [token, setToken] = useState('');
+  const [pToken, setToken] = useState('');
   const [color, setColor] = useState('');
   const [price, setPrice] = useState('');
+  const [notification, setNotification] = useState({});
   // 토큰 생성 코드
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
@@ -57,7 +59,9 @@ function Main({ navigation }) {
     }
   }
   // 푸시 보내기
+
   const sendPushNotification = async (pushToken, pushMessage) => {
+
     const message = {
       to: pushToken,
       sound: 'default',
@@ -65,7 +69,9 @@ function Main({ navigation }) {
       body: pushMessage,
       data: { data: '' },
     };
-    const response = await fetch('https://exp.host/--/api/v2/push/send', {
+    
+
+    await fetch('https://exp.host/--/api/v2/push/send', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -73,26 +79,30 @@ function Main({ navigation }) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(message),
-    });
+    })
   };
-
   registerForPushNotificationsAsync()
-  
   useEffect(() => {
     if (userInfo.status === undefined) {
-      if (userInfo.role === 'employee') {
-        axios.post(url + `/api/setToken.dab`,
-          {
-            user_id: userInfo.user_id,
-            firebase_token: token
-          }).then((response) => {
-            console.log(token)
-          })
-      }
       dispatch(setText(userInfo.dabdoriText.welcome_text))
     }
   }, [userInfo])
-
+  
+  // console.log('담당자 토큰 : '+userInfo.manager_firebase_token)
+  useEffect(()=>{
+    if (userInfo.role === 'employee') {
+      if(pToken !== ''){
+        axios.post(url + `/api/setToken.dab`,
+        {
+          user_id: userInfo.user_id,
+          firebase_token: pToken
+        }).then((response) => {
+          // console.log('저장되는 토큰 : '+pToken)
+        }).catch((err)=>{
+        })
+      }
+    }
+  }, [pToken])
   const handleOptionReset = () => {
     setOption(0);
     setSubOption(0);
@@ -309,20 +319,23 @@ function Main({ navigation }) {
           actions={
             userInfo.role==='client'?
             [
-              { style: { right: -5, bottom: 15 } },
-              { icon: 'cart', style: { right: -5, bottom: 70 }, onPress: () => navigation.navigate('Cart', userInfo) },
-              { icon: 'file-document-box-outline', style: { right: -5, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
+              { style: { right: -5, bottom: -40+10 },onPress: () => navigation.navigate('Cart', userInfo) },
+              { icon: 'cart', style: { right: -5, bottom: 15+10 }, onPress: () => navigation.navigate('Cart', userInfo) },
+              { style: { right: -5, bottom: -10+10 }, onPress:()=>navigation.navigate('OrderHistory', userInfo) },
+              { icon: 'file-document-box-outline', style: { right: -5, bottom: 45+10 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
+              { style: { right: -5, bottom: 15+10 }, onPress:()=>navigation.navigate('MyPage', userInfo)},
               {
-                icon: 'account', style: { right: -5, bottom: 70 }, onPress: () =>
+                icon: 'account', style: { right: -5, bottom: 70+10 }, onPress: () =>
                   navigation.navigate('MyPage', userInfo)
               },
             ]
             :
             [
-              { style: { right: -5, bottom: 15 } },
-              { icon: 'file-document-box-outline', style: { right: -5, bottom: 70 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
+              { style: { right: -5, bottom: -10+10 }, onPress:()=>navigation.navigate('OrderHistory', userInfo) },
+              { icon: 'file-document-box-outline', style: { right: -5, bottom: 45+10 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
+              { style: { right: -5, bottom: 15+10 }, onPress:()=>navigation.navigate('MyPage', userInfo)},
               {
-                icon: 'account', style: { right: -5, bottom: 70 }, onPress: () =>
+                icon: 'account', style: { right: -5, bottom: 70+10 }, onPress: () =>
                   navigation.navigate('MyPage', userInfo)
               },
             ]

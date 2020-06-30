@@ -6,7 +6,14 @@ import getUrl from '../config/environment';
 function createMessage(text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, scroll) {
     let message;
     let quick;
-
+    // let base = [
+    //     '현물조회',
+    //     '샘플신청',
+    //     '아이템 정보',
+    //     '잘못',
+    //     '안녕하세요',
+    //     ''
+    // ]
     const url = getUrl();
 
     // userInfo.role='client'
@@ -51,6 +58,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         title: '아이템 정보',
                         value: '아이템 정보',
                     },
+                    // {
+                    //     title: '푸시 테스트',
+                    //     value: '푸시 테스트'
+                    // }
                 ],
             }
         }
@@ -172,6 +183,13 @@ function createMessage(text, option, subOption, item, userInfo, company, message
         }
     }
 
+    // if(option===0 && base.indexOf(text)===-1){
+    //     text = `잘못 입력 하셨습니다. 다시 입력 해주세요.`
+    //         option = 0;
+    //         subOption = 0;
+    //         quick = 1
+    //         create(text, option, subOption, quick);
+    // }
     // 현물조회
     if (text === '현물조회') {
         if (userInfo.role === 'employee') {
@@ -295,49 +313,124 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         let ipjulCnt = res.data.ipjulCnt;
                         let maxQty = res.data.maxQty;
                         if (r !== undefined) {
-                            handleOption(0)
-                            handleSubOption(0)
-                            message = {
-                                createdAt: new Date(),
-                                _id: Math.round(Math.random() * 1000000),
-                                text: `${r.itemname} ${r.coloryw}\n(${r.colorname})\n\n현물 ${r.jaeqty}YD\n한롯트 가능수량 ${maxQty}YD (${ipjulCnt}절)`,
-                                user: {
-                                    _id: 2
-                                },
-                                quickReplies: {
-                                    type: 'radio',
-                                    values: [
-                                        {
-                                            title: '현물조회',
-                                            value: '현물조회',
+                            axios.post(url + `/api/productionQuantity.dab`,{
+                                itemCode: res.data.itemCode,
+                                colorNo: res.data.colorNo
+                            }).then((res)=>{
+                                handleOption(0)
+                                handleSubOption(0)
+                                if(res.data.length===0){
+                                    message = {
+                                        createdAt: new Date(),
+                                        _id: Math.round(Math.random() * 1000000),
+                                        text: `${r.itemname} ${r.coloryw}\n(${r.colorname})\n\n현물 ${r.jaeqty}YD\n한롯트 가능수량 ${maxQty}YD (${ipjulCnt}절)`,
+                                        user: {
+                                            _id: 2
                                         },
-                                        {
-                                            title: '샘플신청',
-                                            value: '샘플신청',
+                                        quickReplies: {
+                                            type: 'radio',
+                                            values: [
+                                                {
+                                                    title: '현물조회',
+                                                    value: '현물조회',
+                                                },
+                                                {
+                                                    title: '샘플신청',
+                                                    value: '샘플신청',
+                                                },
+                                                {
+                                                    title: '아이템 정보',
+                                                    value: '아이템 정보',
+                                                },
+                                            ],
                                         },
-                                        {
-                                            title: '아이템 정보',
-                                            value: '아이템 정보',
+                                        option: 0,
+                                        subOption: 0,
+                                    }
+                                }
+                                if(res.data.length>0){
+                                    let pqty = '';
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        pqty += `${res.data[i].qty}${res.data[i].unit} (${res.data[i].delyDate})`;
+                                        if(i!==res.data.length-1){
+                                            pqty += `\n`;
+                                        }
+                                    }
+                                    message = {
+                                        createdAt: new Date(),
+                                        _id: Math.round(Math.random() * 1000000),
+                                        text: `${r.itemname} ${r.coloryw}\n(${r.colorname})\n\n현물 ${r.jaeqty}YD\n한롯트 가능수량 ${maxQty}YD (${ipjulCnt}절)\n\n생산예비수량\n${pqty}`,
+                                        user: {
+                                            _id: 2
                                         },
-                                    ],
-                                },
-                                option: 0,
-                                subOption: 0,
-                            }
-                            messageSend(message)
-                            //로그입력
-                            axios.post(url+`/api/insertLog.dab`,{
-                                log_gb:'01',
-                                item_code:r.itemcode,
-                                item_name:r.itemname,
-                                color_name:r.coloryw,
-                                hq_cnt:r.jaeqty,
-                                deagu_cnt:r.gayoungqty,
-                                prod_cnt:r.productqty,
-                                hold_cnt:r.holdqty,
-                                user_name:userInfo.user_name,
-                                role: userInfo.role,
-                                cust_name:userInfo.company_name,
+                                        quickReplies: {
+                                            type: 'radio',
+                                            values: [
+                                                {
+                                                    title: '현물조회',
+                                                    value: '현물조회',
+                                                },
+                                                {
+                                                    title: '샘플신청',
+                                                    value: '샘플신청',
+                                                },
+                                                {
+                                                    title: '아이템 정보',
+                                                    value: '아이템 정보',
+                                                },
+                                            ],
+                                        },
+                                        option: 0,
+                                        subOption: 0,
+                                    }
+                                }
+                                messageSend(message)
+                                //로그입력
+                                axios.post(url+`/api/insertLog.dab`,{
+                                    log_gb:'01',
+                                    item_code:r.itemcode,
+                                    item_name:r.itemname,
+                                    color_name:r.coloryw,
+                                    hq_cnt:r.jaeqty,
+                                    deagu_cnt:r.gayoungqty,
+                                    prod_cnt:r.productqty,
+                                    hold_cnt:r.holdqty,
+                                    user_name:userInfo.user_name,
+                                    role: userInfo.role,
+                                    cust_name:userInfo.company_name,
+                                })
+                            }).catch((err)=>{
+                                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                                handleOption(1)
+                                handleSubOption(1);
+                                message = {
+                                    createdAt: new Date(),
+                                    _id: Math.round(Math.random() * 1000000),
+                                    text: text,
+                                    user: {
+                                        _id: 2
+                                    },
+                                    quickReplies : {
+                                        type: 'radio',
+                                        values: [
+                                            {
+                                                title: '현물조회',
+                                                value: '현물조회',
+                                            },
+                                            {
+                                                title: '샘플신청',
+                                                value: '샘플신청',
+                                            },
+                                            {
+                                                title: '아이템 정보',
+                                                value: '아이템 정보',
+                                            },
+                                        ],
+                                    },
+                                    option: 0,
+                                    subOption: 0,
+                                }
+                                messageSend(message)
                             })
                         }
                     }).catch((err)=>{
@@ -1763,7 +1856,7 @@ ${orderList}
 ${method} ${time === undefined ? '' : time}
                                         
 신청하신 내용이 맞습니까?`
-        create(text,2, 6, 4, order)
+        create(text,2, 8, 4, order)
     }
 
     if (text === '네, 주문완료'){
@@ -2839,6 +2932,12 @@ ${method} ${time === undefined ? '' : time}
                 messageSend(message)
         })
     }
+    // if(text === '푸시 테스트'){
+    //     let pushToken = 'ExponentPushToken[fBVtqiPHhGeY2EvqUXHBkl]';
+    //     sendPushNotification(pushToken,`푸시테스트`)
+    //     text = '푸시를 보내고처음으로 돌아갑니다.';
+    //     create(text, 0, 0, 1)
+    // }
     
     if (text === '처음 단계로' || option === 5) {
         text = '처음으로 돌아갑니다.';

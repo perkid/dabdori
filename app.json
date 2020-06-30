@@ -31,7 +31,6 @@
     "android": {
       "package": "co.youngwoo.dabdori",
       "versionCode":300001
-      
     },
     "notification": {
       "icon": "./assets/dabicon.png"
