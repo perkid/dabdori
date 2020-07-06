@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import getUrl from '../config/environment';
-import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
-import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider } from 'react-native-paper';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Image, Text } from 'react-native';
+import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider,Paragraph } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage, setText } from '../redux/messagesApp';
 import Header from '../components/Header';
@@ -76,9 +76,21 @@ function Main({ navigation }) {
       icon: <Image source={require('../../assets/list.png')} style={{width:20, height: 20}}/>,
       name: "btn_order",
       color: '#ffffff'
-    }
+    },
+    // {
+    //   icon: <Image source={require('../../assets/logo.png')} style={{width:20, height: 20}}/>,
+    //   name: "btn_test",
+    //   color: '#ffffff'
+    // }
   ]
   
+  const [testVisible, setTestVisible] = useState(false);
+
+
+  const showTest = () => setTestVisible(true);
+
+  const hideTest = () => setTestVisible(false);
+
   // 토큰 생성 코드
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
@@ -404,9 +416,32 @@ function Main({ navigation }) {
             if(name == "btn_user"){
               navigation.navigate('MyPage', userInfo)
             }
+            if(name == "btn_test"){
+              showTest()
+            }
           }}
         />
       </View>
+      <Portal>
+      <Dialog visible={testVisible} onDismiss={hideTest}>
+          <Dialog.Title>대체 아이템</Dialog.Title>
+          <Dialog.Content style={{ maxHeight: 400 }}>
+            <Paragraph style={{fontSize:14, fontWeight:'bold'}}>거북선 (7-8042)</Paragraph>
+            <ScrollView>
+              <Paragraph>
+              </Paragraph>
+            </ScrollView>
+            <Paragraph style={{fontSize:14, fontWeight:'bold', marginTop:10}}>JERRY(제리) (2AFPP617)</Paragraph>
+            <ScrollView>
+              <Paragraph>
+              </Paragraph>
+            </ScrollView>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button color='#1E388D' onPress={hideTest}>Done</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       {/* <View style={{ flex: 1 }} />
       <Bottom /> */}
     </>

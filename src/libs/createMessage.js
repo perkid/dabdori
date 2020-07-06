@@ -6,19 +6,13 @@ import getUrl from '../config/environment';
 function createMessage(text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, scroll) {
     let message;
     let quick;
-    // let base = [
-    //     '현물조회',
-    //     '샘플신청',
-    //     '아이템 정보',
-    //     '잘못',
-    //     '안녕하세요',
-    //     ''
-    // ]
+
     const url = getUrl();
 
     // userInfo.role='client'
     // userInfo.specGB='Y'
     // userInfo.priceGB='Y'
+
     if (userInfo.role !== 'employee') {
         handleCompany([{
             custName: userInfo.company_name,
@@ -810,6 +804,8 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                 messageSend(message)
             })
     }
+
+    // 현물조회(고객)
     if (option === 1 && subOption === 4 && blank_pattern.test(text) == true && text.length < 15){
 
         text = `잘못 입력 하셨습니다. 다시 입력 해주세요.`
@@ -860,7 +856,8 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 1,
                         subOption: 5,
                     }
-                    r.forEach(i => message.quickReplies.values.push({ title: i.coloryw, valule: i.coloryw }))
+                    r.forEach(i => message.quickReplies.values.push({ title: i.coloryw, value: i.coloryw }))
+                    message.quickReplies.values.push({title: '전체컬러', value:'전체컬러'})
                     handleSubOption(5)
                     handleItem(item)
                     messageSend(message)
@@ -900,8 +897,100 @@ function createMessage(text, option, subOption, item, userInfo, company, message
             })
         Keyboard.dismiss()
     }
+    if(option ===1 && subOption === 5 && text ==='전체컬러'){
+        axios.post(url + '/api/currentInventory.dab',
+            {
+                    itemName: item,
+                    includeYN: 0
+            }).then((resoponse) => {
+                let r = resoponse.data;
 
-    if (option === 1 && subOption === 5 && text.length < 15) {
+                if (r !== undefined) {
+                    let lastIndex = r.length - 1;
+                    text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
+                    r.map((i, index) => {
+                        index === lastIndex ?
+                            text += `${i.coloryw}\n${i.jaeqty}YD`
+                            :
+                            text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                    })
+
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies: {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
+                    messageSend(message)
+                    //로그입력
+                    axios.post(url+`/api/insertLog.dab`,{
+                        log_gb:'01',
+                        item_code:r[0].itemcode,
+                        item_name:r[0].itemname,
+                        color_name:'전칼라',
+                        user_name:userInfo.user_name,
+                        role: userInfo.role,
+                        cust_name:userInfo.company_name,
+                    })
+                }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
+            })
+        Keyboard.dismiss()
+    }
+
+    if (option === 1 && subOption === 5 && text !=='전체컬러' && text.length < 15) {
         let color = text;
         scroll()
         axios.post(url + '/api/currentInventory.dab',
@@ -2513,6 +2602,10 @@ ${method} ${time === undefined ? '' : time}
                                     value: '스펙과 단가',
                                 },
                                 {
+                                    title: '다른 아이템 조회',
+                                    value: '다른 아이템 조회'
+                                },
+                                {
                                     title: '처음 단계로',
                                     value: '처음 단계로',
                                 },
@@ -2578,7 +2671,7 @@ ${method} ${time === undefined ? '' : time}
                 }
             })
     }
-
+    
     if (text === '업차지' && option === 3 && subOption === 2) {
         axios.post(url+`/api/searchItem.dab`,
         {
@@ -2652,6 +2745,10 @@ ${method} ${time === undefined ? '' : time}
                             {
                                 title: '스펙과 단가',
                                 value: '스펙과 단가',
+                            },
+                            {
+                                title: '다른 아이템 조회',
+                                value: '다른 아이템 조회'
                             },
                             {
                                 title: '처음 단계로',
@@ -2770,6 +2867,10 @@ ${method} ${time === undefined ? '' : time}
                                 value: '스펙과 단가',
                             },
                             {
+                                title: '다른 아이템 조회',
+                                value: '다른 아이템 조회'
+                            },
+                            {
                                 title: '처음 단계로',
                                 value: '처음 단계로',
                             },
@@ -2856,6 +2957,12 @@ ${method} ${time === undefined ? '' : time}
             }
             messageSend(message)
         })
+    }
+    if(text === '다른 아이템 조회'){
+        text = '정보 조회를 원하는 아이템명을\n입력해주세요.';
+        option = 3;
+        subOption = 1;
+        create(text, option, subOption)
     }
     if (option === 4 && subOption ===1 && !text.includes('원하시는') && text.length < 15){
         price = price.replace(',','')
