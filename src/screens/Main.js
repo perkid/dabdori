@@ -14,7 +14,9 @@ import { Notifications } from 'expo';
 import Fab from 'rn-fab';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
-
+import Tab from '../components/Tab';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import getActions from '../static/FABaction';
 
 function Main({ navigation }) {
   const url = getUrl();
@@ -33,56 +35,8 @@ function Main({ navigation }) {
   const [color, setColor] = useState('');
   const [price, setPrice] = useState('');
 
-  
-  const actions = (userInfo.role==='client')?
-  [
-    // Main button - does not need to receive the "text" property.
-    {
-      icon: <Image source={require('../../assets/plus.png')} style={{width:25, height:25}}/>,
-      name: "btn_plus",
-      color: '#1E388D'
-    },
-    // Action Buttons - will be displayed when you tap the main button.
-    {
-      icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
-      name: "btn_user",
-      color: '#ffffff'
-    },
-    {
-      icon: <Image source={require('../../assets/list.png')} style={{width:20, height: 20}}/>,
-      name: "btn_order",
-      color: '#ffffff'
-    },
-    {
-      icon: <Image source={require('../../assets/cart.png')} style={styles.icon}/>,
-      name: "btn_cart",
-      color: '#ffffff'
-    }
-  ] :
-  [
-    // Main button - does not need to receive the "text" property.
-    {
-      icon: <Image source={require('../../assets/plus.png')} style={{width:25, height:25}}/>,
-      name: "btn_plus",
-      color: '#1E388D'
-    },
-    // Action Buttons - will be displayed when you tap the main button.
-    {
-      icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
-      name: "btn_user",
-      color: '#ffffff'
-    },
-    {
-      icon: <Image source={require('../../assets/list.png')} style={{width:20, height: 20}}/>,
-      name: "btn_order",
-      color: '#ffffff'
-    },
-    // {
-    //   icon: <Image source={require('../../assets/logo.png')} style={{width:20, height: 20}}/>,
-    //   name: "btn_test",
-    //   color: '#ffffff'
-    // }
-  ]
+  const actions = getActions(userInfo.role!=='employee')
+    
   
   const [testVisible, setTestVisible] = useState(false);
 
@@ -282,7 +236,7 @@ function Main({ navigation }) {
 
   return (
     <>
-      <Header titleText='답  돌  이' navigation={navigation} main={true} handleOptionReset={handleOptionReset} />
+      <Header titleText='답  돌  이' navigation={navigation} main={true} handleOptionReset={handleOptionReset} app={true}/>
       <View style={styles.container}>
         <GiftedChat
           {...{ messages, onSend }}
@@ -371,41 +325,12 @@ function Main({ navigation }) {
         >
           메세지가 복사되었습니다.
         </Snackbar>
-        {/* <FAB.Group
-          open={fabState}
-          icon='plus'
-          actions={
-            userInfo.role==='client'?
-            [
-              { style: { right: -5, bottom: -40+10 },onPress: () => navigation.navigate('Cart', userInfo) },
-              { icon: 'cart', style: { right: -5, bottom: 15+10 }, onPress: () => navigation.navigate('Cart', userInfo) },
-              { style: { right: -5, bottom: -10+10 }, onPress:()=>navigation.navigate('OrderHistory', userInfo) },
-              { icon: 'file-document-box-outline', style: { right: -5, bottom: 45+10 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
-              { style: { right: -5, bottom: 15+10 }, onPress:()=>navigation.navigate('MyPage', userInfo)},
-              {
-                icon: 'account', style: { right: -5, bottom: 70+10 }, onPress: () =>
-                  navigation.navigate('MyPage', userInfo)
-              },
-            ]
-            :
-            [
-              { style: { right: -5, bottom: -10+10 }, onPress:()=>navigation.navigate('OrderHistory', userInfo) },
-              { icon: 'file-document-box-outline', style: { right: -5, bottom: 45+10 }, onPress: () => navigation.navigate('OrderHistory', userInfo) },
-              { style: { right: -5, bottom: 15+10 }, onPress:()=>navigation.navigate('MyPage', userInfo)},
-              {
-                icon: 'account', style: { right: -5, bottom: 70+10 }, onPress: () =>
-                  navigation.navigate('MyPage', userInfo)
-              },
-            ]
-          }
-          fabStyle={styles.fab}
-          onStateChange={({ fabState }) => handleFabState({ fabState })}
-          onPress={setState}
-        /> */}
+        {/* 새로 추가한 FAB */}
+        {/* 상단 FAB */}
         <Fab
           actions={actions}
-          style={{right: 40, bottom: 140}}
-          rotation={"45deg"}
+          style={{right: 40, top: -55}}
+          rotation={"0deg"}
           onPress={name => {
             if(name == "btn_cart"){
               navigation.navigate('Cart', userInfo)
@@ -421,6 +346,26 @@ function Main({ navigation }) {
             }
           }}
         />
+        {/* 하단 FAB */}
+        {/* <Fab
+          actions={actions}
+          style={{right: 40, bottom:140}}
+          rotation={"45deg"}
+          onPress={name => {
+            if(name == "btn_cart"){
+              navigation.navigate('Cart', userInfo)
+            }
+            if(name == "btn_order"){
+              navigation.navigate('OrderHistory', userInfo)
+            }
+            if(name == "btn_user"){
+              navigation.navigate('MyPage', userInfo)
+            }
+            if(name == "btn_test"){
+              showTest()
+            }
+          }}
+        /> */}
       </View>
       <Portal>
       <Dialog visible={testVisible} onDismiss={hideTest}>
@@ -444,6 +389,7 @@ function Main({ navigation }) {
       </Portal>
       {/* <View style={{ flex: 1 }} />
       <Bottom /> */}
+      <Tab navigation={navigation}/>
     </>
   )
 };
@@ -454,6 +400,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 10,
     paddingVertical: 20,
+    marginBottom:90,
   },
   titleContainer: {
     alignItems: 'center',
