@@ -11,7 +11,7 @@ import Cart from '../screens/Cart';
 import NoticeMain from '../screens/NoticeMain';
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import React from 'react';
-import { setRoute } from '../redux/routeMgt';
+import { setRoute } from '../redux/route';
 import { useDispatch } from 'react-redux';
 
 export default function dabdori(){
@@ -140,7 +140,7 @@ export default function dabdori(){
     <AppContainer
       onNavigationStateChange={(prevState, currentState, action) => {
       const currentRouteName = getActiveRouteName(currentState);
-      const previousRouteName = getActiveRouteName(prevState);
+      // const previousRouteName = getActiveRouteName(prevState);
       dispatch(setRoute(currentRouteName))
       }}
     />

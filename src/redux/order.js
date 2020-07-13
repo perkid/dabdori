@@ -118,7 +118,7 @@ const initialState = {
   }
 }
 
-function orderManagemnet(state = initialState, action) {
+function order(state = initialState, action) {
   if (typeof state === "undefined")
   state = initialState;
   
@@ -187,4 +187,4 @@ function orderManagemnet(state = initialState, action) {
   }
 }
 
-export default orderManagemnet;
+export default order;

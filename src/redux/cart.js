@@ -158,7 +158,7 @@ const initialState = {
     }
 }
 
-function cartManagement(state = initialState, action) {
+function cart(state = initialState, action) {
     if (typeof state === "undefined")
     state = initialState;
     
@@ -229,4 +229,4 @@ function cartManagement(state = initialState, action) {
     }
   }
   
-  export default cartManagement;
+  export default cart;

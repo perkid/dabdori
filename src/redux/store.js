@@ -1,13 +1,14 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import messagesApp from './messagesApp';
 import authentication from './authentication';
-import orderManagement from './orderManagement';
-import cartManagement from './cartManagement';
-import routeMgt from './routeMgt';
+import order from './order';
+import cart from './cart';
+import notice from './notice';
+import route from './route';
 import ReduxThunk from "redux-thunk";
 
 const appReducer = combineReducers({
-    messagesApp, authentication, orderManagement, cartManagement, routeMgt
+    messagesApp, authentication, order, cart, route, notice
 })
 
 const store = createStore(appReducer, applyMiddleware(ReduxThunk));

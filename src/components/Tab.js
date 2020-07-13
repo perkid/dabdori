@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 
 function Tab({ navigation }) {
-    const routeName = useSelector(state => state.routeMgt.routeName)
+    const routeName = useSelector(state => state.route.routeName)
     return (
         <Card style={styles.container}>
             <View style={{flexDirection:'row', flex:1}}>
@@ -13,7 +13,7 @@ function Tab({ navigation }) {
                 style={styles.button}
                 onPress={()=>{navigation.navigate('NoticeMain')}}
             >
-            <MaterialCommunityIcons name='home'  size={40} color={routeName==='Notice'?'#1e388d':'#b7b7b7'}/>
+            <MaterialCommunityIcons name='home'  size={40} color={routeName==='NoticeMain'?'#1e388d':'#b7b7b7'}/>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.button}

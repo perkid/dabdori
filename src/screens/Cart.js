@@ -5,7 +5,7 @@ import CartItem from '../components/CartItem';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { DataTable, Checkbox, Button, Portal, Dialog, TextInput } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { setCartListRequest, deleteCartItemRequest, selectItem, cancelItem, createOrderRequest, createOrder } from '../redux/cartManagement';
+import { setCartListRequest, deleteCartItemRequest, selectItem, cancelItem, createOrderRequest, createOrder } from '../redux/cart';
 
 function Cart({ navigation }){
     const userInfo = navigation.state.params;
@@ -43,9 +43,9 @@ function Cart({ navigation }){
         setRemark('');
     }
 
-    const cartItems = useSelector(state => state.cartManagement.cartList);
-    const selectIndex = useSelector(state => state.cartManagement.selectItem);
-    const createOrderStatus = useSelector(state => state.cartManagement.createOrderStatus);
+    const cartItems = useSelector(state => state.cart.cartList);
+    const selectIndex = useSelector(state => state.cart.selectItem);
+    const createOrderStatus = useSelector(state => state.cart.createOrderStatus);
 
     const handleAllChekedState = () => {
         setAllCheckedState(!allCheckedState)

@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { useSelector, useDispatch } from 'react-redux';
-import { priceConfirmRequest, setPriceFlag, setDetailRequest, setPriceCnt } from '../redux/orderManagement';
+import { priceConfirmRequest, setPriceFlag, setDetailRequest, setPriceCnt } from '../redux/order';
 
 function OrderDetail({ navigation }) {
     function toCommaStringF( number ) {
@@ -18,11 +18,11 @@ function OrderDetail({ navigation }) {
            return number_string.replace( regexp, ',' );
         } 
     }
-    const confirmStatus = useSelector(state => state.orderManagement.confirm);
+    const confirmStatus = useSelector(state => state.order.confirm);
     const user = useSelector(state => state.authentication.user);
-    const orders = useSelector(state => state.orderManagement.orders);
-    const detail = useSelector(state => state.orderManagement.detail);
-    const detailStatus = useSelector(state => state.orderManagement.detailStatus);
+    const orders = useSelector(state => state.order.orders);
+    const detail = useSelector(state => state.order.detail);
+    const detailStatus = useSelector(state => state.order.detailStatus);
     const dispatch = useDispatch();
 
     const [ visible, setVisible ] = useState(false)

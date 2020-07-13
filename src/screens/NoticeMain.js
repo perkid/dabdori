@@ -11,18 +11,29 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 import SliderEntry from '../components/SliderEntry';
 import { sliderWidth, itemWidth } from '../styles/SliderEntry.style';
 import cStyles, { colors } from '../styles/index.style';
-import { ENTRIES1 } from '../static/entries';
-import { notice } from '../static/notice';
+// import { ENTRIES1 } from '../static/entries';
+// import { notice } from '../static/notice';
 import Notice from '../components/Notice';
+import {logo } from '../static/base64logo';
 
 function NoticeMain({ navigation}) {
     const userInfo = useSelector(state => state.authentication.user);
     const actions = getActions(userInfo.role!=='employee')
-
+    
+    const notice = useSelector(state => state.notice.notice.noticeList);
+    const sortedNotice = notice.sort((a, b)=>{
+      return a.index < b.index;
+    })
+    
+    const itemsPerPage = 5;
     const [noticeVisible, setNoticeVisible] = useState(false);
     const [noticeIndex, setNoticeIndex] = useState(0);
-
-
+    const [page, setPage] = useState(0);
+    const from = page * itemsPerPage;
+    const to = (page + 1) * itemsPerPage;
+    const n = sortedNotice.slice(from, to)
+    const nop = Math.ceil(notice.length / itemsPerPage);
+    const reverseNotice = sortedNotice.reverse()
     const showNotice = () => setNoticeVisible(true);
 
     const hideNotice = () => setNoticeVisible(false);
@@ -30,6 +41,19 @@ function NoticeMain({ navigation}) {
     const firstItem = 0;
     const [slider1ActiveSlide, setSlider1ActiveSlide] = useState(firstItem);
     const [slider1Ref, setSlider1Ref] = useState(null);
+
+    const ENTRIES2 = []
+
+    reverseNotice.slice(notice.length-3, notice.length).map((notice)=>{
+      ENTRIES2.push({
+        setNoticeIndex:setNoticeIndex,
+        showNotice:showNotice,
+        index:notice.index,
+        title:notice.title,
+        subtitle:'',
+        illustration:(notice.image==='')?logo:notice.image
+      })
+    });
 
     function _renderItemWithParallax ({item, index}, parallaxProps) {
       return (
@@ -47,7 +71,7 @@ function NoticeMain({ navigation}) {
             <View style={styles.notice}>
             <Carousel
                   ref={c => setSlider1Ref(c)}
-                  data={ENTRIES1}
+                  data={ENTRIES2}
                   renderItem={_renderItemWithParallax}
                   sliderWidth={sliderWidth}
                   itemWidth={itemWidth}
@@ -82,27 +106,27 @@ function NoticeMain({ navigation}) {
             <View style={styles.container}>
               <DataTable>
               {
-                notice.map((notice,i)=>(
+                n.map((notice,i)=>(
                   <DataTable.Row 
                   key={i}
                   onPress={()=>{
-                    setNoticeIndex(i)
+                    setNoticeIndex(notice.index-1)
                     showNotice()
                   }}>
-                  <DataTable.Cell style={{flex:1}}>{i+1}</DataTable.Cell>
-                  <DataTable.Cell style={{flex:9}}>{notice.title}</DataTable.Cell>
+                  <DataTable.Cell style={{flex:1}}>{notice.index}</DataTable.Cell>
+                  <DataTable.Cell style={{flex:9}}>{notice.title+' '+notice.subtitle}</DataTable.Cell>
                   <DataTable.Cell></DataTable.Cell>
                 </DataTable.Row>
-                )).reverse()
+                ))
               }
               <DataTable.Pagination
-      page={1}
-      numberOfPages={notice.length}
-      onPageChange={page => {
-        console.log(page);
-      }}
-      label={`1-3 of ${notice.length}`}
-    />
+                page={page}
+                numberOfPages={nop}
+                onPageChange={page => {
+                  setPage(page)
+                }}
+                label={`${from + 1}-${notice.length<to?notice.length:to} of ${notice.length}`}
+              />
               </DataTable>
             </View>
 
@@ -139,40 +163,14 @@ function NoticeMain({ navigation}) {
 
 const styles = StyleSheet.create({
     notice: {
-        paddingTop:20,
-        flex: 0.9,
+        paddingTop:40,
+        flex: 1,
         // backgroundColor: `#1E388D`,
         backgroundColor:'#ffffff',
     },
-    noticeContianer: {
-        flex:1,
-        // margin: 20,
-        backgroundColor:'#FFF',
-        justifyContent:'center'
-    },
     container: {
         flex: 1,
-        // backgroundColor: `#FFF`,
-        paddingBottom: 30
-    },
-    menuContainer: {
-        flex: 1,
-        // marginTop: 10,
-        // margin:10,
-        // marginHorizontal: 10,
-        flexDirection: 'row',
-        // padding: 3
-    },
-    menu: {
-        flex: 1,
-        backgroundColor: 'white',
-        borderColor:'#656565',
-        // margin: 10,
-        // borderRadius:10,
-        // borderTopWidth:0.5,
-        // borderLeftWidth:0.5,
-        // borderBottomWidth:2.5,
-        // borderRightWidth:2.5,
+        backgroundColor: `#FFF`,
     },
     button:{
         flex:1,

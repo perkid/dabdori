@@ -14,7 +14,7 @@ const initialState = {
   routeName: 'INIT'
 };
 
-function routeMgt(state = initialState, action) {
+function route(state = initialState, action) {
   switch (action.type) {
     case SET_ROUTE:
         return update(state, {
@@ -25,4 +25,4 @@ function routeMgt(state = initialState, action) {
   }
 };
 
-export default routeMgt;
+export default route;

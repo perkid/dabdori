@@ -4,7 +4,7 @@ import { View, StyleSheet, Text, Image } from 'react-native';
 import { Button, Searchbar, Divider } from 'react-native-paper';
 import Header from '../components/Header';
 import Order from '../components/Order';
-import { setOrderRequest } from '../redux/orderManagement';
+import { setOrderRequest } from '../redux/order';
 import PerriodSetting from '../components/PeriodSetting';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useEffect } from 'react';
@@ -15,14 +15,14 @@ import getActions from '../static/FABaction';
 
 function OrderHistory({ navigation }) {
   const user = useSelector(state => state.authentication.user);
-  const orders = useSelector(state => state.orderManagement.orders);
+  const orders = useSelector(state => state.order.orders);
   const [firstQuery, setFirstQuery] = useState('');
   const [visible, setVisible] = useState(false);
   const [startDate, setStartDate] = useState(new Date('2019-01-01'));
   const [endDate, setEndDate] = useState(new Date());
   const [status, setStatus] = useState('all');
   const dispatch = useDispatch();
-  const orderStatus = useSelector(state => state.orderManagement.orderStatus);
+  const orderStatus = useSelector(state => state.order.orderStatus);
   const _showDialog = () => setVisible(true)
   const _hideDialog = () => setVisible(false)
 
