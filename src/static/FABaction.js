@@ -11,12 +11,17 @@ export default function getActions(boolean){
               name: "btn_plus",
               color: '#1E388D'
             },
+            // Action Buttons - will be displayed when you tap the main button.
             {
               icon: <Image source={require('../../assets/cart.png')} style={styles.icon}/>,
               name: "btn_cart",
               color: '#ffffff'
             },
-            // Action Buttons - will be displayed when you tap the main button.
+            {
+              icon: <Image source={require('../../assets/question.png')} style={styles.icon}/>,
+              name: "btn_qna",
+              color: '#ffffff'
+            },
             {
               icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
               name: "btn_user",
@@ -33,6 +38,11 @@ export default function getActions(boolean){
               color: '#1E388D'
             },
             // Action Buttons - will be displayed when you tap the main button.
+            {
+              icon: <Image source={require('../../assets/question.png')} style={styles.icon}/>,
+              name: "btn_qna",
+              color: '#ffffff'
+            },
             {
               icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
               name: "btn_user",

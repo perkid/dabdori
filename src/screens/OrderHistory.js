@@ -185,16 +185,19 @@ const actions = getActions(user.role!=='employee')
             rotation={"0deg"}
             onPress={name => {
                 if(name == "btn_cart"){
-                navigation.navigate('Cart', user)
+                  navigation.navigate('Cart', user)
                 }
                 if(name == "btn_order"){
-                navigation.navigate('OrderHistory', user)
+                  navigation.navigate('OrderHistory', user)
                 }
                 if(name == "btn_user"){
-                navigation.navigate('MyPage', user)
+                  navigation.navigate('MyPage', user)
+                }
+                if(name == "btn_qna"){
+                  navigation.navigate('QNA', user)
                 }
                 if(name == "btn_test"){
-                showTest()
+                  showTest()
                 }
             }}
             />

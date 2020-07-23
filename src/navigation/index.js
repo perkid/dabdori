@@ -13,6 +13,7 @@ import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import React from 'react';
 import { setRoute } from '../redux/route';
 import { useDispatch } from 'react-redux';
+import QNA from '../screens/QNA';
 
 export default function dabdori(){
 
@@ -47,6 +48,9 @@ export default function dabdori(){
       Cart: {
         screen: Cart
       },
+      QNA: {
+        screen: QNA
+      }
     },
     {
       initialRouteName: 'NoticeMain',
@@ -68,6 +72,9 @@ export default function dabdori(){
       Cart: {
         screen: Cart
       },
+      QNA: {
+        screen: QNA
+      }
     },
     {
       initialRouteName: 'Main',
@@ -93,6 +100,9 @@ export default function dabdori(){
       Cart: {
         screen: Cart
       },
+      QNA: {
+        screen: QNA
+      }
     },
     {
       initialRouteName: 'OrderHistory',

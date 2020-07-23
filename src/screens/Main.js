@@ -24,7 +24,6 @@ function Main({ navigation }) {
   const messages = useSelector(state => state.messagesApp.messages)
   const dispatch = useDispatch()
   const onSend = message => dispatch(sendMessage(message))
-  const [fabState, setState] = useState(false);
   const [snackState, setSnackState] = useState(false);
   const [option, setOption] = useState(0);
   const [subOption, setSubOption] = useState(0);
@@ -94,9 +93,10 @@ function Main({ navigation }) {
     })
   };
   registerForPushNotificationsAsync()
+  
   useEffect(() => {
     if (userInfo.status === undefined) {
-      dispatch(setText(userInfo.dabdoriText.welcome_text))
+      dispatch(setText(userInfo.dabdoriText.welcome_text, userInfo.role))
     }
   }, [userInfo])
   
@@ -115,12 +115,10 @@ function Main({ navigation }) {
       }
     }
   }, [pToken])
+
   const handleOptionReset = () => {
     setOption(0);
     setSubOption(0);
-  }
-  const handleFabState = () => {
-    setState(!fabState);
   }
 
   const handleSnackState = () => {
@@ -157,6 +155,7 @@ function Main({ navigation }) {
   const messageSend = (message) => {
     onSend(GiftedChat.append(messages, [message]))
   }
+
   const handleOption = (op) => {
     setOption(op)
   }
@@ -340,6 +339,9 @@ function Main({ navigation }) {
             }
             if(name == "btn_user"){
               navigation.navigate('MyPage', userInfo)
+            }
+            if(name == "btn_qna"){
+              navigation.navigate('QNA', userInfo)
             }
             if(name == "btn_test"){
               showTest()

@@ -25,7 +25,7 @@ export default StyleSheet.create({
         paddingHorizontal: itemHorizontalMargin,
         paddingBottom: 18, // needed for shadow
         // marginLeft: -15
-        marginTop: -20
+        marginTop: -20,
     },
     shadow: {
         position: 'absolute',
@@ -47,7 +47,14 @@ export default StyleSheet.create({
         borderTopRightRadius: entryBorderRadius
     },
     imageContainerEven: {
-        backgroundColor: colors.black
+        backgroundColor: colors.white
+    },
+    imageLogo: {
+        ...StyleSheet.absoluteFillObject,
+        resizeMode:'contain',
+        borderRadius: IS_IOS ? entryBorderRadius : 0,
+        borderTopLeftRadius: entryBorderRadius,
+        borderTopRightRadius: entryBorderRadius
     },
     image: {
         ...StyleSheet.absoluteFillObject,

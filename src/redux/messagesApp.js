@@ -6,10 +6,11 @@ export const RESET_MESSAGE = 'RESET_MESSAGE';
 export const CLEAR_MESSAGE = 'CLEAR_MESSAGE';
 // Action Creators
 
-export function setText(text){
+export function setText(text, role){
   return {
     type: SET_TEXT,
-    text: text
+    text: text,
+    role: role
   }
 };
 
@@ -20,7 +21,7 @@ export function sendMessage(newMessage = []) {
   }
 };
 
-export function resetMessage() {
+export function resetMessage(role) {
   return {
     type: RESET_MESSAGE,
     message: {
@@ -29,30 +30,60 @@ export function resetMessage() {
       text: '처음으로 돌아갑니다.',
       quickReplies: {
         type: 'radio',
-        values: [
-          {
-            title: '현물조회',
-            value: 'inquiry',
+        values: (role)!=='employee'?
+            [
+              {
+                title: '현물조회',
+                value: '현물조회',
+              },
+              {
+                title: '샘플신청',
+                value: '샘플신청',
+              },
+              {
+                title: '아이템 정보',
+                value: '아이템 정보',
+              },
+              {
+                title: '문의사항',
+                value: '문의사항',
+              }
+              // {
+              //   title: '푸시 테스트',
+              //   value: '푸시 테스트'
+              // }
+            ]
+            :
+            [
+              {
+                title: '현물조회',
+                value: '현물조회',
+              },
+              {
+                title: '샘플신청',
+                value: '샘플신청',
+              },
+              {
+                title: '아이템 정보',
+                value: '아이템 정보',
+              },
+              // {
+              //   title: '푸시 테스트',
+              //   value: '푸시 테스트'
+              // }
+            ]
+            ,
           },
-          {
-            title: '샘플신청',
-            value: 'sample',
-          },
-          {
-            title: '아이템 정보',
-            value: 'item',
-          },
-        ],
-      },
       user: 2,
     }
   }
 }
 
-export function clearMessage(text) {
+export function clearMessage(text, role) {
   return {
     type: CLEAR_MESSAGE,
-    text: text
+    text: text,
+    role: role
   }
 }
 
@@ -72,7 +103,31 @@ function messagesReducer(state = initialState, action) {
           createdAt: new Date(),
           quickReplies: {
             type: 'radio',
-            values: [
+            values: (action.role)!=='employee'?
+            [
+              {
+                title: '현물조회',
+                value: '현물조회',
+              },
+              {
+                title: '샘플신청',
+                value: '샘플신청',
+              },
+              {
+                title: '아이템 정보',
+                value: '아이템 정보',
+              },
+              {
+                title: '문의사항',
+                value: '문의사항',
+              }
+              // {
+              //   title: '푸시 테스트',
+              //   value: '푸시 테스트'
+              // }
+            ]
+            :
+            [
               {
                 title: '현물조회',
                 value: '현물조회',
@@ -89,7 +144,8 @@ function messagesReducer(state = initialState, action) {
               //   title: '푸시 테스트',
               //   value: '푸시 테스트'
               // }
-            ],
+            ]
+            ,
           },
           user: {
             _id: 2,
@@ -113,20 +169,49 @@ function messagesReducer(state = initialState, action) {
           createdAt: new Date(),
           quickReplies: {
             type: 'radio',
-            values: [
+            values: (action.role)!=='employee'?
+            [
               {
                 title: '현물조회',
-                value: 'inquiry',
+                value: '현물조회',
               },
               {
                 title: '샘플신청',
-                value: 'sample',
+                value: '샘플신청',
               },
               {
                 title: '아이템 정보',
-                value: 'item',
+                value: '아이템 정보',
               },
-            ],
+              {
+                title: '문의사항',
+                value: '문의사항',
+              }
+              // {
+              //   title: '푸시 테스트',
+              //   value: '푸시 테스트'
+              // }
+            ]
+            :
+            [
+              {
+                title: '현물조회',
+                value: '현물조회',
+              },
+              {
+                title: '샘플신청',
+                value: '샘플신청',
+              },
+              {
+                title: '아이템 정보',
+                value: '아이템 정보',
+              },
+              // {
+              //   title: '푸시 테스트',
+              //   value: '푸시 테스트'
+              // }
+            ]
+            ,
           },
           user: {
             _id: 2,

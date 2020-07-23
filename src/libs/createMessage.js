@@ -37,27 +37,54 @@ function createMessage(text, option, subOption, item, userInfo, company, message
         let quickReplies;
 
         if (quick === 1) {
-            quickReplies = {
-                type: 'radio',
-                values: [
-                    {
-                        title: '현물조회',
-                        value: '현물조회',
-                    },
-                    {
-                        title: '샘플신청',
-                        value: '샘플신청',
-                    },
-                    {
-                        title: '아이템 정보',
-                        value: '아이템 정보',
-                    },
-                    // {
-                    //     title: '푸시 테스트',
-                    //     value: '푸시 테스트'
-                    // }
-                ],
-            }
+            (userInfo.role==='employee')?
+                quickReplies = {
+                    type: 'radio',
+                    values: [
+                        {
+                            title: '현물조회',
+                            value: '현물조회',
+                        },
+                        {
+                            title: '샘플신청',
+                            value: '샘플신청',
+                        },
+                        {
+                            title: '아이템 정보',
+                            value: '아이템 정보',
+                        },
+                        // {
+                        //     title: '푸시 테스트',
+                        //     value: '푸시 테스트'
+                        // }
+                    ],
+                }
+                :
+                quickReplies = {
+                    type: 'radio',
+                    values: [
+                        {
+                            title: '현물조회',
+                            value: '현물조회',
+                        },
+                        {
+                            title: '샘플신청',
+                            value: '샘플신청',
+                        },
+                        {
+                            title: '아이템 정보',
+                            value: '아이템 정보',
+                        },
+                        {
+                            title: '문의사항',
+                            value: '문의사항',
+                        }
+                        // {
+                        //     title: '푸시 테스트',
+                        //     value: '푸시 테스트'
+                        // }
+                    ],
+                }
         }
         if (quick === 2) {
             quickReplies = {
@@ -888,6 +915,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 title: '아이템 정보',
                                 value: '아이템 정보',
                             },
+                            {
+                                title: '문의사항',
+                                value: '문의사항',
+                            }
                         ],
                     },
                     option: 0,
@@ -937,6 +968,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                     title: '아이템 정보',
                                     value: '아이템 정보',
                                 },
+                                {
+                                    title: '문의사항',
+                                    value: '문의사항',
+                                }
                             ],
                         },
                         option: 0,
@@ -980,6 +1015,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 title: '아이템 정보',
                                 value: '아이템 정보',
                             },
+                            {
+                                title: '문의사항',
+                                value: '문의사항',
+                            }
                         ],
                     },
                     option: 0,
@@ -1165,6 +1204,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 title: '아이템 정보',
                                 value: '아이템 정보',
                             },
+                            {
+                                title: '문의사항',
+                                value: '문의사항',
+                            }
                         ],
                     },
                     option: 0,
@@ -1181,6 +1224,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
         subOption = 6;
         create(text, option, subOption)
     }
+
     if (text === '장바구니 담기'){
         axios.post(url+`/api/searchItem.dab`,
         {
@@ -1276,6 +1320,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 title: '아이템 정보',
                                 value: '아이템 정보',
                             },
+                            {
+                                title: '문의사항',
+                                value: '문의사항',
+                            }
                         ],
                     },
                     option: 0,
@@ -1964,33 +2012,67 @@ ${method} ${time === undefined ? '' : time}
                 text = `신청하신 내용이 정상적으로 등\n록되었습니다.\n\n주문번호는 ${response.data.cause}\n입니다.`;
                 handleOption(0)
                 handleSubOption(0)
-
-                message = {
-                    createdAt: new Date(),
-                    _id: Math.round(Math.random() * 1000000),
-                    text: text,
-                    user: {
-                        _id: 2
-                    },
-                    quickReplies : {
-                        type: 'radio',
-                        values: [
-                            {
-                                title: '현물조회',
-                                value: '현물조회',
-                            },
-                            {
-                                title: '샘플신청',
-                                value: '샘플신청',
-                            },
-                            {
-                                title: '아이템 정보',
-                                value: '아이템 정보',
-                            },
-                        ],
-                    },
-                    option: 0,
-                    subOption: 0,
+                if(userInfo.role==='employee'){
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
+                }
+                if(userInfo.role!=='employee'){
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                                {
+                                    title: '문의사항',
+                                    value: '문의사항',
+                                }
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
                 }
 
                 let deliType = (item.deli_type===20)?'02':'01';
@@ -2124,32 +2206,67 @@ ${method} ${time === undefined ? '' : time}
                 handleOption(0)
                 handleSubOption(0)
 
-                message = {
-                    createdAt: new Date(),
-                    _id: Math.round(Math.random() * 1000000),
-                    text: text,
-                    user: {
-                        _id: 2
-                    },
-                    quickReplies : {
-                        type: 'radio',
-                        values: [
-                            {
-                                title: '현물조회',
-                                value: '현물조회',
-                            },
-                            {
-                                title: '샘플신청',
-                                value: '샘플신청',
-                            },
-                            {
-                                title: '아이템 정보',
-                                value: '아이템 정보',
-                            },
-                        ],
-                    },
-                    option: 0,
-                    subOption: 0,
+                if(userInfo.role==='employee'){
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
+                }
+                if(userInfo.role!=='employee'){
+                    message = {
+                        createdAt: new Date(),
+                        _id: Math.round(Math.random() * 1000000),
+                        text: text,
+                        user: {
+                            _id: 2
+                        },
+                        quickReplies : {
+                            type: 'radio',
+                            values: [
+                                {
+                                    title: '현물조회',
+                                    value: '현물조회',
+                                },
+                                {
+                                    title: '샘플신청',
+                                    value: '샘플신청',
+                                },
+                                {
+                                    title: '아이템 정보',
+                                    value: '아이템 정보',
+                                },
+                                {
+                                    title: '문의사항',
+                                    value: '문의사항',
+                                }
+                            ],
+                        },
+                        option: 0,
+                        subOption: 0,
+                    }
                 }
 
                 let deliType = (item.deli_type===20)?'02':'01';
@@ -2313,6 +2430,10 @@ ${method} ${time === undefined ? '' : time}
                                 title: '아이템 정보',
                                 value: '아이템 정보',
                             },
+                            {
+                                title: '문의사항',
+                                value: '문의사항',
+                            }
                         ],
                     },
                     option: 0,
@@ -2454,6 +2575,10 @@ ${method} ${time === undefined ? '' : time}
                                 title: '아이템 정보',
                                 value: '아이템 정보',
                             },
+                            {
+                                title: '문의사항',
+                                value: '문의사항',
+                            }
                         ],
                     },
                     option: 0,
@@ -2999,6 +3124,10 @@ ${method} ${time === undefined ? '' : time}
                             title: '아이템 정보',
                             value: '아이템 정보',
                         },
+                        {
+                            title: '문의사항',
+                            value: '문의사항',
+                        }
                     ],
                 },
                 option: 0,
@@ -3045,7 +3174,92 @@ ${method} ${time === undefined ? '' : time}
     //     text = '푸시를 보내고처음으로 돌아갑니다.';
     //     create(text, 0, 0, 1)
     // }
-    
+
+    // 문의사항
+    if(text === '문의사항'){
+        text= '문의사항을 입력해주세요.';
+        option = 6;
+        subOption = 1;
+        create(text, option, subOption);
+    }
+
+    if(option === 6 && subOption === 1 && !text.includes('문의사항을 입력해주세요.')){
+        axios.post(url + `/api/insertQna.dab`,
+        {
+            role: userInfo.role,
+            user_id: userInfo.user_id,
+            content: text,
+        }).then((response) => {
+            text = '문의사항이 전달 되었습니다.'
+            handleOption(0)
+            handleSubOption(0);
+            message = {
+                createdAt: new Date(),
+                _id: Math.round(Math.random() * 1000000),
+                text: text,
+                user: {
+                    _id: 2
+                },
+                quickReplies: {
+                    type: 'radio',
+                    values: [
+                        {
+                            title: '현물조회',
+                            value: '현물조회',
+                        },
+                        {
+                            title: '샘플신청',
+                            value: '샘플신청',
+                        },
+                        {
+                            title: '아이템 정보',
+                            value: '아이템 정보',
+                        },
+                        {
+                            title: '문의사항',
+                            value: '문의사항',
+                        }
+                    ],
+                },
+                option: 0,
+                subOption: 0,
+            }
+            messageSend(message)
+        }).catch((err)=>{
+            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies: {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                messageSend(message)
+        })
+    }
+
     if (text === '처음 단계로' || option === 5) {
         text = '처음으로 돌아갑니다.';
         create(text, 0, 0, 1)

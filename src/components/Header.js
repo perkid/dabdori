@@ -4,8 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { resetMessage, clearMessage } from '../redux/messagesApp';
 import { Appbar, Title, IconButton, Drawer } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-// import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import SimplePopupMenu from 'react-native-simple-popup-menu'
 
 function Header({ titleText, navigation, main, handleOptionReset, auth, app }) {
 
@@ -15,30 +13,13 @@ function Header({ titleText, navigation, main, handleOptionReset, auth, app }) {
 
   const first = () => {
     handleOptionReset()
-    dispatch(resetMessage())
+    dispatch(resetMessage(userInfo.role))
   }
   const clearChat = () => {
     handleOptionReset()
-    dispatch(clearMessage(userInfo.dabdoriText.welcome_text))
+    dispatch(clearMessage(userInfo.dabdoriText.welcome_text, userInfo.role))
   }
 
-  const items = (userInfo.role!=='employee')?[
-    { id: '장바구니', label: '장바구니' },
-    { id: '계정정보', label: '계정정보' },
-  ]:[
-    { id: '계정정보', label: '계정정보'}
-  ]
-  // const [menu, setMenu] = useState(null);
-  
-  // const setMenuRef = (ref) => {
-  //   setMenu(ref)
-  // }
-  // const hideMenu = () => {
-  //   menu.hide();
-  // }
-  // const showMenu = () => {
-  //   menu.show();
-  // }
   return (
     <Appbar.Header style={styles.headerContainer}>
       <TouchableOpacity onPress={() => { main ? first() : navigation.goBack() }}>
@@ -62,43 +43,13 @@ function Header({ titleText, navigation, main, handleOptionReset, auth, app }) {
       />}
       {
         app?
-        // <SimplePopupMenu
-        //   items={items}
-        //   onSelect={(select)=>{
-        //     if(select.id==='계정정보'){
-        //       navigation.navigate('MyPage', userInfo)
-        //     }
-        //     if(select.id==='장바구니'){
-        //       navigation.navigate('Cart', userInfo)
-        //     }
-        //   }}
-        //   onCancel={() => {}}>
           <IconButton
         icon='menu'
         size={30}
         color='white'
       />
-      // {/* </SimplePopupMenu> */}
         :undefined
       }
-      {/* {
-        app? <View style={{marginTop:5}}><Menu
-        ref={setMenuRef}
-        button={<IconButton
-          icon='menu'
-          size={30}
-          color='white'
-          onPress={() => showMenu()}
-        />}
-        >
-        <MenuItem style={{backgroundColor:'#1e388d'}}/>
-        <MenuItem onPress={hideMenu}>장바구니</MenuItem>
-        <MenuDivider/>
-        <MenuItem onPress={hideMenu}>계정정보</MenuItem>
-      </Menu>
-      </View>
-      : undefined
-      } */}
       
     </Appbar.Header>
   )

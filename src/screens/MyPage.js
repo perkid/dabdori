@@ -51,7 +51,7 @@ function MyPage({ navigation }) {
               </Text>
             </DataTable.Cell>
             <DataTable.Cell numeric={true}>
-              >
+              {'>'}
             </DataTable.Cell>
           </DataTable.Row>
           <DataTable.Row onPress={() => {
@@ -63,7 +63,7 @@ function MyPage({ navigation }) {
               </Text>
             </DataTable.Cell>
             <DataTable.Cell numeric={true}>
-              >
+            {'>'}
             </DataTable.Cell>
           </DataTable.Row>
         </DataTable>
