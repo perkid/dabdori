@@ -223,7 +223,6 @@ function Cart({ navigation }){
                 <DataTable style={{marginLeft:10, maxHeight:300}}>
                     <DataTable.Header style={{justifyContent:'center', alignItems:'center'}}>
                         <Checkbox.Android status={allCheckedState ? 'checked' : 'unchecked'} onPress={()=>{handleAllChekedState()}} color='#1E388D'></Checkbox.Android>
-                        {/* <DataTable.Title style={styles.tableText}><Text style={styles.titleText}>업체명</Text></DataTable.Title> */}
                         <DataTable.Title style={styles.tableText}><Text style={styles.titleText}>아이템명</Text></DataTable.Title>
                         <DataTable.Title style={styles.tableText}><Text style={styles.titleText}>컬러명</Text></DataTable.Title>
                         <DataTable.Title style={styles.tableText}><Text style={styles.titleText}>수량(YD)</Text></DataTable.Title>

@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import { ParallaxImage } from 'react-native-snap-carousel';
 import styles from '../styles/SliderEntry.style';
+import { Platform } from 'react-native';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -25,37 +26,54 @@ export default class SliderEntry extends Component {
     };
 
     get image () {
-        const { data: { illustration }, parallax, parallaxProps, even } = this.props;
-        if(illustration.length!==0){
-            return <View style={{backgroundColor:'white', flex:1, justifyContent:'center', alignItems:'center'}}>
-                <View style={{backgroundColor:`#${illustration[0].html_no}`, width:150, height:150}}>
-                </View>
-                </View>
+        const { data: { illustration, img_data }, parallax, parallaxProps, even } = this.props;
+        // if(illustration.length!==0){
+        //     // console.log(illustration)
+        //     return <View style={{backgroundColor:'white', flex:1, justifyContent:'center', alignItems:'center'}}>
+        //         <View style={{backgroundColor:`#${illustration[0].html_no}`, width:150, height:150}}>
+        //         </View>
+        //         </View>
                 
+        // } else {
+        //     return <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+        //         <Image
+        //                 source={(illustration)===''?require('../../assets/logo.png'):undefined}
+        //                 style={{width:100, height:100 }}
+        //             />
+        //         </View>
+        //     // return parallax ? (
+        //     //     <ParallaxImage
+        //     //       source={(illustration)===''?require('../../assets/img1.png'):undefined}
+        //     //       containerStyle={[styles.imageContainer, even ? styles.imageContainerEven : {}]}
+        //     //       style={(illustration)===''?styles.imageLogo:styles.image}
+        //     //       parallaxFactor={0.35}
+        //     //       showSpinner={true}
+        //     //       spinnerColor={even ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.25)'}
+        //     //       {...parallaxProps}
+        //     //     />
+        //     // ) : (
+        //     //     <Image
+        //     //       source={{ uri: illustration }}
+        //     //       style={styles.image}
+        //     //     />
+        //     // );
+        // }
+        if(img_data!==''){
+            return <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+            <Image
+                    source={{uri:`data:image/png;base64,${img_data}`}}
+                    style={(Platform.OS == "ios")? {width:slideWidth*0.7, height:slideHeight*0.6}:{width:slideWidth*0.6, height:slideHeight*0.6}}
+                />
+            </View>
         } else {
             return <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                 <Image
-                        source={(illustration)===''?require('../../assets/logo.png'):undefined}
-                        style={{width:100, height:100 }}
+                        source={require('../../assets/logo.png')}
+                        style={{width:150, height:150 }}
                     />
                 </View>
-            // return parallax ? (
-            //     <ParallaxImage
-            //       source={(illustration)===''?require('../../assets/img1.png'):undefined}
-            //       containerStyle={[styles.imageContainer, even ? styles.imageContainerEven : {}]}
-            //       style={(illustration)===''?styles.imageLogo:styles.image}
-            //       parallaxFactor={0.35}
-            //       showSpinner={true}
-            //       spinnerColor={even ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.25)'}
-            //       {...parallaxProps}
-            //     />
-            // ) : (
-            //     <Image
-            //       source={{ uri: illustration }}
-            //       style={styles.image}
-            //     />
-            // );
         }
+        
     }
 
     render () {

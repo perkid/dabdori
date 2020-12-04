@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View, Dimensions, Platform} from 'react-native';
 import { FAB, DataTable, Portal } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import Fab from 'rn-fab';
@@ -17,6 +17,10 @@ import { setNoticeTopListRequest, setNoticeBodyListRequest, getNotyDetailRequest
 
 function NoticeMain({ navigation }) {
 
+  const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
+  const r = viewportWidth/12;
+  const t = Platform.OS==='ios' ? 45 : 25;
   const userInfo = useSelector(state => state.authentication.user);
   const topList = useSelector(state => state.notice.notice.topList);
   const bodyList = useSelector(state => state.notice.notice.bodyList);
@@ -54,11 +58,13 @@ function NoticeMain({ navigation }) {
         index: i,
         title: notice.title,
         subtitle: '',
-        illustration: notice.data_list.length === 0 ? '' : notice.data_list
+        illustration: notice.data_list.length === 0 ? '' : notice.data_list, // 칼라정보
+        img_data: notice.img_data === null ? '' : notice.img_data // 이미지
       })
     })
   }
 
+  // console.log(topList)
   function _renderItemWithParallax({ item, index }, parallaxProps) {
     return (
       <SliderEntry
@@ -69,6 +75,7 @@ function NoticeMain({ navigation }) {
       />
     );
   }
+  
 
   // 게시판 공지
   const [noticeBodyVisible, setNoticeBodyVisible] = useState(false);
@@ -77,8 +84,8 @@ function NoticeMain({ navigation }) {
 
   const hideBodyNotice = () => setNoticeBodyVisible(false);
 
-  const handelDetail = (noty_id) => {
-    dispatch(getNotyDetailRequest(noty_id))
+  const handleDetail = (noty_id, img_data) => {
+    dispatch(getNotyDetailRequest(noty_id, img_data))
   }
 
   useEffect(() => {
@@ -174,6 +181,8 @@ function NoticeMain({ navigation }) {
             visible={noticeVisible}
             hideNotice={hideNotice}
             notice={topList[noticeIndex]}
+            role={userInfo.role}
+            inventoryInquiry={inventoryInquiry}
           /> : undefined
         }
       </Portal>
@@ -186,9 +195,9 @@ function NoticeMain({ navigation }) {
                 <DataTable.Row
                   key={i}
                   onPress={() => {
-                    handelDetail(notice.noty_id)
+                    handleDetail(notice.noty_id, notice.img_data)
                   }}>
-                  <DataTable.Cell style={{ flex: 1 }}>{notice.noty_id}</DataTable.Cell>
+                  <DataTable.Cell style={{ flex: 0.3 }}></DataTable.Cell>
                   <DataTable.Cell style={{ flex: 9 }}>{notice.title}</DataTable.Cell>
                   <DataTable.Cell></DataTable.Cell>
                 </DataTable.Row>
@@ -212,6 +221,9 @@ function NoticeMain({ navigation }) {
               visible={noticeBodyVisible}
               hideNotice={hideBodyNotice}
               notice={detail.detail}
+              img={detail.img_data}
+              role={userInfo.role}
+              inventoryInquiry={inventoryInquiry}
             /> : undefined
         }
       </Portal>
@@ -224,7 +236,7 @@ function NoticeMain({ navigation }) {
       {/* 햄버거 메뉴 */}
       <Fab
         actions={actions}
-        style={{ right: 40, top: 45 }}
+        style={{ right: r, top: t }}
         rotation={"0deg"}
         onPress={name => {
           if (name == "btn_cart") {

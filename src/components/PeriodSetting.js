@@ -148,34 +148,6 @@ function PeriodSetting({ visible, _hideDialog, startDate, endDate, getFormatDate
                             </View>
                         </View>
                     </DataTable.Row>
-                    {/* <DataTable.Row>
-                        <View style={styles.radioContainer}>
-                            <View style={styles.radio}>
-                                <RadioButton.Android
-                                    color='#1E388D'
-                                    value="1"
-                                    status={role === '1' ? 'checked' : 'unchecked'}
-                                    onPress={() => setRole('1')}
-                                /><Text>고객용</Text>
-                            </View>
-                            <View style={styles.radio}>
-                                <RadioButton.Android
-                                    color='#1E388D'
-                                    value="2"
-                                    status={role === '2' ? 'checked' : 'unchecked'}
-                                    onPress={() => setRole('2')}
-                                /><Text>직원용</Text>
-                            </View>
-                            <View style={styles.radio}>
-                                <RadioButton.Android
-                                    color='#1E388D'
-                                    value="all"
-                                    status={role === 'all' ? 'checked' : 'unchecked'}
-                                    onPress={() => setRole('all')}
-                                /><Text>전체</Text>
-                            </View>
-                        </View>
-                    </DataTable.Row> */}
                 </DataTable>
                 <Dialog.Actions style={{ justifyContent: 'center', marginVertical: 25 }}>
                     <Button

@@ -12,7 +12,11 @@
     "@react-native-community/masked-view": "0.1.5",
     "axios": "^0.19.2",
     "expo": "~36.0.0",
+    "expo-av": "^8.0.0",
+    "expo-file-system": "~8.0.0",
     "expo-notifications": "^0.4.0",
+    "expo-permissions": "^8.0.0",
+    "expo-status-bar": "^1.0.2",
     "lodash.remove": "4.7.0",
     "react": "~16.9.0",
     "react-addons-update": "^15.6.2",
@@ -33,6 +37,7 @@
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "request": "^2.88.2",
     "rn-fab": "^0.0.6"
   },
   "devDependencies": {

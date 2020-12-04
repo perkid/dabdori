@@ -22,6 +22,7 @@ function MyPage({ navigation }) {
   }
   let last_login_date = user.last_login_date.split(' ');
   let lastLogin = last_login_date[0];
+  
   return (
     <>
       <Header titleText='마이페이지' navigation={navigation} />

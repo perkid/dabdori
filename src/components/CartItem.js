@@ -31,7 +31,6 @@ function CartItem({index, item, allChecked, allCheckedState, handleAllCheked, cn
     return (
         <DataTable.Row>
             <View style={{justifyContent:'center'}}><Checkbox.Android status={checked ? 'checked' : 'unchecked'} onPress={()=>{setChecked(!checked)}} color='#1E388D'></Checkbox.Android></View>
-            {/* <DataTable.Cell style={styles.tableText}>{item.company}</DataTable.Cell> */}
             <DataTable.Cell style={styles.tableText}>{item.itemName}</DataTable.Cell>
             <DataTable.Cell style={styles.tableText}>{item.colorYW}</DataTable.Cell>
             <DataTable.Cell style={styles.tableText}>{item.amount}</DataTable.Cell>

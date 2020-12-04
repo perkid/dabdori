@@ -32,7 +32,6 @@ function Question({ role, question, insertQNA }) {
                     <View style={{marginTop: 10}}>
                         <View style={{marginLeft:15, flexDirection:'row', alignItems:'center'}}>
                             <Text style={{color:'#ff7c7c', fontSize: 18, fontWeight: 'bold'}}>ㄴ A </Text><Text style={{marginLeft: 5, maxWidth:'95%'}}>{question.ans_content}</Text>
-                            {/* <Button color='red' onPress={()=>insertQNA('수정가능',question.qna_id)}>수정</Button> */}
                         </View>
                         <View style={{ flexDirection: 'row', marginTop: 10, marginLeft: 45 }}>
                             <Paragraph style={{ color: 'gray', marginHorizontal: 10 }}>

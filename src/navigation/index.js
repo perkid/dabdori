@@ -150,7 +150,6 @@ export default function dabdori(){
     <AppContainer
       onNavigationStateChange={(prevState, currentState, action) => {
       const currentRouteName = getActiveRouteName(currentState);
-      // const previousRouteName = getActiveRouteName(prevState);
       dispatch(setRoute(currentRouteName))
       }}
     />

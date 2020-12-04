@@ -7,9 +7,13 @@ import { StyleSheet, View, Image, Text, Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 
 function ResetPassword({ navigation }) {
+    
     const [user_id, setUser_id] = useState('');
-    const forgotPass = useSelector(state => state.authentication.forgotPass)
-    const dispatch = useDispatch()
+
+    const forgotPass = useSelector(state => state.authentication.forgotPass);
+
+    const dispatch = useDispatch();
+
     const handleReset = () => {
         if (user_id === '') {
             Alert.alert('', '이메일 주소를 입력해 주세요.')
@@ -17,6 +21,7 @@ function ResetPassword({ navigation }) {
             dispatch(forgotPassRequest(user_id))
         }
     }
+
     useEffect(()=>{
         if(forgotPass.text.includes('완료')){
             Alert.alert('', forgotPass.text, [{ text: 'OK', onPress: () => navigation.goBack() }]);
@@ -25,9 +30,11 @@ function ResetPassword({ navigation }) {
             Alert.alert('', forgotPass.text);
         }
     },[forgotPass.text])
+
     if(forgotPass.status==='FAILURE'){
         Alert.alert('','문제가 발생했습니다. 관리자에게 문의하세요')
     }
+
     return (
         <>
             <Header titleText='비밀번호 재설정' navigation={navigation} />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { View, StyleSheet, Text, Image } from 'react-native';
+import { View, StyleSheet, Text, Image, Platform, Dimensions } from 'react-native';
 import { Button, Searchbar, Divider } from 'react-native-paper';
 import Header from '../components/Header';
 import Order from '../components/Order';
@@ -14,6 +14,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import getActions from '../static/FABaction';
 
 function OrderHistory({ navigation }) {
+
+  const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
+  const r = viewportWidth/12;
+  const t = Platform.OS==='ios' ? 45 : 25;
+
   const user = useSelector(state => state.authentication.user);
   const orders = useSelector(state => state.order.orders);
   const [firstQuery, setFirstQuery] = useState('');
@@ -86,17 +92,6 @@ function OrderHistory({ navigation }) {
       order.orderStatusNm == sub
     )
   }
-
-  // if (role === '1') {
-  //   foundOrders = foundOrders.filter(order =>
-  //     order.remarks.includes('답돌이 직원 등록')
-  //     )
-  //   }
-  //   if (role ==='2') {
-  //     foundOrders = foundOrders.filter(order => 
-  //       !order.remarks.includes('답돌이 직원 등록')
-  //     )
-  // }
 
   if (firstQuery !== '') {
     foundOrders = foundOrders.filter(order =>
@@ -181,7 +176,7 @@ const actions = getActions(user.role!=='employee')
       <Tab navigation={navigation}/>
       <Fab
             actions={actions}
-            style={{right: 40, top: 45}}
+            style={{right: r, top: t}}
             rotation={"0deg"}
             onPress={name => {
                 if(name == "btn_cart"){

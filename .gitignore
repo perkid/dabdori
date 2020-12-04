@@ -9,6 +9,7 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
+alien-striker-207409-ae01413bce86.json
 
 # macOS
 .DS_Store

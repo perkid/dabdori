@@ -60,14 +60,14 @@ export const setNoticeBodyListSuccess = (list) => ({ type: SET_NOTICE_BODY_LIST_
 export const setNoticeBodyListFailure = () => ({ type: SET_NOTICE_BODY_LIST_FAILURE })
 
 
-export function getNotyDetailRequest(noty_id) {
+export function getNotyDetailRequest(noty_id, img_data) {
     return (dispatch) => {
         dispatch(getNotyDetail())
         return axios.post(url + `/api/getNotyDetail.dab`,
             {
                 noty_id: noty_id
             }).then((response) => {
-                dispatch(getNotyDetailSuccess(response.data))
+                dispatch(getNotyDetailSuccess(response.data, img_data))
             }).catch((err) => {
                 console.log(err)
                 dispatch(setNoticeBodyListFailure())
@@ -77,7 +77,7 @@ export function getNotyDetailRequest(noty_id) {
 
 export const getNotyDetail = () => ({ type: GET_NOTY_DETAIL })
 
-export const getNotyDetailSuccess = (detail) => ({ type: GET_NOTY_DETAIL_SUCCESS, detail });
+export const getNotyDetailSuccess = (detail, img_data) => ({ type: GET_NOTY_DETAIL_SUCCESS, detail, img_data });
 
 export const getNotyDetailFailure = () => ({ type: GET_NOTY_DETAIL_FAILURE });
 
@@ -88,6 +88,8 @@ const initialState = {
         bodyList: [],
         notyDetail: {
             detail: {
+            },
+            img_data: {
             },
             status: 'INiT',
         }
@@ -150,6 +152,7 @@ function cart(state = initialState, action) {
                 notice: {
                     notyDetail: {
                         detail: { $set: action.detail },
+                        img_data: { $set: action.img_data},
                         status: { $set: 'SUCCESS' }
                     }
                 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import getUrl from '../config/environment';
-import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Image, Text } from 'react-native';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
 import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider,Paragraph } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage, setText } from '../redux/messagesApp';
@@ -10,15 +10,18 @@ import Company from '../components/Company';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import QuickReplies from 'react-native-gifted-chat/lib/QuickReplies';
 import createMessage from '../libs/createMessage';
-import { Notifications } from 'expo';
 import Fab from 'rn-fab';
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
 import Tab from '../components/Tab';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import getActions from '../static/FABaction';
+import { registerForPushNotificationsAsync, sendPushNotification} from '../libs/push';
+import STTButton from '../components/STTButton';
 
 function Main({ navigation }) {
+  const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
+  const r = viewportWidth/12;
+  const t = Platform.OS==='ios' ? 45 : 25;
+
   const url = getUrl();
   const userInfo = useSelector(state => state.authentication.user);
   const messages = useSelector(state => state.messagesApp.messages)
@@ -33,66 +36,48 @@ function Main({ navigation }) {
   const [pToken, setToken] = useState('');
   const [color, setColor] = useState('');
   const [price, setPrice] = useState('');
+  const [question, setQuestion] = useState('')
+
+  const [transcript, setTranscript] = useState('');
+  
+  // 음성인식
+  const handleTranscript = (text) => {
+    console.log(text)
+    let message = {
+      createdAt: new Date(),
+      _id: Math.round(Math.random() * 1000000),
+      // text: text.replace(/ /g,""), // 공백제거
+      text: text,
+      user: {
+        _id: 1,
+      }
+    }
+    setOption(7)
+    onSend(GiftedChat.append(messages, [message]))
+  }
+
+  // 음성인식 테스트
+  const handleTest = () => {
+    if(option===7){
+      setOption(0)
+    } else {
+      setOption(7)
+    }
+  }
 
   const actions = getActions(userInfo.role!=='employee')
     
-  
   const [testVisible, setTestVisible] = useState(false);
-
 
   const showTest = () => setTestVisible(true);
 
   const hideTest = () => setTestVisible(false);
 
-  // 토큰 생성 코드
-  const registerForPushNotificationsAsync = async () => {
-    if (Constants.isDevice) {
-      const { status: existingStatus } = await Permissions.getAsync(
-        Permissions.NOTIFICATIONS
-      );
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(
-          Permissions.NOTIFICATIONS
-        );
-        finalStatus = status;
-      }
-      // 푸시 알람 허용하지 않은 경우
-      // if (finalStatus !== 'granted') {
-      //   alert('Failed to get push token for push notification!');
-      //   return;
-      // }
-      let token = await Notifications.getExpoPushTokenAsync();
-      setToken(token)
-      return true;
-    } else {
-
-    }
+  const handleToken = (token) => {
+    setToken(token)
   }
-  // 푸시 보내기
 
-  const sendPushNotification = async (pushToken, pushMessage) => {
-
-    const message = {
-      to: pushToken,
-      sound: 'default',
-      title: '신규오더',
-      body: pushMessage,
-      data: { data: '' },
-    };
-    
-
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    })
-  };
-  registerForPushNotificationsAsync()
+  registerForPushNotificationsAsync(handleToken)
   
   useEffect(() => {
     if (userInfo.status === undefined) {
@@ -111,6 +96,7 @@ function Main({ navigation }) {
         }).then((response) => {
           // console.log('저장되는 토큰 : '+pToken)
         }).catch((err)=>{
+          // console.log(err)
         })
       }
     }
@@ -125,7 +111,6 @@ function Main({ navigation }) {
     setSnackState(!snackState);
   }
 
-  
   const [visible, setVisible] = useState(false);
   const [checked, setChecked] = useState('');
   const [companyList, setCompanyList] = useState(undefined);
@@ -136,6 +121,7 @@ function Main({ navigation }) {
   const _hideDialog = () => {
     setVisible(false);
   }
+
   const selcet = () => {
     let r = {
       createdAt: new Date(),
@@ -152,6 +138,7 @@ function Main({ navigation }) {
     _hideDialog()
   }
 
+  // 답돌이 답변 lib에서 메세지 보내주는 method
   const messageSend = (message) => {
     onSend(GiftedChat.append(messages, [message]))
   }
@@ -177,7 +164,11 @@ function Main({ navigation }) {
   const handlePrice = (p) => {
     setPrice(p)
   }
+  const handelQuestion = (q) =>{
+    setQuestion(q)
+  }
 
+  // 직원 샘플 신청시 업체 리스트 method
   const selectCompany = (list) => {
     setCompanyList(list.map((company, index) =>
       (<Company
@@ -188,6 +179,7 @@ function Main({ navigation }) {
     _showDialog()
   }
 
+  // 채팅 빠른답변
   const onQuickReply = replies => {
     const createdAt = new Date();
     if (replies.length === 1) {
@@ -216,14 +208,18 @@ function Main({ navigation }) {
       console.warn('replies param is not set correctly')
     }
   }
+
+  // 채팅 스크롤 최하단
   const ref = useRef(null)
+
   const scroll = () => {
     ref.current.scrollToBottom()
   }
 
+  // 채팅 입력시 메세지 반영
   useEffect(() => {
     if (messages[0] !== undefined) {
-      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, scroll) ;
+      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, handelQuestion, question, scroll) ;
       if (r !== undefined) {
         onSend(GiftedChat.append(messages, [r]))
         setOption(r.option);
@@ -325,29 +321,7 @@ function Main({ navigation }) {
           메세지가 복사되었습니다.
         </Snackbar>
         {/* 새로 추가한 FAB */}
-        {/* 상단 FAB */}
-        <Fab
-          actions={actions}
-          style={{right: 40, top: -55}}
-          rotation={"0deg"}
-          onPress={name => {
-            if(name == "btn_cart"){
-              navigation.navigate('Cart', userInfo)
-            }
-            if(name == "btn_order"){
-              navigation.navigate('OrderHistory', userInfo)
-            }
-            if(name == "btn_user"){
-              navigation.navigate('MyPage', userInfo)
-            }
-            if(name == "btn_qna"){
-              navigation.navigate('QNA', userInfo)
-            }
-            if(name == "btn_test"){
-              showTest()
-            }
-          }}
-        />
+       
         {/* 하단 FAB */}
         {/* <Fab
           actions={actions}
@@ -368,7 +342,41 @@ function Main({ navigation }) {
             }
           }}
         /> */}
+        {/* <FAB
+                style={styles.fab}
+                small
+                icon="plus"
+                onPress={() => sendPushNotification('ExponentPushToken[VuX1tiM4uIGTHHcVMgDKjP]','테스트','테스트중 입니다.')}
+              /> */}
+        {/* STT Test 버튼 */}
+        {/* <STTButton
+          handleTranscript={handleTranscript}
+          handleTest={handleTest}
+        /> */}
       </View>
+       {/* 상단 FAB */}
+       <Fab
+          actions={actions}
+          style={{right: r, top: t}}
+          rotation={"0deg"}
+          onPress={name => {
+            if(name == "btn_cart"){
+              navigation.navigate('Cart', userInfo)
+            }
+            if(name == "btn_order"){
+              navigation.navigate('OrderHistory', userInfo)
+            }
+            if(name == "btn_user"){
+              navigation.navigate('MyPage', userInfo)
+            }
+            if(name == "btn_qna"){
+              navigation.navigate('QNA', userInfo)
+            }
+            if(name == "btn_test"){
+              showTest()
+            }
+          }}
+        />
       <Portal>
       <Dialog visible={testVisible} onDismiss={hideTest}>
           <Dialog.Title>대체 아이템</Dialog.Title>
@@ -389,8 +397,6 @@ function Main({ navigation }) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      {/* <View style={{ flex: 1 }} />
-      <Bottom /> */}
       <Tab navigation={navigation}/>
     </>
   )
