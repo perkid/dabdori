@@ -46,7 +46,7 @@ function Header({ titleText, navigation, main, handleOptionReset, auth, app }) {
           <IconButton
         icon='menu'
         size={30}
-        color='white'
+        color='#1E388D'
       />
         :undefined
       }

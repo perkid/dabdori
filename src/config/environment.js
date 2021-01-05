@@ -1,5 +1,5 @@
 export default function getUrl(){
-    const currentENV = 'DEV';
+    const currentENV = 'PROD';
     switch(currentENV){
         // case 'DEV':
         //     return 'http://172.20.10.2:8080/dabdori-admin'

@@ -6,10 +6,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Permissions from "expo-permissions";
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
-import key from '../../alien-striker-207409-ae01413bce86.json';
+import key from '../../API-KEY';
 
-export default function STTButton({handleTranscript, handleTest}) {
-  const API_KEY = key.API_KEY;
+export default function STTButton({handleTranscript, handleTest, handleExplanation}) {
+  const API_KEY = key;
   const [recording, setRecording] = useState();
   const [isAllowRecord, setAllowRecord] = useState("No");
   const [recordingStatus, setRecordingStatus] = useState();
@@ -69,6 +69,7 @@ export default function STTButton({handleTranscript, handleTest}) {
 
   // 녹음 시작
   async function _startRecording() {
+    handleExplanation()
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -188,12 +189,12 @@ export default function STTButton({handleTranscript, handleTest}) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={{marginTop:5}} onPress={handleTest}>
-            <MaterialCommunityIcons name='microphone' size={35} color={'white'}/>
-      </TouchableOpacity>
-      {/* <TouchableOpacity style={{marginTop:5}} onPressIn={_startRecording} onPressOut={handleStopRecording}>
+      {/* <TouchableOpacity style={{marginTop:5}} onPress={handleTest}>
             <MaterialCommunityIcons name='microphone' size={35} color={'white'}/>
       </TouchableOpacity> */}
+      <TouchableOpacity style={{marginTop:5}} onPressIn={_startRecording} onPressOut={handleStopRecording}>
+            <MaterialCommunityIcons name='microphone' size={35} color={'white'}/>
+      </TouchableOpacity>
       {/* <Button title="start record" onPress={_startRecording} /> */}
       {/* <Text>Open up App.tsx to start working on your app!</Text>
 

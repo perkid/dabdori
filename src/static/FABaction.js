@@ -13,8 +13,8 @@ export default function getActions(boolean){
             },
             // Action Buttons - will be displayed when you tap the main button.
             {
-              icon: <Image source={require('../../assets/cart.png')} style={styles.icon}/>,
-              name: "btn_cart",
+              icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
+              name: "btn_user",
               color: '#ffffff'
             },
             {
@@ -22,9 +22,10 @@ export default function getActions(boolean){
               name: "btn_qna",
               color: '#ffffff'
             },
+            
             {
-              icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
-              name: "btn_user",
+              icon: <Image source={require('../../assets/cart.png')} style={styles.icon}/>,
+              name: "btn_cart",
               color: '#ffffff'
             },
           ]
@@ -37,17 +38,18 @@ export default function getActions(boolean){
               name: "btn_plus",
               color: '#1E388D'
             },
+            {
+              icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
+              name: "btn_user",
+              color: '#ffffff'
+            },
             // Action Buttons - will be displayed when you tap the main button.
             {
               icon: <Image source={require('../../assets/question.png')} style={styles.icon}/>,
               name: "btn_qna",
               color: '#ffffff'
             },
-            {
-              icon: <Image source={require('../../assets/user.png')} style={styles.icon}/>,
-              name: "btn_user",
-              color: '#ffffff'
-            },
+            
           ]
     }
 }

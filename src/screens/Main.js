@@ -40,6 +40,22 @@ function Main({ navigation }) {
 
   const [transcript, setTranscript] = useState('');
   
+  // 음성인식 설명
+  const handleExplanation = () => {
+    let text = userInfo.role === 'employee' ? '조회하실 내용을 마이크 버튼을 누르고 있는\n상태에서 다음과 같이 말해보세요\n\n현물 조회\n아이템명 칼라번호(생략시 전체 칼라) 현물 조회\n예) 거북선 9080 현물 조회\n\n샘플신청\n1. 업체명 샘플신청\n2. 아이템명 칼라번호 수량 단가 (단가 입력시 모든 주문 아이템에 단가를 입력해야 합니다)\n예) 영우 샘플신청\n(업체 선택 후)\n거북선 9080 10\n\n아이템 정보\n아이템명 스펙 또는 아이템명 업차지\n예) 거북선 스펙' :  '조회하실 내용을 마이크 버튼을 누르고 있는\n상태에서 다음과 같이 말해보세요\n\n현물 조회\n아이템명 칼라번호(생략시 전체 칼라) 현물 조회\n예) 거북선 9080 현물 조회\n\n샘플신청\n아이템명 칼라번호 수량 샘플신청\n예) 거북선 9080 10 샘플신청\n\n아이템 정보\n아이템명 스펙\n예) 거북선 스펙';
+
+    let message = {
+      createdAt: new Date(),
+      _id: Math.round(Math.random() * 1000000),
+      // text: text.replace(/ /g,""), // 공백제거
+      text: text,
+      user: {
+        _id: 2,
+      }
+    }
+    setOption(8)
+    onSend(GiftedChat.append(messages, [message]))
+  }
   // 음성인식
   const handleTranscript = (text) => {
     console.log(text)
@@ -58,9 +74,10 @@ function Main({ navigation }) {
 
   // 음성인식 테스트
   const handleTest = () => {
+    // handleExplanation()
     if(option===7){
       setOption(0)
-    } else {
+    } else{
       setOption(7)
     }
   }
@@ -352,6 +369,7 @@ function Main({ navigation }) {
         {/* <STTButton
           handleTranscript={handleTranscript}
           handleTest={handleTest}
+          handleExplanation={handleExplanation}
         /> */}
       </View>
        {/* 상단 FAB */}
@@ -408,7 +426,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 10,
     paddingVertical: 20,
-    marginBottom:90,
+    marginBottom:60,
   },
   titleContainer: {
     alignItems: 'center',

@@ -9,7 +9,7 @@ import PasswordChange from '../screens/PasswordChange';
 import OrderDetail from '../screens/OrderDetail';
 import Cart from '../screens/Cart';
 import NoticeMain from '../screens/NoticeMain';
-import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 import React from 'react';
 import { setRoute } from '../redux/route';
 import { useDispatch } from 'react-redux';
@@ -111,17 +111,21 @@ export default function dabdori(){
     }
   )
 
-  const AppStack = createMaterialTopTabNavigator({
+  const AppStack = createBottomTabNavigator({ // createMaterialTopTabNavigator 변경시 스와이프 가능
     NoticeMain: NoticeStack,
     Chat: ChatStack,
     OrderHistory: OrderStack,
-  },{
+  },
+  {
     initialRouteName: 'NoticeMain',
     tabBarOptions: {
       style: {
         height:0
       },
-    }
+      labelStyle: {
+        color:'white'
+      }
+    },
   });
 
   const AppContainer = createAppContainer(createSwitchNavigator(
