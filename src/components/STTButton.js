@@ -62,7 +62,7 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
       const info = await FileSystem.getInfoAsync(recording.getURI())
       await FileSystem.deleteAsync(info.uri)
     } catch (error) {
-      console.log('There was an error deleting recorded file', error)
+      // console.log('There was an error deleting recorded file', error)
     }
   }
 
@@ -95,13 +95,13 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
   // 녹음 종료
   async function _stopRecording() {
     if (!recording) {
-      console.log("You are not recording.")
+      // console.log("You are not recording.")
       return;
     }
 
     try {
       await recording.stopAndUnloadAsync();
-      console.log(`Recorded URI: ${recording.getURI()}`);
+      // console.log(`Recorded URI: ${recording.getURI()}`);
     } catch (error) {
       // Do nothing -- we are already unloaded.
     }
@@ -157,12 +157,10 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
         }
       })
 
-      // console.log(data)
-      console.log(data.results[0].alternatives[0].transcript)
-      // setTranscript(data.results[0].alternatives[0].transcript)
+      // console.log(data.results[0].alternatives[0].transcript)
       handleTranscript(data.results[0].alternatives[0].transcript)
     } catch (error) {
-      console.log('There was an error reading file', error)
+      // console.log('There was an error reading file', error)
       // _stopRecording()
       // resetRecording()
     }

@@ -2479,9 +2479,11 @@ ${method} ${time === undefined ? '' : time}
                 let spec = response.data;
                 let itemName = spec.itemName;
                 let itemNo = spec.itemNo;
-                let price = spec.prodList[0].price.split('.')
+                let price = spec.price.split('.')
                 let check = spec.dry_friction===null
-                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원`:''}`
+
+                
+                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
                 
                 handleOption(0)
                 handleSubOption(0)
@@ -2625,9 +2627,9 @@ ${method} ${time === undefined ? '' : time}
                 let spec = response.data;
                 let itemName = spec.itemName;
                 let itemNo = spec.itemNo;
-                let price = spec.prodList[0].price.split('.')
+                let price = spec.price.split('.')
                 let check = spec.dry_friction===null
-                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원`:''}`
+                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
                 
                 handleOption(0)
                 handleSubOption(0)
@@ -2890,7 +2892,7 @@ ${method} ${time === undefined ? '' : time}
                 
                 
                 let text;
-                let custName = spec.prodList[0].custName
+                let custName = spec.custName
 
                 switch (custName) {
                     case '지사(대구)':
@@ -3038,6 +3040,7 @@ ${method} ${time === undefined ? '' : time}
                 itemName:item
         }).then((response)=>{
             let itemCode = response.data.itemCode;
+            console.log(itemCode)
             axios.post(url+`/api/itemSpecInfo.dab`,
                 {
                         itemCode:itemCode
@@ -3046,10 +3049,10 @@ ${method} ${time === undefined ? '' : time}
                 let spec = response.data;
                 let itemName = spec.itemName
                 let itemNo = spec.itemNo;
-                let price = spec.prodList[0].price.split('.');
+                let price = spec.price.split('.');
                 let check = spec.dry_friction===null
-                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원`:''}`
                 
+                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}${userInfo.specGB==='Y'?`\n경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
                 handleOption(3)
                 handleSubOption(2)
                 message = {
@@ -3096,6 +3099,7 @@ ${method} ${time === undefined ? '' : time}
                     cust_name:userInfo.company_name
                 })
             }).catch((err)=>{
+                console.log(err)
                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
                 handleOption(0)
                 handleSubOption(0);
@@ -3179,9 +3183,9 @@ ${method} ${time === undefined ? '' : time}
                     ).then((response) => {
                         let spec = response.data;
 
-                        let price = spec.prodList[0].price.split('.')
+                        let price = spec.price.split('.')
                         let check = spec.dry_friction === null
-                        text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원` : ''}`
+                        text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                         handleOption(0)
                         handleSubOption(0)
@@ -3324,9 +3328,9 @@ ${method} ${time === undefined ? '' : time}
                     ).then((response) => {
                         let spec = response.data;
 
-                        let price = spec.prodList[0].price.split('.')
+                        let price = spec.price.split('.')
                         let check = spec.dry_friction === null
-                        text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원` : ''}`
+                        text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                         handleOption(0)
                         handleSubOption(0)
@@ -3896,8 +3900,8 @@ ${method} ${time === undefined ? '' : time}
             }
         }
             // 메뉴별 서버요청
-            console.log(menu)
-            console.log(subMenu)
+            // console.log(menu)
+            // console.log(subMenu)
             // 현물조회
             if(menu === '현물 조회'){
                 // 아이템 명만 입력된 경우
@@ -3909,6 +3913,7 @@ ${method} ${time === undefined ? '' : time}
                                 itemName: itemName,
                                 includeYN: 0
                             }).then((response) => {
+                                
                                 if (response.data.length === 0) {
                                     text = `${itemName}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`
                                     handleOption(1)
@@ -4871,9 +4876,9 @@ ${method} ${time === undefined ? '' : time}
                                     let spec = response.data;
                                     let specItemName = spec.itemName;
                                     let itemNo = spec.itemNo;
-                                    let price = spec.prodList[0].price.split('.')
+                                    let price = spec.price.split('.')
                                     let check = spec.dry_friction === null
-                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원` : ''}`
+                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                                     handleOption(0)
                                     handleSubOption(0)
@@ -5017,9 +5022,9 @@ ${method} ${time === undefined ? '' : time}
                                     let spec = response.data;
                                     let specItemName = spec.itemName;
                                     let itemNo = spec.itemNo;
-                                    let price = spec.prodList[0].price.split('.')
+                                    let price = spec.price.split('.')
                                     let check = spec.dry_friction === null
-                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원` : ''}`
+                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                                     handleOption(0)
                                     handleSubOption(0)
@@ -5163,9 +5168,9 @@ ${method} ${time === undefined ? '' : time}
                                     let spec = response.data;
                                     let specItemName = spec.itemName;
                                     let itemNo = spec.itemNo;
-                                    let price = spec.prodList[0].price.split('.')
+                                    let price = spec.price.split('.')
                                     let check = spec.dry_friction === null
-                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.prodList[0].custName} : ${price[0]}원` : ''}`
+                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                                     handleOption(3)
                                     handleSubOption(2)
@@ -5297,7 +5302,7 @@ ${method} ${time === undefined ? '' : time}
 
 
                                     let text;
-                                    let custName = spec.prodList[0].custName
+                                    let custName = spec.custName
 
                                     switch (custName) {
                                         case '지사(대구)':

@@ -366,11 +366,11 @@ function Main({ navigation }) {
                 onPress={() => sendPushNotification('ExponentPushToken[VuX1tiM4uIGTHHcVMgDKjP]','테스트','테스트중 입니다.')}
               /> */}
         {/* STT Test 버튼 */}
-        {/* <STTButton
+        <STTButton
           handleTranscript={handleTranscript}
           handleTest={handleTest}
           handleExplanation={handleExplanation}
-        /> */}
+        />
       </View>
        {/* 상단 FAB */}
        <Fab
