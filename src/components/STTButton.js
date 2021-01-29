@@ -34,8 +34,6 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
     setAllowRecord(response.status);
   }
 
-  let currentRecordingStatus;
-
   const recordingOptions = {
     android: {
       extension: '.m4a',
@@ -56,6 +54,7 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
       linearPCMIsFloat: false,
     },
   }
+
   // 에러시 기존 레코딩 파일 삭제
   async function deleteRecordingFile() {
     try {
@@ -66,9 +65,9 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
     }
   }
 
-
   // 녹음 시작
   async function _startRecording() {
+    // console.log('뭔')
     handleExplanation()
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
@@ -107,6 +106,8 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
     }
     // 녹음 파일 재생을 위한 코드
     const info = await FileSystem.getInfoAsync(recording.getURI() || "");
+    // console.log(info)
+
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -116,6 +117,7 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
       playThroughEarpieceAndroid: false,
       staysActiveInBackground: true,
     });
+
     const { sound, status } = await recording.createNewLoadedSoundAsync(
       {
         isLooping: false,
@@ -137,7 +139,6 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
 
       // const formData = new FormData()
 
-
       // formData.append('file', {
       //   uri,
       //   type: Platform.OS === 'ios' ? 'audio/x-wav' : 'audio/m4a',
@@ -156,10 +157,12 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
           languageCode: "ko-KR",
         }
       })
-
+      // console.log(data)
+      // console.log(data.results)
       // console.log(data.results[0].alternatives[0].transcript)
       handleTranscript(data.results[0].alternatives[0].transcript)
     } catch (error) {
+      // console.log(error)
       // console.log('There was an error reading file', error)
       // _stopRecording()
       // resetRecording()
@@ -177,6 +180,7 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
 
   // 녹음 종료시
   function handleStopRecording() {
+    // console.log('끝')
     _stopRecording()
     getTranscription()
   }

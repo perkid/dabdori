@@ -3,13 +3,12 @@
     "name": "답돌이",
     "slug": "Dabdori",
     "privacy": "public",
-    "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
-    "version": "3.0.1",
+    "version": "4.0.1",
     "orientation": "portrait",
     "icon": "./assets/dabicon.png",
     "splash": {
@@ -26,11 +25,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.youngwoo.dabdori",
-      "buildNumber": "3.0.1"
+      "buildNumber": "4.0.1"
     },
     "android": {
       "package": "co.youngwoo.dabdori",
-      "versionCode":300001
+      "versionCode": 400001
     },
     "notification": {
       "icon": "./assets/dabicon.png"

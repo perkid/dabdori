@@ -58,7 +58,7 @@ function Main({ navigation }) {
   }
   // 음성인식
   const handleTranscript = (text) => {
-    console.log(text)
+    // console.log(text)
     let message = {
       createdAt: new Date(),
       _id: Math.round(Math.random() * 1000000),
