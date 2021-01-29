@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Button, TouchableOpacity, Platform } from "react-native";
 import { Audio, AVPlaybackStatus} from "expo-av";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Permissions from "expo-permissions";
@@ -36,10 +36,10 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
 
   const recordingOptions = {
     android: {
-      extension: '.m4a',
-      outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-      audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-      sampleRate: 44100,
+      extension: '.3gp',
+      outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_AMR_WB,
+      audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_WB,
+      sampleRate: 16000,
       numberOfChannels: 1,
       bitRate: 128000,
     },
@@ -150,11 +150,15 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
         audio:{
           content:audioBytes
         },
-        config:{
+        config:Platform.OS==='ios'?{  
           encoding: "LINEAR16",
           // audioChannelCount:1,
           sampleRateHertz: 41000,
           languageCode: "ko-KR",
+        }:{
+          encoding: "AMR-WB",
+          sampleRateHertz: 16000,
+          languageCode: "ko-KR"
         }
       })
       // console.log(data)
