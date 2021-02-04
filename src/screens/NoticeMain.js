@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { StyleSheet, View, Dimensions, Platform} from 'react-native';
+import { StyleSheet, View, Dimensions, Platform, Text} from 'react-native';
 import { FAB, DataTable, Portal } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import Fab from 'rn-fab';
@@ -21,6 +21,8 @@ function NoticeMain({ navigation }) {
 
   const r = viewportWidth/12;
   const t = Platform.OS==='ios' ? 45 : 25;
+  const iPhone8 = viewportHeight < 812
+  const iPad = r > 85
   const userInfo = useSelector(state => state.authentication.user);
   const topList = useSelector(state => state.notice.notice.topList);
   const bodyList = useSelector(state => state.notice.notice.bodyList);
@@ -34,7 +36,6 @@ function NoticeMain({ navigation }) {
     dispatch(setNoticeTopListRequest(userInfo.role));
     dispatch(setNoticeBodyListRequest(userInfo.role));
   }, []);
-
 
   // Carousel 공지
   const firstItem = 0;
@@ -140,7 +141,7 @@ function NoticeMain({ navigation }) {
     <View style={{ flex: 1, backgroundColor: '#FFF' }}>
       <Header titleText='공지사항' navigation={navigation} auth={true} app={true} />
       {/* Carousel 공지 */}
-      <View style={styles.notice}>
+      <View style={styles.notice, iPhone8?{marginTop:0}:styles.notice}>
         <Carousel
           ref={c => setSlider1Ref(c)}
           data={TOPENTRIES}
@@ -187,18 +188,19 @@ function NoticeMain({ navigation }) {
         }
       </Portal>
       {/* 게시판 공지 */}
-      <View style={styles.container}>
+      <View style={styles.container, iPhone8?{marginTop:-20}:styles.container}>
         <DataTable>
           {
             bodyList.length > 0 ?
               bodyList.slice(from, to).map((notice, i) => (
                 <DataTable.Row
+                  style={iPad ? {height:80}:{}}
                   key={i}
                   onPress={() => {
                     handleDetail(notice.noty_id, notice.img_data)
                   }}>
                   <DataTable.Cell style={{ flex: 0.3 }}></DataTable.Cell>
-                  <DataTable.Cell style={{ flex: 9 }}>{notice.title}</DataTable.Cell>
+                  <DataTable.Cell style={{ flex: 9 }}><Text style={iPad?{fontSize:20}:{}}>{notice.title}</Text></DataTable.Cell>
                   <DataTable.Cell></DataTable.Cell>
                 </DataTable.Row>
               ))
@@ -236,7 +238,7 @@ function NoticeMain({ navigation }) {
       {/* 햄버거 메뉴 */}
       <Fab
         actions={actions}
-        style={{ right: r, top: t }}
+        style={iPad?{right:35, top: 25}:iPhone8?{right: 25, top: 20}:{right: r, top: t}}
         rotation={"0deg"}
         onPress={name => {
           if (name == "btn_cart") {
@@ -264,7 +266,7 @@ function NoticeMain({ navigation }) {
 
 const styles = StyleSheet.create({
   notice: {
-    paddingTop: 40,
+    paddingTop: 10,
     flex: 1,
     backgroundColor: '#ffffff',
   },

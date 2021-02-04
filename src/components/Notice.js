@@ -12,20 +12,23 @@ function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
   const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
   const slideHeight = viewportHeight * 0.3;
   const slideWidth = wp(80);
-  
+  const iPad = slideWidth > 800
+  const iPhone8 = viewportHeight < 812
+
     return (
         <Dialog visible={visible} onDismiss={hideNotice}>
-          <Dialog.Title>{notice.title}</Dialog.Title>
-          <Dialog.Content style={{ maxHeight: 400 }}>
+          <Dialog.Title style={iPad?{padding:30}:{}}><Text style={iPad?{fontSize:40, lineHeight:40}:{}}>{notice.title}</Text></Dialog.Title>
+          <Dialog.Content style={iPad ? { maxHeight: 800 } : { maxHeight: 400}}>
            
             <ScrollView>
             {notice.data_list!==undefined?
             (notice.img_data!==null)?
             // TopList 신아이템
-            <View style={{flex:1, justifyContent:'center', alignItems:'center', paddingBottom:20, paddingVertical:10}}>
+            <View style={iPad?{flex:1, justifyContent:'center', alignItems:'center', paddingBottom:50, paddingVertical:30}:
+            {flex:1, justifyContent:'center', alignItems:'center', paddingBottom:20, paddingVertical:10}}>
             <Image
                     source={{uri:`data:image/png;base64,${notice.img_data}`}}
-                    style={{width:250, height:250 }}
+                    style={iPad ? {width:400, height:400 } : iPhone8 ? {width:200, height:200} : {width : 250, height: 250}}
                 />
             </View>
               :
@@ -51,18 +54,19 @@ function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
                     key={i}
                     style={{flexDirection:'row', alignItems:'center', paddingVertical:10}}
                   >
-                      <View style={{backgroundColor:`#${data.html_no}`, width:50,height:50}}/>
+                      <View style={iPad?{backgroundColor:`#${data.html_no}`, width:100,height:100, marginLeft:30}:{backgroundColor:`#${data.html_no}`, width:50,height:50}}/>
                       <View style={{alignItems:'center'}}></View>
-                      <Text style={{marginLeft:30, fontWeight:'bold'}}>{data.color_yw}</Text><View style={{marginLeft:30}}><Text style={{fontWeight:'bold'}}>PANTONE</Text><Text>{data.panton_no}</Text></View>
+                      <Text style={iPad?{marginLeft:50, fontWeight:"bold", fontSize:25}:{marginLeft:30, fontWeight:'bold'}}>{data.color_yw}</Text><View style={iPad?{marginLeft:50}:{marginLeft:30}}><Text style={iPad?{fontSize:25, fontWeight:'bold'}:{fontWeight:'bold'}}>PANTONE</Text><Text style={iPad?{fontSize:25}:{}}>{data.panton_no}</Text></View>
                   </View>
                 ))
               }
               </>
-              :(img!==null)?<View style={{flex:1, justifyContent:'center', alignItems:'center', paddingBottom:20, paddingVertical:10}}>
+              :(img!==null)?<View style={iPad?{flex:1, justifyContent:'center', alignItems:'center', paddingBottom:50, paddingVertical:30}:
+              {flex:1, justifyContent:'center', alignItems:'center', paddingBottom:20, paddingVertical:10}}>
               {/* BodyList 신아이템 */}
               <Image
                       source={{uri:`data:image/png;base64,${img}`}}
-                      style={{width:250, height:250 }}
+                      style={iPad?{width:400, height:400}: iPhone8 ? {width:200, height:200} : {width:250, height:250 }}
                   />
               </View>:
               <>
@@ -86,9 +90,9 @@ function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
                     key={i}
                     style={{flexDirection:'row', alignItems:'center', paddingVertical:10}}
                   >
-                      <View style={{backgroundColor:`#${data.html_no}`, width:50,height:50}}/>
+                      <View style={iPad?{backgroundColor:`#${data.html_no}`, width:100,height:100, marginLeft:30}:{backgroundColor:`#${data.html_no}`, width:50,height:50}}/>
                       <View style={{alignItems:'center'}}></View>
-                      <Text style={{marginLeft:30, fontWeight:'bold'}}>{data.color_yw}</Text><View style={{marginLeft:30}}><Text style={{fontWeight:'bold'}}>PANTONE</Text><Text>{data.panton_no}</Text></View>
+                      <Text style={iPad?{marginLeft:50, fontWeight:"bold", fontSize:25}:{marginLeft:30, fontWeight:'bold'}}>{data.color_yw}</Text><View style={iPad?{marginLeft:50}:{marginLeft:30}}><Text style={iPad?{fontSize:25, fontWeight:'bold'}:{fontWeight:'bold'}}>PANTONE</Text><Text style={iPad?{fontSize:25}:{}}>{data.panton_no}</Text></View>
                   </View>
                 ))
               }
@@ -99,25 +103,25 @@ function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
               notice.noty_gb === 'N' && role ==='employee' ? 
               // 신아이템 직원
               <>
-                <Paragraph>{notice.content_side}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>{notice.content_side}</Paragraph>
                 <Paragraph></Paragraph>
-                <Paragraph>혼용률 : {notice.mix_ratio}</Paragraph>
-                <Paragraph>사용폭 : {notice.use_width},     중량 : {notice.weight_yard}</Paragraph>
-                <Paragraph>Finish : {notice.finish}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>혼용률 : {notice.mix_ratio}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>사용폭 : {notice.use_width},     중량 : {notice.weight_yard}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>Finish : {notice.finish}</Paragraph>
                 <Paragraph></Paragraph>
-                <Paragraph>경사사종 : {notice.logt_name}</Paragraph>
-                <Paragraph>위사사종 : {notice.latt_name}</Paragraph>
-                <Paragraph>경사본수 : {notice.logt_num}</Paragraph>
-                <Paragraph>경사밀도 : {notice.logt_deny},     위사밀도 : {notice.latt_deny}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사사종 : {notice.logt_name}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>위사사종 : {notice.latt_name}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사본수 : {notice.logt_num}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사밀도 : {notice.logt_deny},     위사밀도 : {notice.latt_deny}</Paragraph>
               </> : 
               notice.noty_gb === 'N' && role !== 'employee' ?
               // 신아이템 고객
               <>
-                <Paragraph>{notice.content}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>{notice.content}</Paragraph>
                 <Paragraph></Paragraph>
-                <Paragraph>혼용률 : {notice.mix_ratio}</Paragraph>
-                <Paragraph>사용폭 : {notice.use_width},     중량 : {notice.weight_yard}</Paragraph>
-                <Paragraph>Finish : {notice.finish}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>혼용률 : {notice.mix_ratio}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>사용폭 : {notice.use_width},     중량 : {notice.weight_yard}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>Finish : {notice.finish}</Paragraph>
               </> :
               // 신컬러
               <Paragraph></Paragraph>
@@ -128,8 +132,8 @@ function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
             <Button color='#1E388D' onPress={()=>{
                 hideNotice()
                 inventoryInquiry(notice.item_name)}
-              }>재고 조회</Button>
-            <Button color='#1E388D' onPress={hideNotice}>닫기</Button>
+              }><Text style={iPad ? {fontSize:25}:{}}>재고 조회</Text></Button>
+            <Button color='#1E388D' onPress={hideNotice}><Text style={iPad ? {fontSize:25}:{}}>닫기</Text></Button>
           </Dialog.Actions>
         </Dialog>
     )

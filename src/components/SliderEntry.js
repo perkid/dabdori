@@ -6,7 +6,6 @@ import styles from '../styles/SliderEntry.style';
 import { Platform } from 'react-native';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
-
 function wp (percentage) {
     const value = (percentage * viewportWidth) / 100;
     return Math.round(value);
@@ -14,6 +13,8 @@ function wp (percentage) {
 
 const slideHeight = viewportHeight * 0.4;
 const slideWidth = wp(80);
+
+const iPhone8 = viewportHeight < 812
 
 export default class SliderEntry extends Component {
 
@@ -62,7 +63,7 @@ export default class SliderEntry extends Component {
             return <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
             <Image
                     source={{uri:`data:image/png;base64,${img_data}`}}
-                    style={(Platform.OS == "ios")? {width:slideWidth*0.7, height:slideHeight*0.6}:{width:slideWidth*0.6, height:slideHeight*0.6}}
+                    style={(Platform.OS == "ios")? slideWidth > 800 ?{width:slideWidth*0.45, height:slideHeight*0.6}:iPhone8?{width:slideWidth*0.5, height:slideHeight*0.5}:{width:slideWidth*0.7, height:slideHeight*0.6}:{width:slideWidth*0.6, height:slideHeight*0.6}}
                 />
             </View>
         } else {
@@ -81,7 +82,7 @@ export default class SliderEntry extends Component {
 
         const uppercaseTitle = title ? (
             <Text
-              style={[styles.title, even ? styles.titleEven : {}]}
+              style={[styles.title, even ? styles.titleEven : {}, slideWidth > 800 ? styles.titleiPad:{}]}
               numberOfLines={2}
             >
                 { title.toUpperCase() }
@@ -102,7 +103,7 @@ export default class SliderEntry extends Component {
                     { this.image }
                     <View style={[styles.radiusMask, even ? styles.radiusMaskEven : {}]} />
                 </View>
-                <View style={[styles.textContainer, even ? styles.textContainerEven : {}]}>
+                <View style={[styles.textContainer, even ? styles.textContainerEven : {}, iPhone8?{height:50}:{}]}>
                     { uppercaseTitle }
                     <Text
                       style={[styles.subtitle, even ? styles.subtitleEven : {}]}

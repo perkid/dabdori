@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, Button, TouchableOpacity, Platform } from "react-native";
+import { StyleSheet, Text, View, Button, TouchableOpacity, Platform, Dimensions } from "react-native";
 import { Audio, AVPlaybackStatus} from "expo-av";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Permissions from "expo-permissions";
@@ -9,6 +9,8 @@ import axios from 'axios';
 import key from '../../API-KEY';
 
 export default function STTButton({handleTranscript, handleTest, handleExplanation}) {
+  const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+  const r = viewportWidth/12;
   const API_KEY = key;
   const [recording, setRecording] = useState();
   const [isAllowRecord, setAllowRecord] = useState("No");
@@ -36,10 +38,10 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
 
   const recordingOptions = {
     android: {
-      extension: '.3gp',
-      outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_AMR_WB,
-      audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_WB,
-      sampleRate: 16000,
+      extension: '.mp3',
+      outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_DEFAULT,
+      audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_DEFAULT,
+      sampleRate: 44100,
       numberOfChannels: 1,
       bitRate: 128000,
     },
@@ -67,7 +69,6 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
 
   // 녹음 시작
   async function _startRecording() {
-    // console.log('뭔')
     handleExplanation()
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
@@ -104,10 +105,11 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
     } catch (error) {
       // Do nothing -- we are already unloaded.
     }
+    // console.log(recording._uri)
     // 녹음 파일 재생을 위한 코드
     const info = await FileSystem.getInfoAsync(recording.getURI() || "");
     // console.log(info)
-
+    
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -150,14 +152,20 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
         audio:{
           content:audioBytes
         },
-        config:Platform.OS==='ios'?{  
+        config:
+        // {
+        //   encoding:"LINEAR16",
+        //   sampleRateHertz: 41000,
+        //   languageCode: "ko-KR"
+        // }
+        Platform.OS==='ios'?{  
           encoding: "LINEAR16",
           // audioChannelCount:1,
           sampleRateHertz: 41000,
           languageCode: "ko-KR",
         }:{
-          encoding: "AMR-WB",
-          sampleRateHertz: 16000,
+          encoding: "MP3",
+          sampleRateHertz: 41000,
           languageCode: "ko-KR"
         }
       })
@@ -194,7 +202,7 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
   }
 
   return (
-    <View style={styles.container}>
+    <View style={r < 85 ? styles.container : styles.iPadContainer}>
       {/* <TouchableOpacity style={{marginTop:5}} onPress={handleTest}>
             <MaterialCommunityIcons name='microphone' size={35} color={'white'}/>
       </TouchableOpacity> */}
@@ -230,6 +238,22 @@ const styles = StyleSheet.create({
     position:"absolute",
     right:15,
     bottom:80,
+    backgroundColor: "#1E388D",
+    borderRadius: 25,
+    width:50,
+    height:50,
+    shadowOpacity: 0.35,
+    shadowOffset: {
+      width: 0,
+      height: 5
+    },
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  iPadContainer:{
+    position:"absolute",
+    right:30,
+    bottom:180,
     backgroundColor: "#1E388D",
     borderRadius: 25,
     width:50,

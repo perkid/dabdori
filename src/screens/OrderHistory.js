@@ -20,6 +20,9 @@ function OrderHistory({ navigation }) {
   const r = viewportWidth/12;
   const t = Platform.OS==='ios' ? 45 : 25;
 
+  const iPhone8 = viewportHeight < 812
+  const iPad = r > 85
+
   const user = useSelector(state => state.authentication.user);
   const orders = useSelector(state => state.order.orders);
   const [firstQuery, setFirstQuery] = useState('');
@@ -176,7 +179,7 @@ const actions = getActions(user.role!=='employee')
       <Tab navigation={navigation}/>
       <Fab
             actions={actions}
-            style={{right: r, top: t}}
+            style={iPad?{right:35, top: 25}:iPhone8?{right: 25, top: 20}:{right: r, top: t}}
             rotation={"0deg"}
             onPress={name => {
                 if(name == "btn_cart"){

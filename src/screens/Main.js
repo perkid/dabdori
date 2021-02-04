@@ -18,10 +18,10 @@ import STTButton from '../components/STTButton';
 
 function Main({ navigation }) {
   const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
-
   const r = viewportWidth/12;
   const t = Platform.OS==='ios' ? 45 : 25;
-
+  const iPhone8 = viewportHeight < 812
+  const iPad = r > 85
   const url = getUrl();
   const userInfo = useSelector(state => state.authentication.user);
   const messages = useSelector(state => state.messagesApp.messages)
@@ -375,7 +375,7 @@ function Main({ navigation }) {
        {/* 상단 FAB */}
        <Fab
           actions={actions}
-          style={{right: r, top: t}}
+          style={iPad?{right:35, top: 25}:iPhone8?{right: 25, top: 20}:{right: r, top: t}}
           rotation={"0deg"}
           onPress={name => {
             if(name == "btn_cart"){

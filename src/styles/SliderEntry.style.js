@@ -98,6 +98,9 @@ export default StyleSheet.create({
     titleEven: {
         color: 'white'
     },
+    titleiPad:{
+        fontSize: 20,
+    },
     subtitle: {
         marginTop: 6,
         color: colors.gray,
