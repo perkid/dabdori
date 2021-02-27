@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import getUrl from '../config/environment';
-import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider,Paragraph } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage, setText } from '../redux/messagesApp';
@@ -37,28 +37,76 @@ function Main({ navigation }) {
   const [color, setColor] = useState('');
   const [price, setPrice] = useState('');
   const [question, setQuestion] = useState('')
-
+  const [stop, setStop] = useState(0);
   const [transcript, setTranscript] = useState('');
+  const [loading, setLoading] = useState(false);
   
   // 음성인식 설명
   const handleExplanation = () => {
-    let text = userInfo.role === 'employee' ? '조회하실 내용을 마이크 버튼을 누르고 있는\n상태에서 다음과 같이 말해보세요\n\n현물 조회\n아이템명 칼라번호(생략시 전체 칼라) 현물 조회\n예) 거북선 9080 현물 조회\n\n샘플신청\n1. 업체명 샘플신청\n2. 아이템명 칼라번호 수량 단가 (단가 입력시 모든 주문 아이템에 단가를 입력해야 합니다)\n예) 영우 샘플신청\n(업체 선택 후)\n거북선 9080 10\n\n아이템 정보\n아이템명 스펙 또는 아이템명 업차지\n예) 거북선 스펙' :  '조회하실 내용을 마이크 버튼을 누르고 있는\n상태에서 다음과 같이 말해보세요\n\n현물 조회\n아이템명 칼라번호(생략시 전체 칼라) 현물 조회\n예) 거북선 9080 현물 조회\n\n샘플신청\n아이템명 칼라번호 수량 샘플신청\n예) 거북선 9080 10 샘플신청\n\n아이템 정보\n아이템명 스펙\n예) 거북선 스펙';
+    if(option===0){
+      let text = userInfo.role === 'employee' ? '조회하실 내용을 다음과 같이 말해보세요\n\n현물 조회\n아이템명 칼라번호(생략시 전체 칼라) 현물 조회\n예) 거북선 9080 현물 조회\n\n샘플신청\n1. 업체명 샘플신청\n2. 아이템명 칼라번호 수량 단가 (단가 입력시 모든 주문 아이템에 단가를 입력해야 합니다)\n예) 영우 샘플신청\n(업체 선택 후)\n거북선 9080 10\n\n아이템 정보\n아이템명 스펙 또는 아이템명 업차지\n예) 거북선 스펙' :  '조회하실 내용을 다음과 같이 말해보세요\n\n현물 조회\n아이템명 칼라번호(생략시 전체 칼라) 현물 조회\n예) 거북선 9080 현물 조회\n\n샘플신청\n아이템명 칼라번호 수량 샘플신청\n예) 거북선 9080 10 샘플신청\n\n아이템 정보\n아이템명 스펙\n예) 거북선 스펙';
 
-    let message = {
-      createdAt: new Date(),
-      _id: Math.round(Math.random() * 1000000),
-      // text: text.replace(/ /g,""), // 공백제거
-      text: text,
-      user: {
-        _id: 2,
+      let message = {
+        createdAt: new Date(),
+        _id: Math.round(Math.random() * 1000000),
+        // text: text.replace(/ /g,""), // 공백제거
+        text: text,
+        user: {
+          _id: 2,
+        }
       }
+      // setOption(8)
+      onSend(GiftedChat.append(messages, [message]))
     }
-    setOption(8)
-    onSend(GiftedChat.append(messages, [message]))
   }
   // 음성인식
   const handleTranscript = (text) => {
-    // console.log(text)
+
+    // 입력 보정
+    let sentence = text.split(' ')
+    // console.log('변경 전 : '+text)
+
+    text = ''
+
+    for (var i in sentence) {
+
+      // 아이템명 오류
+      if (i == 0) {
+        sentence[i] = sentence[i].replace('곡성', '거북선');
+        sentence[i] = sentence[i].replace('검은고', '거문고');
+      }
+
+      // 메뉴 오류
+      if (i != 0) {
+        sentence[i] = sentence[i].replace(/해물/gi, '현물');
+        sentence[i] = sentence[i].replace(/한물/gi, '현물');
+        sentence[i] = sentence[i].replace(/현무/gi, '현물');
+        sentence[i] = sentence[i].replace(/선물/gi, '현물');
+        sentence[i] = sentence[i].replace(/샘물/gi, '현물');
+        sentence[i] = sentence[i].replace(/유물/gi, '현물');
+        sentence[i] = sentence[i].replace(/우편물/gi, '현물');
+        sentence[i] = sentence[i].replace(/스페/gi, '스펙');
+        sentence[i] = sentence[i].replace(/슾/gi, '스펙');
+        sentence[i] = sentence[i].replace(/교회/gi, '조회');
+        sentence[i] = sentence[i].replace(/좋아/gi, '조회');
+      }
+      
+      let keyword = ['현물', '스펙']
+
+      if(keyword.includes(sentence[i-1])){
+        sentence[i] = sentence[i].replace('줘', '조회');
+      }
+
+      if (i == (sentence.length - 1)) {
+        text += sentence[i]
+      }
+      else {
+        text += sentence[i] + ' '
+      }
+    }
+    // console.log('변경 후 : '+text)
+    // console.log(' ')
+
     let message = {
       createdAt: new Date(),
       _id: Math.round(Math.random() * 1000000),
@@ -68,7 +116,7 @@ function Main({ navigation }) {
         _id: 1,
       }
     }
-    setOption(7)
+    // setOption(7)
     onSend(GiftedChat.append(messages, [message]))
   }
 
@@ -226,6 +274,14 @@ function Main({ navigation }) {
     }
   }
 
+  const handleStop = (setting) =>{
+    setStop(setting)
+  }
+  
+  const handleLoading = (boolean) => {
+    setLoading(boolean)
+  }
+
   // 채팅 스크롤 최하단
   const ref = useRef(null)
 
@@ -236,7 +292,7 @@ function Main({ navigation }) {
   // 채팅 입력시 메세지 반영
   useEffect(() => {
     if (messages[0] !== undefined) {
-      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, handelQuestion, question, scroll) ;
+      let r = createMessage(messages[0].text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, handelQuestion, question, scroll, handleLoading) ;
       if (r !== undefined) {
         onSend(GiftedChat.append(messages, [r]))
         setOption(r.option);
@@ -296,6 +352,14 @@ function Main({ navigation }) {
             );
           }}
         />
+        {
+          loading?
+          <View style={{position:'absolute', top:'55%', left:'50%'}}>
+          <ActivityIndicator size="large" color="#1E388D" />
+          </View>:
+          undefined
+        }
+        
         <Portal>
           <Dialog
             visible={visible}
@@ -328,7 +392,7 @@ function Main({ navigation }) {
             </Dialog.Actions>
           </Dialog>
         </Portal>
-        {Platform.OS === 'ios' ? undefined : <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={90} />}
+        {/* {Platform.OS === 'ios' ? undefined : <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={90} />} */}
         <Snackbar
           visible={snackState}
           duration={1300}
@@ -370,6 +434,8 @@ function Main({ navigation }) {
           handleTranscript={handleTranscript}
           handleTest={handleTest}
           handleExplanation={handleExplanation}
+          handleStop={handleStop}
+          stop = {stop}
         />
       </View>
        {/* 상단 FAB */}

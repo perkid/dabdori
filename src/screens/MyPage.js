@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, AsyncStorage } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import Header from '../components/Header';
+import Bottom from '../components/Bottom';
+
 import { useDispatch } from 'react-redux';
 import { clearMessage } from '../redux/messagesApp';
 import { login } from '../redux/authentication';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function MyPage({ navigation }) {
   const user = navigation.state.params;
@@ -20,8 +23,8 @@ function MyPage({ navigation }) {
     AsyncStorage.clear()
     navigation.navigate('Auth')
   }
-  let last_login_date = user.last_login_date.split(' ');
-  let lastLogin = last_login_date[0];
+  // let last_login_date = user.last_login_date.split(' ');
+  // let lastLogin = last_login_date[0];
   
   return (
     <>
@@ -32,7 +35,7 @@ function MyPage({ navigation }) {
           안녕하세요 {user.company_name}{'\n'}
           {user.user_name} 님{'\n'}
           {user.counter}번째 방문을 환영합니다.{'\n'}
-          최근 접속일 : {lastLogin}
+          {/* 최근 접속일 : {lastLogin}{'\n'} */}
         </Text>
       </View>
       <View style={styles.menu}>

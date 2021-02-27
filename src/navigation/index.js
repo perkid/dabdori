@@ -79,7 +79,7 @@ export default function dabdori(){
     {
       initialRouteName: 'Main',
       headerMode: 'none',
-      mode: 'modal'
+      mode: 'modal',
     }
   );
 
@@ -124,7 +124,8 @@ export default function dabdori(){
       },
       labelStyle: {
         color:'white'
-      }
+      },
+      keyboardHidesTabBar: false
     },
   });
 

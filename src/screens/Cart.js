@@ -160,6 +160,12 @@ function Cart({ navigation }){
             tmpOrder.remark = (userInfo.role === 'employee') ? '답돌이 직원 등록' : `답돌이 고객 등록 (${userInfo.user_name})`;
             setVTime('')
         }
+        if (method === '거래처(택배)') {
+            tmpOrder.delyDate = `${year}-${month}-${day}`;
+            tmpOrder.deli_type = 30;
+            tmpOrder.remark = (userInfo.role === 'employee') ? '답돌이 직원 등록' : `답돌이 고객 등록 (${userInfo.user_name})`;
+            setVTime('')
+        }
 
         if (method === '매장') {
             if (hour < 14) {
@@ -314,6 +320,19 @@ function Cart({ navigation }){
                                                 <DataTable.Cell style={{justifyContent:'center'}}>
                                                     <Text>
                                                         영업사원 직접전달
+                                                    </Text>
+                                                </DataTable.Cell>
+                                            </DataTable.Row >
+                                            <DataTable.Row
+                                                onPress={()=>{
+                                                    setMethod('거래처(택배)')
+                                                    hideMethodModal()
+                                                    showOrderModal()
+                                                }}
+                                            >
+                                                <DataTable.Cell style={{justifyContent:'center'}}>
+                                                    <Text>
+                                                        거래처(택배)
                                                     </Text>
                                                 </DataTable.Cell>
                                             </DataTable.Row >

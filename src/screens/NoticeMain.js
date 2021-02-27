@@ -106,9 +106,11 @@ function NoticeMain({ navigation }) {
   const messages = useSelector(state => state.messagesApp.messages)
 
   const inventoryInquiry = (item) => {
+    navigation.navigate('Chat')
+
     let option;
     let subOption;
-
+    
     let message = {
       createdAt: new Date(),
       _id: Math.round(Math.random() * 1000000),
@@ -132,7 +134,7 @@ function NoticeMain({ navigation }) {
 
     function timeout() {
       dispatch(sendMessage(GiftedChat.append(messages, [message])))
-      navigation.navigate('Chat')
+      // navigation.navigate('Chat')
     }
     setTimeout(timeout, 500)
   }

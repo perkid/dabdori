@@ -8,7 +8,7 @@ import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import key from '../../API-KEY';
 
-export default function STTButton({handleTranscript, handleTest, handleExplanation}) {
+export default function STTButton({handleTranscript, handleTest, handleExplanation, handleStop, stop}) {
   const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
   const r = viewportWidth/12;
   const API_KEY = key;
@@ -17,6 +17,8 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
   const [recordingStatus, setRecordingStatus] = useState();
   const [isFetching, setIsFetching] = useState(false);
   const [transcript, setTranscript] = useState();
+  const [isRecording, setIsRecording] = useState(0);
+  const [isTimer, setIsTimer] = useState(false);
 
   // 녹음된 소리 듣기 위한 코드
   const [muted, setMuted] = useState();
@@ -69,7 +71,7 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
 
   // 녹음 시작
   async function _startRecording() {
-    handleExplanation()
+    handleExplanation();
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -90,6 +92,12 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
     );
 
     await newRrecording.startAsync();
+    
+    // 녹음 종료 시간초
+    setTimeout(()=>{
+      setIsRecording(2)
+      setIsTimer(false)
+    },5000)
   }
 
   // 녹음 종료
@@ -132,6 +140,36 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
     setSound(sound);
   }
 
+  function test () {
+    setIsFetching(true)
+    const audioBytes =  FileSystem.readAsStringAsync(recording.getURI(), {encoding:FileSystem.EncodingType.Base64});
+    axios.post(`http://10.0.3.88:4000/dabdori`, {
+    // axios.post(`https://speech.googleapis.com/v1p1beta1/speech:recognize?key=${API_KEY}`, {
+        // audio:{
+        //   content:audioBytes
+        // },
+        // config:
+        // // {
+        // //   encoding:"LINEAR16",
+        // //   sampleRateHertz: 41000,
+        // //   languageCode: "ko-KR"
+        // // }
+        // Platform.OS==='ios'?{  
+        //   encoding: "LINEAR16",
+        //   // audioChannelCount:1,
+        //   sampleRateHertz: 41000,
+        //   languageCode: "ko-KR",
+        // }:{
+        //   encoding: "MP3",
+        //   sampleRateHertz: 41000,
+        //   languageCode: "ko-KR"
+        // }
+      }).then((res)=>{
+        console.log(res.data)
+      })
+    setIsFetching(false)
+  }
+
   // 파일 전송
   async function getTranscription () {
     setIsFetching(true)
@@ -147,32 +185,33 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
       //   name: Platform.OS === 'ios' ? `${Date.now()}.wav` :`${Date.now()}.m4a`,
       // })
 
+      if(stop===1){
+        handleStop(0)
+        const { data } = await axios.post(`https://speech.googleapis.com/v1p1beta1/speech:recognize?key=${API_KEY}`, {
+          audio: {
+            content: audioBytes
+          },
+          config:
+            // {
+            //   encoding:"LINEAR16",
+            //   sampleRateHertz: 41000,
+            //   languageCode: "ko-KR"
+            // }
+            Platform.OS === 'ios' ? {
+              encoding: "LINEAR16",
+              // audioChannelCount:1,
+              sampleRateHertz: 41000,
+              languageCode: "ko-KR",
+            } : {
+                encoding: "MP3",
+                sampleRateHertz: 41000,
+                languageCode: "ko-KR"
+              }
+        })
+        // console.log(data.results[0].alternatives[0].transcript)
 
-      const { data } = await axios.post(`https://speech.googleapis.com/v1p1beta1/speech:recognize?key=${API_KEY}`, {
-        audio:{
-          content:audioBytes
-        },
-        config:
-        // {
-        //   encoding:"LINEAR16",
-        //   sampleRateHertz: 41000,
-        //   languageCode: "ko-KR"
-        // }
-        Platform.OS==='ios'?{  
-          encoding: "LINEAR16",
-          // audioChannelCount:1,
-          sampleRateHertz: 41000,
-          languageCode: "ko-KR",
-        }:{
-          encoding: "MP3",
-          sampleRateHertz: 41000,
-          languageCode: "ko-KR"
-        }
-      })
-      // console.log(data)
-      // console.log(data.results)
-      // console.log(data.results[0].alternatives[0].transcript)
-      handleTranscript(data.results[0].alternatives[0].transcript)
+        handleTranscript(data.results[0].alternatives[0].transcript)
+      }
     } catch (error) {
       // console.log(error)
       // console.log('There was an error reading file', error)
@@ -192,28 +231,57 @@ export default function STTButton({handleTranscript, handleTest, handleExplanati
 
   // 녹음 종료시
   function handleStopRecording() {
-    // console.log('끝')
     _stopRecording()
+    // test()
     getTranscription()
+    setIsRecording(0)
   }
 
   async function soundPlay() {
     sound.playAsync()
   }
 
+  useEffect(()=>{
+    if(isRecording===1){
+      _startRecording()
+    }
+    if(isRecording===2){
+      handleStopRecording()
+    }
+  },[isRecording])
+
   return (
-    <View style={r < 85 ? styles.container : styles.iPadContainer}>
-      {/* <TouchableOpacity style={{marginTop:5}} onPress={handleTest}>
+    <View style={isRecording===1? r < 85? styles.containerR:styles.iPadContainerR:r < 85 ? styles.container : styles.iPadContainer}>
+      {/* <TouchableOpacity style={{marginTop:5}} onPress={test}>
             <MaterialCommunityIcons name='microphone' size={35} color={'white'}/>
       </TouchableOpacity> */}
-      <TouchableOpacity style={{marginTop:5}} onPressIn={_startRecording} onPressOut={handleStopRecording}>
+      {/* <TouchableOpacity style={{marginTop:5}} onPressIn={_startRecording} onPressOut={handleStopRecording}>
             <MaterialCommunityIcons name='microphone' size={35} color={'white'}/>
+      </TouchableOpacity> */}
+      {isRecording===1?<TouchableOpacity style={{marginTop:0}} onPress={()=>{
+        setIsRecording(2)
+      }}>
+            <MaterialCommunityIcons name='stop-circle' size={50} color={'white'}/>
       </TouchableOpacity>
+      :
+        isTimer?
+        <TouchableOpacity style={{marginTop:5}} onPress={()=>{
+          }}>
+              <MaterialCommunityIcons name='microphone' size={35} color={'white'}/>
+        </TouchableOpacity>:
+        <TouchableOpacity style={{marginTop:5}} onPress={()=>{
+          handleStop(1)
+          setIsTimer(true)
+          setIsRecording(1)
+          }}>
+              <MaterialCommunityIcons name='microphone' size={35} color={'white'}/>
+        </TouchableOpacity>
+      }
       {/* <Button title="start record" onPress={_startRecording} /> */}
       {/* <Text>Open up App.tsx to start working on your app!</Text>
 
       <Button title="start record" onPress={_startRecording} />
-      <Button title="stop record" onPress={handleStopRecording} />
+      <Button title="stop record" onPress={()=>{setIsRecording(2)}} />
       <Button title="play record" onPress={soundPlay}/>
       <View>
         <Text>Recording permission: {isAllowRecord} </Text>
@@ -250,11 +318,43 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center'
   },
+  containerR: {
+    position:"absolute",
+    right:15,
+    bottom:80,
+    backgroundColor: "#DF0101",
+    borderRadius: 25,
+    width:50,
+    height:50,
+    shadowOpacity: 0.35,
+    shadowOffset: {
+      width: 0,
+      height: 5
+    },
+    justifyContent:'center',
+    alignItems:'center'
+  },
   iPadContainer:{
     position:"absolute",
     right:30,
     bottom:180,
     backgroundColor: "#1E388D",
+    borderRadius: 25,
+    width:50,
+    height:50,
+    shadowOpacity: 0.35,
+    shadowOffset: {
+      width: 0,
+      height: 5
+    },
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  iPadContainerR:{
+    position:"absolute",
+    right:30,
+    bottom:180,
+    backgroundColor: "red",
     borderRadius: 25,
     width:50,
     height:50,

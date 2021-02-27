@@ -128,6 +128,7 @@ function OrderHistory({ navigation }) {
 
 const actions = getActions(user.role!=='employee')
     
+const version = user.user_name==='이성재'||user.user_name==='고유준'?'v4.0.7':''
 
   return (
     <>
@@ -175,6 +176,7 @@ const actions = getActions(user.role!=='employee')
             />
           ))}
         </ScrollView>
+      {version!==''?<View style={{alignItems:'flex-end'}}><Text>{version}</Text></View>:undefined}
       </View>
       <Tab navigation={navigation}/>
       <Fab

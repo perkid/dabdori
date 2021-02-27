@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback, AsyncStorage, Alert, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginRequest, login } from '../redux/authentication';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Login({ navigation }) {
 
@@ -62,7 +63,7 @@ function Login({ navigation }) {
                 <KeyboardAvoidingView
                     behavior={Platform.OS == "ios" ? "padding" : 'padding'}
                     style={{flex:1, width:'100%'}}
-                    keyboardVerticalOffset={64}
+                    keyboardVerticalOffset={0}
                 >
                 
                 

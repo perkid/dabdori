@@ -2,9 +2,10 @@ import { Keyboard } from 'react-native';
 import { callNumber } from './calling';
 import axios from 'axios';
 import getUrl from '../config/environment';
+import { set } from 'react-native-reanimated';
 
 
-function createMessage(text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, handleQuestion, question, scroll) {
+function createMessage(text, option, subOption, item, userInfo, company, messageSend, handleOption, handleSubOption, handleItem, selectCompany, handleCompany, sendPushNotification, handleColor, color, handleItemName, itemName, handlePrice, price, handleQuestion, question, scroll, handleLoading) {
 
     // option
     // 1: 현물조회
@@ -255,11 +256,11 @@ function createMessage(text, option, subOption, item, userInfo, company, message
             create(text, option, subOption);
         }
     }
-
     if (option === 1 && subOption === 1 && text.length < 15) {
         let strArr = text.split(' ');
         //아이템 명만 입력한 경우
         if (strArr.length === 1) {
+            handleLoading(true)
             axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: strArr[0],
@@ -279,8 +280,105 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 1,
                         subOption: 1,
                     }
+                    handleLoading(false)
                     messageSend(message)
                 } else {
+                    // axios.post(url + '/api/currentInventory.dab',
+                    //     {
+                    //         itemName: strArr[0],
+                    //         includeYN: 0
+                    //     }).then((resoponse) => {
+                    //         let r = resoponse.data;
+
+                    //         if (r !== undefined) {
+                    //             let lastIndex = r.length - 1;
+                    //             text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
+                    //             r.map((i, index) => {
+                    //                 index === lastIndex ?
+                    //                     text += `${i.coloryw}\n${i.jaeqty}YD`
+                    //                     :
+                    //                     text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                    //             })
+
+                    //             message = {
+                    //                 createdAt: new Date(),
+                    //                 _id: Math.round(Math.random() * 1000000),
+                    //                 text: text,
+                    //                 user: {
+                    //                     _id: 2
+                    //                 },
+                    //                 quickReplies: {
+                    //                     type: 'radio',
+                    //                     values: [
+                    //                         {
+                    //                             title: '현물조회',
+                    //                             value: '현물조회',
+                    //                         },
+                    //                         {
+                    //                             title: '샘플신청',
+                    //                             value: '샘플신청',
+                    //                         },
+                    //                         {
+                    //                             title: '아이템 정보',
+                    //                             value: '아이템 정보',
+                    //                         },
+                    //                     ],
+                    //                 },
+                    //                 option: 0,
+                    //                 subOption: 0,
+                    //             }
+                    //             handleOption(0)
+                    //             handleSubOption(0)
+                    //             handleLoading(false)
+                    //             messageSend(message)
+                    //             Keyboard.dismiss()
+                    //             //로그입력
+                    //             axios.post(url + `/api/insertLog.dab`, {
+                    //                 log_gb: '01',
+                    //                 item_code: r[0].itemcode,
+                    //                 item_name: r[0].itemname,
+                    //                 color_name: '전칼라',
+                    //                 user_name: userInfo.user_name,
+                    //                 role: userInfo.role,
+                    //                 cust_name: userInfo.company_name,
+                    //             })
+                    //         }
+                    //     }).catch((err) => {
+                    //         text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                    //         handleOption(0)
+                    //         handleSubOption(0);
+                    //         message = {
+                    //             createdAt: new Date(),
+                    //             _id: Math.round(Math.random() * 1000000),
+                    //             text: text,
+                    //             user: {
+                    //                 _id: 2
+                    //             },
+                    //             quickReplies: {
+                    //                 type: 'radio',
+                    //                 values: [
+                    //                     {
+                    //                         title: '현물조회',
+                    //                         value: '현물조회',
+                    //                     },
+                    //                     {
+                    //                         title: '샘플신청',
+                    //                         value: '샘플신청',
+                    //                     },
+                    //                     {
+                    //                         title: '아이템 정보',
+                    //                         value: '아이템 정보',
+                    //                     },
+                    //                 ],
+                    //             },
+                    //             option: 0,
+                    //             subOption: 0,
+                    //         }
+                    //         handleLoading(false)
+                    //         messageSend(message)
+                    //     })
+                    
+                    // 용도 선택
                     text = `용도를 선택해 주세요.`;
                     handleOption(1)
                     handleSubOption(2)
@@ -308,6 +406,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 1,
                         subOption: 2,
                     }
+                    handleLoading(false)
                     messageSend(message)
                     Keyboard.dismiss()
                 }
@@ -342,11 +441,13 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 0,
                         subOption: 0,
                     }
+                    handleLoading(false)
                     messageSend(message)
             })
         }
         //칼라 번호도 입력한 경우
         if (strArr.length === 2) {
+            handleLoading(true)
             axios.post(url + '/api/currentInventory.dab',
                 {
                         itemName: strArr[0],
@@ -434,6 +535,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                         subOption: 0,
                                     }
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                                 //로그입력
                                 axios.post(url+`/api/insertLog.dab`,{
@@ -480,6 +582,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
                         }
@@ -514,6 +617,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                             option: 0,
                             subOption: 0,
                         }
+                        handleLoading(false)
                         messageSend(message)
                     })
                 } else {
@@ -530,6 +634,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 1,
                         subOption: 1,
                     }
+                    handleLoading(false)
                     messageSend(message)
                 }
                 }).catch((err)=>{
@@ -563,6 +668,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 0,
                         subOption: 0,
                     }
+                    handleLoading(false)
                     messageSend(message)
                 })
             Keyboard.dismiss()
@@ -576,6 +682,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
     }
 
     if (option === 1 && subOption === 2 && text === '업체용') {
+        handleLoading(true)
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
@@ -620,6 +727,9 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 0,
                         subOption: 0,
                     }
+                    handleOption(0)
+                    handleSubOption(0)
+                    handleLoading(false)
                     messageSend(message)
                     //로그입력
                     axios.post(url+`/api/insertLog.dab`,{
@@ -663,6 +773,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
         Keyboard.dismiss()
@@ -677,6 +788,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
     }
 
     if (option === 1 && subOption === 3 && text === '네') {
+        handleLoading(true)
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
@@ -721,6 +833,9 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 0,
                         subOption: 0,
                     }
+                    handleOption(0)
+                    handleSubOption(0)
+                    handleLoading(false)
                     messageSend(message)
                     //로그입력
                     axios.post(url+`/api/insertLog.dab`,{
@@ -764,11 +879,13 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
     }
 
     if (option === 1 && subOption === 3 && text === '아니요') {
+        handleLoading(true)
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
@@ -814,6 +931,9 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 0,
                         subOption: 0,
                     }
+                    handleOption(0)
+                    handleSubOption(0)
+                    handleLoading(false)
                     messageSend(message)
                     //로그입력
                     axios.post(url+`/api/insertLog.dab`,{
@@ -857,6 +977,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
     }
@@ -872,6 +993,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
 
     if (option === 1 && subOption === 4 && text.length < 15) {
         let item = text;
+        handleLoading(true)
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
@@ -892,6 +1014,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 1,
                         subOption: 5,
                     }
+                    handleLoading(false)
                     messageSend(message)
                 }
                 if (r !== undefined && r.length !== 0) {
@@ -916,6 +1039,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     message.quickReplies.values.push({title: '전체컬러', value:'전체컬러'})
                     handleSubOption(5)
                     handleItem(item)
+                    handleLoading(false)
                     messageSend(message)
                 } 
             }).catch((err)=>{
@@ -953,11 +1077,14 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
         Keyboard.dismiss()
     }
-    if(option ===1 && subOption === 5 && text ==='전체컬러'){
+    let passText = ['전체 컬러', '전체컬러']
+    if(option ===1 && subOption === 5 && passText.includes(text)){
+        handleLoading(true)
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
@@ -1006,6 +1133,9 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 0,
                         subOption: 0,
                     }
+                    handleOption(0)
+                    handleSubOption(0)
+                    handleLoading(false)
                     messageSend(message)
                     //로그입력
                     axios.post(url+`/api/insertLog.dab`,{
@@ -1053,6 +1183,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
         Keyboard.dismiss()
@@ -1061,6 +1192,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
     if (option === 1 && subOption === 5 && text !=='전체컬러' && text.length < 15) {
         let color = text;
         scroll()
+        handleLoading(true);
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
@@ -1112,7 +1244,9 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 option: 0,
                                 subOption: 0,
                             }
-                            
+                            handleOption(0)
+                            handleSubOption(0)
+                            handleLoading(false)
                             messageSend(message)
                         }
                         if(colorList.length>0){
@@ -1149,6 +1283,9 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 option: 0,
                                 subOption: 0,
                             }
+                            handleOption(0)
+                            handleSubOption(0)
+                            handleLoading(false)
                             messageSend(message)
                         }
                     } else{
@@ -1187,8 +1324,11 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                             option: 0,
                             subOption: 0,
                         }
+                        handleOption(0)
+                        handleSubOption(0)
                         handleItemName(item)
                         handleColor(color)
+                        handleLoading(false)
                         messageSend(message)
                     }
                     //로그입력
@@ -1242,6 +1382,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
         Keyboard.dismiss()
@@ -1292,6 +1433,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
     }
 
     if (text === '다시 선택') {
+        handleLoading(true)
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
@@ -1321,6 +1463,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     handleOption(1)
                     handleSubOption(5)
                     handleItem(item)
+                    handleLoading(false)
                     messageSend(message)
                 }
             }).catch((err)=>{
@@ -1358,6 +1501,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
         Keyboard.dismiss()
@@ -1379,8 +1523,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
     }
 
     let passOp = [2,7]
-
-    if (passOp.includes(option) && subOption === 2) {
+    if (passOp.includes(option) && subOption === 2 && company !=='스펙정보') {
         text = `원하시는 아이템명, 컬러명, 수량을\n입력해주세요.\n\n예시) ${userInfo.promotion_Item} ${userInfo.promotion_Color} 10`;
         option = 2;
         subOption = 3;
@@ -1398,7 +1541,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
     }
 
     if (option === 2 && subOption === 1 && !text.includes('거래처명')) {
-
+        handleLoading(true)
         axios.post(url + '/api/searchCustmors.dab',
              { custName: text }
             )
@@ -1421,6 +1564,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         subOption: 2,
                         company: c
                     }
+                    handleLoading(false)
                     messageSend(message)
                 }
                 if (companyList.length > 1) {
@@ -1434,14 +1578,15 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 2,
                         subOption: 1,
                     }
+                    handleLoading(false)
                     messageSend(message)
                     handleCompany(companyList)
                     selectCompany(companyList)
                     Keyboard.dismiss()
                 }
                 if (companyList.length === 0) {
-                    handleOption = 2;
-                    handleSubOption = 1;
+                    handleOption(2);
+                    handleSubOption(1);
                     message = {
                         createdAt: new Date(),
                         _id: Math.round(Math.random() * 1000000),
@@ -1452,6 +1597,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                         option: 2,
                         subOption: 1,
                     }
+                    handleLoading(false)
                     messageSend(message)
                 }
             }).catch((err)=>{
@@ -1485,6 +1631,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
     }
@@ -1578,6 +1725,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     amount: ``,
                     price: ``
                 }
+                handleLoading(true)
                 axios.post(url + `/api/searchItem.dab`,
                     {
                             itemName: strArr[0]
@@ -1634,6 +1782,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                     option: 0,
                                                     subOption: 0,
                                                 }
+                                                handleLoading(false)
                                                 messageSend(message)
                                             })
                                         }
@@ -1659,6 +1808,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                         {
                                                             title: '영업사원전달',
                                                             value: '영업사원전달',
+                                                        },
+                                                        {
+                                                            title: '거래처(택배)',
+                                                            value: '거래처(택배)'
                                                         }
                                                     ],
                                                 },
@@ -1666,6 +1819,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                 subOption: 4,
                                                 item: itemList
                                             }
+                                            handleLoading(false)
                                             messageSend(message)
                                             Keyboard.dismiss()
                                         }
@@ -1681,6 +1835,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                             option: 2,
                                             subOption: 2,
                                         }
+                                        handleLoading(false)
                                         messageSend(message)
                                     }
                                 }).catch((err)=>{
@@ -1714,6 +1869,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                         option: 0,
                                         subOption: 0,
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                 })
                         }
@@ -1728,6 +1884,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 option: 2,
                                 subOption: 2,
                             }
+                            handleLoading(false)
                             messageSend(message)
                         }
                     }).catch((err)=>{
@@ -1761,6 +1918,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                             option: 0,
                             subOption: 0,
                         }
+                        handleLoading(false)
                         messageSend(message)
                     })
             })
@@ -1812,6 +1970,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     amount: ``,
                     price: ``
                 }
+                handleLoading(true)
                 axios.post(url + `/api/searchItem.dab`,
                     {
                             itemName: strArr[0]
@@ -1868,6 +2027,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                     option: 0,
                                                     subOption: 0,
                                                 }
+                                                handleLoading(false)
                                                 messageSend(message)
                                             })
                                         }
@@ -1893,6 +2053,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                         {
                                                             title: '영업사원전달',
                                                             value: '영업사원전달',
+                                                        },
+                                                        {
+                                                            title: '거래처(택배)',
+                                                            value: '거래처(택배)'
                                                         }
                                                     ],
                                                 },
@@ -1900,6 +2064,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                 subOption: 4,
                                                 item: itemList
                                             }
+                                            handleLoading(false)
                                             messageSend(message)
                                             Keyboard.dismiss()
                                         }
@@ -1915,6 +2080,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                             option: 2,
                                             subOption: 2,
                                         }
+                                        handleLoading(false)
                                         messageSend(message)
                                     }
                                 }).catch((err)=>{
@@ -1948,6 +2114,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                         option: 0,
                                         subOption: 0,
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                 })
                         }
@@ -1962,6 +2129,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                 option: 2,
                                 subOption: 2,
                             }
+                            handleLoading(false)
                             messageSend(message)
                         }
                     }).catch((err)=>{
@@ -1995,6 +2163,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                             option: 0,
                             subOption: 0,
                         }
+                        handleLoading(false)
                         messageSend(message)
                     })
             })
@@ -2037,6 +2206,11 @@ function createMessage(text, option, subOption, item, userInfo, company, message
             order.deli_type = 20;
             order.remark = (userInfo.role === 'employee') ? '답돌이 직원 등록' : `답돌이 고객 등록 (${userInfo.user_name})`;
         }
+        if (method === '거래처(택배)'){
+            order.delyDate = `${year}-${month}-${day}`;
+            order.deli_type = 30;
+            order.remark = (userInfo.role === 'employee') ? '답돌이 직원 등록' : `답돌이 고객 등록 (${userInfo.user_name})`;
+        }
 
         if (method === '매장') {
             if (hour < 14) {
@@ -2073,6 +2247,7 @@ ${method} ${time === undefined ? '' : time}
     }
 
     if (text === '네, 주문완료'){
+        handleLoading(true)
         axios.post(url+`/api/createOrder.dab`,
         {
             companyCode: item.company_code,
@@ -2088,6 +2263,7 @@ ${method} ${time === undefined ? '' : time}
                 text = `신청하신 내용이 정상적으로 등\n록되었습니다.\n\n주문번호는 ${response.data.cause}\n입니다.`;
                 handleOption(0)
                 handleSubOption(0)
+                handleLoading(false)
                 if(userInfo.role==='employee'){
                     message = {
                         createdAt: new Date(),
@@ -2220,6 +2396,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             }
         }).catch((err)=>{
@@ -2253,6 +2430,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
         })
     }
@@ -2266,6 +2444,7 @@ ${method} ${time === undefined ? '' : time}
 
     if(option === 2 && subOption === 7 && !text.includes('전달사항을 입력해주세요.')){
         item.remark += ` ${text}`
+        handleLoading(true)
         axios.post(url+`/api/createOrder.dab`,
             {
                     companyCode: item.company_code,
@@ -2380,6 +2559,7 @@ ${method} ${time === undefined ? '' : time}
                     let pushToken = userInfo.manager_firebase_token;
                     sendPushNotification(pushToken,'신규오더',`${userInfo.company_name} 오더 단가를 확정해주세요.`)
                 }
+                handleLoading(false)
                 messageSend(message)
             }
             if(response.data.result==='FAIL'){
@@ -2413,6 +2593,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             }
         }).catch((err)=>{
@@ -2446,6 +2627,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
         })
         Keyboard.dismiss()
@@ -2466,6 +2648,8 @@ ${method} ${time === undefined ? '' : time}
     }
 
     if (option === 3 && subOption === 1 && userInfo.role === 'client' && text.length < 10) {
+        text = text.replace(/ /g,"")
+        handleLoading(true)
         axios.post(url+`/api/searchItem.dab`,
         {
                 itemName:text
@@ -2518,6 +2702,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0
                 }
+                handleLoading(false)
                 messageSend(message)
                 Keyboard.dismiss()
                 //로그입력
@@ -2544,6 +2729,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 3,
                     subOption: 1,
                 }
+                handleLoading(false)
                 messageSend(message)
                 } else{
                     text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -2576,6 +2762,7 @@ ${method} ${time === undefined ? '' : time}
                         option: 0,
                         subOption: 0,
                     }
+                    handleLoading(false)
                     messageSend(message)
                 }
             })
@@ -2610,10 +2797,13 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
         })
     }
     if (option === 3 && subOption === 1 && userInfo.role === 'partner' && text.length < 10) {
+        text = text.replace(/ /g,"")
+        handleLoading(true)
         axios.post(url+`/api/searchItem.dab`,
         {
                 itemName:text
@@ -2664,6 +2854,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0
                 }
+                handleLoading(false)
                 messageSend(message)
                 Keyboard.dismiss()
                 //로그입력
@@ -2690,6 +2881,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 3,
                     subOption: 1,
                 }
+                handleLoading(false)
                 messageSend(message)
                 } else{
                     text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -2722,6 +2914,7 @@ ${method} ${time === undefined ? '' : time}
                         option: 0,
                         subOption: 0,
                     }
+                    handleLoading(false)
                     messageSend(message)
                 }
             })
@@ -2756,11 +2949,14 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
         })
     }
 
     if (option === 3 && subOption === 1 && userInfo.role === 'employee' && text.length < 10) {
+        text = text.replace(/ /g,"")
+        handleLoading(true)
         axios.post(url+`/api/searchItem.dab`,
         {
                 itemName:text
@@ -2780,12 +2976,13 @@ ${method} ${time === undefined ? '' : time}
                     option: 3,
                     subOption: 1,
                 }
+                handleLoading(false)
                 messageSend(message)
             } else {
                 let item = text;
                 text = '조회 항목을 선택해 주세요.';
                 quick = 2;
-                handleOption(3)
+                handleOption(0)
                 handleSubOption(2);
                 handleItem(item)
                 message = {
@@ -2820,6 +3017,7 @@ ${method} ${time === undefined ? '' : time}
                         subOption: 2,
                         item:item
                     }
+                    handleLoading(false)
                     messageSend(message)
                
                     Keyboard.dismiss()
@@ -2840,6 +3038,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 3,
                     subOption: 1,
                 }
+                handleLoading(false)
                 messageSend(message)
                 } else{
                     text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -2872,12 +3071,14 @@ ${method} ${time === undefined ? '' : time}
                         option: 0,
                         subOption: 0,
                     }
+                    handleLoading(false)
                     messageSend(message)
                 }
             })
     }
     
-    if (text === '업차지' && option === 3 && subOption === 2) {
+    if (text === '업차지' && subOption === 2) {
+        handleLoading(true)
         axios.post(url+`/api/searchItem.dab`,
         {
                 itemName:item
@@ -2930,8 +3131,6 @@ ${method} ${time === undefined ? '' : time}
                         text = '업차지 정보가 입력되어있지 않습니다.'
                         break;
                 }
-                handleOption(3)
-                handleSubOption(2)
 
                 message = {
                     createdAt: new Date(),
@@ -2961,9 +3160,12 @@ ${method} ${time === undefined ? '' : time}
                             },
                         ],
                     },
-                    option: 3,
+                    option: 0,
                     subOption: 2
                 }
+                handleOption(0)
+                handleSubOption(2)
+                handleLoading(false)
                 messageSend(message)
                 Keyboard.dismiss()
             }).catch((err)=>{
@@ -2997,6 +3199,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
         }).catch((err)=>{
@@ -3030,11 +3233,13 @@ ${method} ${time === undefined ? '' : time}
                 option: 0,
                 subOption: 0,
             }
+            handleLoading(false)
             messageSend(message)
         })
     }
 
-    if (text === '스펙과 단가' && option === 3 && subOption === 2) {
+    if (text === '스펙과 단가' && subOption === 2) {
+        handleLoading(true)
         axios.post(url+`/api/searchItem.dab`,
         {
                 itemName:item
@@ -3052,8 +3257,7 @@ ${method} ${time === undefined ? '' : time}
                 let check = spec.dry_friction===null
 
                 text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}${userInfo.specGB==='Y'?`\n경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
-                handleOption(3)
-                handleSubOption(2)
+
                 message = {
                     createdAt: new Date(),
                     _id: Math.round(Math.random() * 1000000),
@@ -3082,9 +3286,13 @@ ${method} ${time === undefined ? '' : time}
                             },
                         ],
                     },
-                    option: 3,
+                    option: 0,
                     subOption: 2
                 }
+
+                handleOption(0)
+                handleSubOption(2)
+                handleLoading(false)
                 messageSend(message)
                 Keyboard.dismiss()
 
@@ -3128,6 +3336,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
             })
         }).catch((err)=>{
@@ -3161,420 +3370,437 @@ ${method} ${time === undefined ? '' : time}
                 option: 0,
                 subOption: 0,
             }
+            handleLoading(false)
             messageSend(message)
         })
     }
 
     let passList = ['업차지','스펙과 단가','다른 아이템 조회','처음 단계로'];
 
-    if(option === 3 && subOption === 2 && !passList.includes(text) && text.length < 10){
-        if(userInfo.role === 'client'){
-            axios.post(url + `/api/searchItem.dab`,
-                {
-                    itemName: text
-                }).then((response) => {
-                    let itemCode = response.data.itemCode;
-                    axios.post(url + `/api/itemSpecInfo.dab`,
-                        {
-                            itemCode: itemCode
-                        }
-                    ).then((response) => {
-                        let spec = response.data;
+    // 바로 조회하는 부분
+    // if(option === 3 && subOption === 2 && !passList.includes(text) && text.length < 10){
+    //     if(userInfo.role === 'client'){
+    //         handleLoading(true)
+    //         axios.post(url + `/api/searchItem.dab`,
+    //             {
+    //                 itemName: text
+    //             }).then((response) => {
+    //                 let itemCode = response.data.itemCode;
+    //                 axios.post(url + `/api/itemSpecInfo.dab`,
+    //                     {
+    //                         itemCode: itemCode
+    //                     }
+    //                 ).then((response) => {
+    //                     let spec = response.data;
 
-                        let price = spec.price.split('.')
-                        let check = spec.dry_friction === null
-                        text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+    //                     let price = spec.price.split('.')
+    //                     let check = spec.dry_friction === null
+    //                     text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
-                        handleOption(0)
-                        handleSubOption(0)
-                        message = {
-                            createdAt: new Date(),
-                            _id: Math.round(Math.random() * 1000000),
-                            text: text,
-                            user: {
-                                _id: 2
-                            },
-                            quickReplies: {
-                                type: 'radio',
-                                values: [
-                                    {
-                                        title: '현물조회',
-                                        value: '현물조회',
-                                    },
-                                    {
-                                        title: '샘플신청',
-                                        value: '샘플신청',
-                                    },
-                                    {
-                                        title: '아이템 정보',
-                                        value: '아이템 정보',
-                                    },
-                                    {
-                                        title: '문의사항',
-                                        value: '문의사항',
-                                    }
-                                ],
-                            },
-                            option: 0,
-                            subOption: 0
-                        }
-                        messageSend(message)
-                        Keyboard.dismiss()
-                        //로그입력
-                        axios.post(url + `/api/insertLog.dab`, {
-                            log_gb: '03',
-                            item_code: itemCode,
-                            item_name: response.data.itemName,
-                            user_name: userInfo.user_name,
-                            role: userInfo.role,
-                            cust_name: userInfo.company_name
-                        })
-                    }).catch((err) => {
-                        if (err.message.includes('spec.prodList[0]')) {
-                            text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
-                            handleOption(3)
-                            handleSubOption(1);
-                            message = {
-                                createdAt: new Date(),
-                                _id: Math.round(Math.random() * 1000000),
-                                text: text,
-                                user: {
-                                    _id: 2
-                                },
-                                option: 3,
-                                subOption: 1,
-                            }
-                            messageSend(message)
-                        } else {
-                            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                            handleOption(0)
-                            handleSubOption(0);
-                            message = {
-                                createdAt: new Date(),
-                                _id: Math.round(Math.random() * 1000000),
-                                text: text,
-                                user: {
-                                    _id: 2
-                                },
-                                quickReplies: {
-                                    type: 'radio',
-                                    values: [
-                                        {
-                                            title: '현물조회',
-                                            value: '현물조회',
-                                        },
-                                        {
-                                            title: '샘플신청',
-                                            value: '샘플신청',
-                                        },
-                                        {
-                                            title: '아이템 정보',
-                                            value: '아이템 정보',
-                                        },
-                                    ],
-                                },
-                                option: 0,
-                                subOption: 0,
-                            }
-                            messageSend(message)
-                        }
-                    })
-                }).catch((err) => {
-                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                    handleOption(0)
-                    handleSubOption(0);
-                    message = {
-                        createdAt: new Date(),
-                        _id: Math.round(Math.random() * 1000000),
-                        text: text,
-                        user: {
-                            _id: 2
-                        },
-                        quickReplies: {
-                            type: 'radio',
-                            values: [
-                                {
-                                    title: '현물조회',
-                                    value: '현물조회',
-                                },
-                                {
-                                    title: '샘플신청',
-                                    value: '샘플신청',
-                                },
-                                {
-                                    title: '아이템 정보',
-                                    value: '아이템 정보',
-                                },
-                            ],
-                        },
-                        option: 0,
-                        subOption: 0,
-                    }
-                    messageSend(message)
-                })
-        }
-        if (userInfo.role === 'partner') {
-            axios.post(url + `/api/searchItem.dab`,
-                {
-                    itemName: text
-                }).then((response) => {
-                    let itemCode = response.data.itemCode;
-                    axios.post(url + `/api/itemSpecInfo.dab`,
-                        {
-                            itemCode: itemCode
-                        }
-                    ).then((response) => {
-                        let spec = response.data;
+    //                     handleOption(0)
+    //                     handleSubOption(0)
+    //                     message = {
+    //                         createdAt: new Date(),
+    //                         _id: Math.round(Math.random() * 1000000),
+    //                         text: text,
+    //                         user: {
+    //                             _id: 2
+    //                         },
+    //                         quickReplies: {
+    //                             type: 'radio',
+    //                             values: [
+    //                                 {
+    //                                     title: '현물조회',
+    //                                     value: '현물조회',
+    //                                 },
+    //                                 {
+    //                                     title: '샘플신청',
+    //                                     value: '샘플신청',
+    //                                 },
+    //                                 {
+    //                                     title: '아이템 정보',
+    //                                     value: '아이템 정보',
+    //                                 },
+    //                                 {
+    //                                     title: '문의사항',
+    //                                     value: '문의사항',
+    //                                 }
+    //                             ],
+    //                         },
+    //                         option: 0,
+    //                         subOption: 0
+    //                     }
+    //                     handleLoading(false)
+    //                     messageSend(message)
+    //                     Keyboard.dismiss()
+    //                     //로그입력
+    //                     axios.post(url + `/api/insertLog.dab`, {
+    //                         log_gb: '03',
+    //                         item_code: itemCode,
+    //                         item_name: response.data.itemName,
+    //                         user_name: userInfo.user_name,
+    //                         role: userInfo.role,
+    //                         cust_name: userInfo.company_name
+    //                     })
+    //                 }).catch((err) => {
+    //                     if (err.message.includes('spec.prodList[0]')) {
+    //                         text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+    //                         handleOption(3)
+    //                         handleSubOption(1);
+    //                         message = {
+    //                             createdAt: new Date(),
+    //                             _id: Math.round(Math.random() * 1000000),
+    //                             text: text,
+    //                             user: {
+    //                                 _id: 2
+    //                             },
+    //                             option: 3,
+    //                             subOption: 1,
+    //                         }
+    //                         handleLoading(false)
+    //                         messageSend(message)
+    //                     } else {
+    //                         text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+    //                         handleOption(0)
+    //                         handleSubOption(0);
+    //                         message = {
+    //                             createdAt: new Date(),
+    //                             _id: Math.round(Math.random() * 1000000),
+    //                             text: text,
+    //                             user: {
+    //                                 _id: 2
+    //                             },
+    //                             quickReplies: {
+    //                                 type: 'radio',
+    //                                 values: [
+    //                                     {
+    //                                         title: '현물조회',
+    //                                         value: '현물조회',
+    //                                     },
+    //                                     {
+    //                                         title: '샘플신청',
+    //                                         value: '샘플신청',
+    //                                     },
+    //                                     {
+    //                                         title: '아이템 정보',
+    //                                         value: '아이템 정보',
+    //                                     },
+    //                                 ],
+    //                             },
+    //                             option: 0,
+    //                             subOption: 0,
+    //                         }
+    //                         handleLoading(false)
+    //                         messageSend(message)
+    //                     }
+    //                 })
+    //             }).catch((err) => {
+    //                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+    //                 handleOption(0)
+    //                 handleSubOption(0);
+    //                 message = {
+    //                     createdAt: new Date(),
+    //                     _id: Math.round(Math.random() * 1000000),
+    //                     text: text,
+    //                     user: {
+    //                         _id: 2
+    //                     },
+    //                     quickReplies: {
+    //                         type: 'radio',
+    //                         values: [
+    //                             {
+    //                                 title: '현물조회',
+    //                                 value: '현물조회',
+    //                             },
+    //                             {
+    //                                 title: '샘플신청',
+    //                                 value: '샘플신청',
+    //                             },
+    //                             {
+    //                                 title: '아이템 정보',
+    //                                 value: '아이템 정보',
+    //                             },
+    //                         ],
+    //                     },
+    //                     option: 0,
+    //                     subOption: 0,
+    //                 }
+    //                 handleLoading(false)
+    //                 messageSend(message)
+    //             })
+    //     }
+    //     if (userInfo.role === 'partner') {
+    //         handleLoading(true)
+    //         axios.post(url + `/api/searchItem.dab`,
+    //             {
+    //                 itemName: text
+    //             }).then((response) => {
+    //                 let itemCode = response.data.itemCode;
+    //                 axios.post(url + `/api/itemSpecInfo.dab`,
+    //                     {
+    //                         itemCode: itemCode
+    //                     }
+    //                 ).then((response) => {
+    //                     let spec = response.data;
 
-                        let price = spec.price.split('.')
-                        let check = spec.dry_friction === null
-                        text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+    //                     let price = spec.price.split('.')
+    //                     let check = spec.dry_friction === null
+    //                     text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
-                        handleOption(0)
-                        handleSubOption(0)
-                        message = {
-                            createdAt: new Date(),
-                            _id: Math.round(Math.random() * 1000000),
-                            text: text,
-                            user: {
-                                _id: 2
-                            },
-                            quickReplies: {
-                                type: 'radio',
-                                values: [
-                                    {
-                                        title: '현물조회',
-                                        value: '현물조회',
-                                    },
-                                    {
-                                        title: '샘플신청',
-                                        value: '샘플신청',
-                                    },
-                                    {
-                                        title: '아이템 정보',
-                                        value: '아이템 정보',
-                                    },
-                                    {
-                                        title: '문의사항',
-                                        value: '문의사항',
-                                    }
-                                ],
-                            },
-                            option: 0,
-                            subOption: 0
-                        }
-                        messageSend(message)
-                        Keyboard.dismiss()
-                        //로그입력
-                        axios.post(url + `/api/insertLog.dab`, {
-                            log_gb: '03',
-                            item_code: itemCode,
-                            item_name: response.data.itemName,
-                            user_name: userInfo.user_name,
-                            role: userInfo.role,
-                            cust_name: userInfo.company_name
-                        })
-                    }).catch((err) => {
-                        if (err.message.includes('spec.prodList[0]')) {
-                            text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
-                            handleOption(3)
-                            handleSubOption(1);
-                            message = {
-                                createdAt: new Date(),
-                                _id: Math.round(Math.random() * 1000000),
-                                text: text,
-                                user: {
-                                    _id: 2
-                                },
-                                option: 3,
-                                subOption: 1,
-                            }
-                            messageSend(message)
-                        } else {
-                            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                            handleOption(0)
-                            handleSubOption(0);
-                            message = {
-                                createdAt: new Date(),
-                                _id: Math.round(Math.random() * 1000000),
-                                text: text,
-                                user: {
-                                    _id: 2
-                                },
-                                quickReplies: {
-                                    type: 'radio',
-                                    values: [
-                                        {
-                                            title: '현물조회',
-                                            value: '현물조회',
-                                        },
-                                        {
-                                            title: '샘플신청',
-                                            value: '샘플신청',
-                                        },
-                                        {
-                                            title: '아이템 정보',
-                                            value: '아이템 정보',
-                                        },
-                                    ],
-                                },
-                                option: 0,
-                                subOption: 0,
-                            }
-                            messageSend(message)
-                        }
-                    })
-                }).catch((err) => {
-                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                    handleOption(0)
-                    handleSubOption(0);
-                    message = {
-                        createdAt: new Date(),
-                        _id: Math.round(Math.random() * 1000000),
-                        text: text,
-                        user: {
-                            _id: 2
-                        },
-                        quickReplies: {
-                            type: 'radio',
-                            values: [
-                                {
-                                    title: '현물조회',
-                                    value: '현물조회',
-                                },
-                                {
-                                    title: '샘플신청',
-                                    value: '샘플신청',
-                                },
-                                {
-                                    title: '아이템 정보',
-                                    value: '아이템 정보',
-                                },
-                            ],
-                        },
-                        option: 0,
-                        subOption: 0,
-                    }
-                    messageSend(message)
-                })
-        }
-        if(userInfo.role === 'employee'){
-            axios.post(url+`/api/searchItem.dab`,
-        {
-                itemName:text
-        }).then((response)=>{
+    //                     handleOption(0)
+    //                     handleSubOption(0)
+    //                     message = {
+    //                         createdAt: new Date(),
+    //                         _id: Math.round(Math.random() * 1000000),
+    //                         text: text,
+    //                         user: {
+    //                             _id: 2
+    //                         },
+    //                         quickReplies: {
+    //                             type: 'radio',
+    //                             values: [
+    //                                 {
+    //                                     title: '현물조회',
+    //                                     value: '현물조회',
+    //                                 },
+    //                                 {
+    //                                     title: '샘플신청',
+    //                                     value: '샘플신청',
+    //                                 },
+    //                                 {
+    //                                     title: '아이템 정보',
+    //                                     value: '아이템 정보',
+    //                                 },
+    //                                 {
+    //                                     title: '문의사항',
+    //                                     value: '문의사항',
+    //                                 }
+    //                             ],
+    //                         },
+    //                         option: 0,
+    //                         subOption: 0
+    //                     }
+    //                     handleLoading(false)
+    //                     messageSend(message)
+    //                     Keyboard.dismiss()
+    //                     //로그입력
+    //                     axios.post(url + `/api/insertLog.dab`, {
+    //                         log_gb: '03',
+    //                         item_code: itemCode,
+    //                         item_name: response.data.itemName,
+    //                         user_name: userInfo.user_name,
+    //                         role: userInfo.role,
+    //                         cust_name: userInfo.company_name
+    //                     })
+    //                 }).catch((err) => {
+    //                     if (err.message.includes('spec.prodList[0]')) {
+    //                         text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+    //                         handleOption(3)
+    //                         handleSubOption(1);
+    //                         message = {
+    //                             createdAt: new Date(),
+    //                             _id: Math.round(Math.random() * 1000000),
+    //                             text: text,
+    //                             user: {
+    //                                 _id: 2
+    //                             },
+    //                             option: 3,
+    //                             subOption: 1,
+    //                         }
+    //                         handleLoading(false)
+    //                         messageSend(message)
+    //                     } else {
+    //                         text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+    //                         handleOption(0)
+    //                         handleSubOption(0);
+    //                         message = {
+    //                             createdAt: new Date(),
+    //                             _id: Math.round(Math.random() * 1000000),
+    //                             text: text,
+    //                             user: {
+    //                                 _id: 2
+    //                             },
+    //                             quickReplies: {
+    //                                 type: 'radio',
+    //                                 values: [
+    //                                     {
+    //                                         title: '현물조회',
+    //                                         value: '현물조회',
+    //                                     },
+    //                                     {
+    //                                         title: '샘플신청',
+    //                                         value: '샘플신청',
+    //                                     },
+    //                                     {
+    //                                         title: '아이템 정보',
+    //                                         value: '아이템 정보',
+    //                                     },
+    //                                 ],
+    //                             },
+    //                             option: 0,
+    //                             subOption: 0,
+    //                         }
+    //                         handleLoading(false)
+    //                         messageSend(message)
+    //                     }
+    //                 })
+    //             }).catch((err) => {
+    //                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+    //                 handleOption(0)
+    //                 handleSubOption(0);
+    //                 message = {
+    //                     createdAt: new Date(),
+    //                     _id: Math.round(Math.random() * 1000000),
+    //                     text: text,
+    //                     user: {
+    //                         _id: 2
+    //                     },
+    //                     quickReplies: {
+    //                         type: 'radio',
+    //                         values: [
+    //                             {
+    //                                 title: '현물조회',
+    //                                 value: '현물조회',
+    //                             },
+    //                             {
+    //                                 title: '샘플신청',
+    //                                 value: '샘플신청',
+    //                             },
+    //                             {
+    //                                 title: '아이템 정보',
+    //                                 value: '아이템 정보',
+    //                             },
+    //                         ],
+    //                     },
+    //                     option: 0,
+    //                     subOption: 0,
+    //                 }
+    //                 handleLoading(false)
+    //                 messageSend(message)
+    //             })
+    //     }
+    //     if(userInfo.role === 'employee'){
+    //         handleLoading(true)
+    //         axios.post(url+`/api/searchItem.dab`,
+    //     {
+    //             itemName:text
+    //     }).then((response)=>{
 
-            if(response.data.itemName===null){
-                text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
-                handleOption(3)
-                handleSubOption(1);
-                message = {
-                    createdAt: new Date(),
-                    _id: Math.round(Math.random() * 1000000),
-                    text: text,
-                    user: {
-                        _id: 2
-                    },
-                    option: 3,
-                    subOption: 1,
-                }
-                messageSend(message)
-            } else {
-                let item = text;
-                text = '조회 항목을 선택해 주세요.';
-                quick = 2;
-                handleOption(3)
-                handleSubOption(2);
-                handleItem(item)
-                message = {
-                        createdAt: new Date(),
-                        _id: Math.round(Math.random() * 1000000),
-                        text: text,
-                        user: {
-                            _id: 2
-                        },
-                        quickReplies: {
-                            type: 'radio',
-                            values: [
-                                {
-                                    title: '업차지',
-                                    value: '업차지',
-                                },
-                                {
-                                    title: '스펙과 단가',
-                                    value: '스펙과 단가',
-                                },
-                                {
-                                    title: '다른 아이템 조회',
-                                    value: '다른 아이템 조회'
-                                },
-                                {
-                                    title: '처음 단계로',
-                                    value: '처음 단계로',
-                                },
-                            ],
-                        },
-                        option: 3,
-                        subOption: 2,
-                        item:item
-                    }
-                    messageSend(message)
+    //         if(response.data.itemName===null){
+    //             text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+    //             handleOption(3)
+    //             handleSubOption(1);
+    //             message = {
+    //                 createdAt: new Date(),
+    //                 _id: Math.round(Math.random() * 1000000),
+    //                 text: text,
+    //                 user: {
+    //                     _id: 2
+    //                 },
+    //                 option: 3,
+    //                 subOption: 1,
+    //             }
+    //             handleLoading(false)
+    //             messageSend(message)
+    //         } else {
+    //             let item = text;
+    //             text = '조회 항목을 선택해 주세요.';
+    //             quick = 2;
+    //             handleOption(3)
+    //             handleSubOption(2);
+    //             handleItem(item)
+    //             message = {
+    //                     createdAt: new Date(),
+    //                     _id: Math.round(Math.random() * 1000000),
+    //                     text: text,
+    //                     user: {
+    //                         _id: 2
+    //                     },
+    //                     quickReplies: {
+    //                         type: 'radio',
+    //                         values: [
+    //                             {
+    //                                 title: '업차지',
+    //                                 value: '업차지',
+    //                             },
+    //                             {
+    //                                 title: '스펙과 단가',
+    //                                 value: '스펙과 단가',
+    //                             },
+    //                             {
+    //                                 title: '다른 아이템 조회',
+    //                                 value: '다른 아이템 조회'
+    //                             },
+    //                             {
+    //                                 title: '처음 단계로',
+    //                                 value: '처음 단계로',
+    //                             },
+    //                         ],
+    //                     },
+    //                     option: 3,
+    //                     subOption: 2,
+    //                     item:item
+    //                 }
+    //                 handleLoading(false)
+    //                 messageSend(message)
                
-                    Keyboard.dismiss()
-            }
+    //                 Keyboard.dismiss()
+    //         }
             
-            }).catch((err)=>{
-                if(err.message.includes('spec.prodList[0]')){
-                    text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
-                handleOption(3)
-                handleSubOption(1);
-                message = {
-                    createdAt: new Date(),
-                    _id: Math.round(Math.random() * 1000000),
-                    text: text,
-                    user: {
-                        _id: 2
-                    },
-                    option: 3,
-                    subOption: 1,
-                }
-                messageSend(message)
-                } else{
-                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                    handleOption(0)
-                    handleSubOption(0);
-                    message = {
-                        createdAt: new Date(),
-                        _id: Math.round(Math.random() * 1000000),
-                        text: text,
-                        user: {
-                            _id: 2
-                        },
-                        quickReplies : {
-                            type: 'radio',
-                            values: [
-                                {
-                                    title: '현물조회',
-                                    value: '현물조회',
-                                },
-                                {
-                                    title: '샘플신청',
-                                    value: '샘플신청',
-                                },
-                                {
-                                    title: '아이템 정보',
-                                    value: '아이템 정보',
-                                },
-                            ],
-                        },
-                        option: 0,
-                        subOption: 0,
-                    }
-                    messageSend(message)
-                }
-            })
-        }
-    }
+    //         }).catch((err)=>{
+    //             if(err.message.includes('spec.prodList[0]')){
+    //                 text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+    //             handleOption(3)
+    //             handleSubOption(1);
+    //             message = {
+    //                 createdAt: new Date(),
+    //                 _id: Math.round(Math.random() * 1000000),
+    //                 text: text,
+    //                 user: {
+    //                     _id: 2
+    //                 },
+    //                 option: 3,
+    //                 subOption: 1,
+    //             }
+    //             handleLoading(false)
+    //             messageSend(message)
+    //             } else{
+    //                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+    //                 handleOption(0)
+    //                 handleSubOption(0);
+    //                 message = {
+    //                     createdAt: new Date(),
+    //                     _id: Math.round(Math.random() * 1000000),
+    //                     text: text,
+    //                     user: {
+    //                         _id: 2
+    //                     },
+    //                     quickReplies : {
+    //                         type: 'radio',
+    //                         values: [
+    //                             {
+    //                                 title: '현물조회',
+    //                                 value: '현물조회',
+    //                             },
+    //                             {
+    //                                 title: '샘플신청',
+    //                                 value: '샘플신청',
+    //                             },
+    //                             {
+    //                                 title: '아이템 정보',
+    //                                 value: '아이템 정보',
+    //                             },
+    //                         ],
+    //                     },
+    //                     option: 0,
+    //                     subOption: 0,
+    //                 }
+    //                 handleLoading(false)
+    //                 messageSend(message)
+    //             }
+    //         })
+    //     }
+    // }
     if(text === '다른 아이템 조회'){
         text = '정보 조회를 원하는 아이템명을\n입력해주세요.';
         option = 3;
@@ -3584,6 +3810,7 @@ ${method} ${time === undefined ? '' : time}
 
     if (option === 4 && subOption ===1 && !text.includes('원하시는') && text.length < 15){
         price = price.replace(',','')
+        handleLoading(true)
         axios.post(url+`/api/insertCart.dab`,
         {
             user_id: userInfo.object_id,
@@ -3626,6 +3853,7 @@ ${method} ${time === undefined ? '' : time}
                 option: 0,
                 subOption: 0,
             }
+            handleLoading(false)
             messageSend(message)
         }).catch((err)=>{
             text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -3658,6 +3886,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
         })
     }
@@ -3676,7 +3905,7 @@ ${method} ${time === undefined ? '' : time}
         create(text, option, subOption);
     }
 
-    passOp = [6, 7]
+    passOp = [6]
     if(passOp.includes(option) && subOption === 1 && !text.includes('문의사항을 입력해주세요.') && !text.includes('문의 하시겠습니까?')){
         handleQuestion(text)
         text = `"${text}"를 문의 하시겠습니까?`
@@ -3687,6 +3916,7 @@ ${method} ${time === undefined ? '' : time}
     }
 
     if(passOp.includes(option) && subOption === 2 && text === '네'){
+        handleLoading(true)
         axios.post(url + `/api/insertQna.dab`,
         {
             role: userInfo.role,
@@ -3727,6 +3957,7 @@ ${method} ${time === undefined ? '' : time}
                 option: 0,
                 subOption: 0,
             }
+            handleLoading(false)
             messageSend(message)
         }).catch((err)=>{
             text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -3759,6 +3990,7 @@ ${method} ${time === undefined ? '' : time}
                     option: 0,
                     subOption: 0,
                 }
+                handleLoading(false)
                 messageSend(message)
         })
     }
@@ -3766,18 +3998,28 @@ ${method} ${time === undefined ? '' : time}
         text = '처음으로 돌아갑니다.';
         create(text, 0, 0, 1)
     }
-
     // 음성인식
-    if(option===7){
-        let inventorySearch = ['현물','수량','재고','물']
-        let sampleAplly = ['샘플','신청']
-        let itemInfo = ['스펙','단가','업','아이템']
-        let explanation = ['조회하실']
+    passOp = [0, 7]
+    let basicMenu = ['현물조회', '샘플신청', '아이템 정보','문의사항','아이템정보', '다시 선택']
+    if(text==undefined){
+        text = '로그아웃 하여 중간에 text가 사라져 text.length에 에러가 생겨서 추가합니다.'
+    }
+    if(!basicMenu.includes(text) && passOp.includes(option) && text.length < 20 && !text.includes('YD') && !text.includes('처음') && !text.includes('현물없음')){
+    // if(option===7){
+        let inventorySearch = ['현물','수량','재고','현물조회']
+        let sampleAplly = ['샘플','신청','샘플신청','주문']
+        let itemInfo = ['스펙','단가','업','아이템','정보','스펙조회']
+        let all = []
+        let includesMenu = false
+
+        inventorySearch.forEach((i)=>all.push(i))
+        sampleAplly.forEach((i)=>all.push(i))
+        itemInfo.forEach((i)=>all.push(i))
 
         let sentence = text.split(' ')
         
         let cName
-        let itemName;
+        let itemName = '';
         let cYW
         let qty
         let price
@@ -3786,132 +4028,849 @@ ${method} ${time === undefined ? '' : time}
         let itemArr = [];
         let itemListCount
 
-        // menu 및 기본 정보 확인
-        if (text.includes('조회하실')){
+        for (let i = 0; i < all.length; i++) {
+            if(sentence.includes(all[i])){
+                includesMenu = true
+            }
             
-        } else {
-
         }
-        for(var i in sentence){
-            for(var j in itemInfo){
-                // 현물 조회
-                if(sentence[i].includes(inventorySearch[j])){
-                    itemName = sentence[0]
-                    menu = '현물 조회'
-                    // 아이템 명만 입력된 경우
-                    if(isNaN(Number(sentence[i-1].replace(',','')))){
-                        cYW = -1
-                    }
-                    // 컬러도 입력된 경우
-                    if(!isNaN(Number(sentence[i-1].replace(',','')))){
-                        cYW = sentence[i-1].replace(',','')
-                    }
+
+        if(sentence.length === 2 && !includesMenu){
+            sentence = [text.replace(/ /g,"")]
+        }
+        // 아이템명만 입력한 경우
+        if(sentence.length===1 && text !== '업차지'){
+            itemName = sentence[0];
+            // 고객
+            if(userInfo.role === 'client'|| userInfo.role === 'partner'){
+                // 스펙 조회
+                if (userInfo.role === 'client') {
+                    handleLoading(true)
+                    axios.post(url + `/api/searchItem.dab`,
+                        {
+                            itemName: itemName
+                        }).then((response) => {
+                            let itemCode = response.data.itemCode;
+                            axios.post(url + `/api/itemSpecInfo.dab`,
+                                {
+                                    itemCode: itemCode
+                                }
+                            ).then((response) => {
+                                let spec = response.data;
+                                let specItemName = spec.itemName;
+                                let itemNo = spec.itemNo;
+                                let price = spec.price.split('.')
+                                let check = spec.dry_friction === null
+                                text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+
+                                handleOption(0)
+                                handleSubOption(0)
+                                message = {
+                                    createdAt: new Date(),
+                                    _id: Math.round(Math.random() * 1000000),
+                                    text: text,
+                                    user: {
+                                        _id: 2
+                                    },
+                                    // quickReplies: {
+                                    //     type: 'radio',
+                                    //     values: [
+                                    //         {
+                                    //             title: '현물조회',
+                                    //             value: '현물조회',
+                                    //         },
+                                    //         {
+                                    //             title: '샘플신청',
+                                    //             value: '샘플신청',
+                                    //         },
+                                    //         {
+                                    //             title: '아이템 정보',
+                                    //             value: '아이템 정보',
+                                    //         },
+                                    //         {
+                                    //             title: '문의사항',
+                                    //             value: '문의사항',
+                                    //         }
+                                    //     ],
+                                    // },
+                                    option: 0,
+                                    subOption: 0
+                                }
+                                // handleLoading(false)
+                                messageSend(message)
+                                Keyboard.dismiss()
+                                //로그입력
+                                axios.post(url + `/api/insertLog.dab`, {
+                                    log_gb: '03',
+                                    item_code: itemCode,
+                                    item_name: response.data.itemName,
+                                    user_name: userInfo.user_name,
+                                    role: userInfo.role,
+                                    cust_name: userInfo.company_name
+                                })
+                            }).catch((err) => {
+                                if (err.message.includes('spec.prodList[0]')) {
+                                    text = `${itemName}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+                                    handleOption(3)
+                                    handleSubOption(1);
+                                    message = {
+                                        createdAt: new Date(),
+                                        _id: Math.round(Math.random() * 1000000),
+                                        text: text,
+                                        user: {
+                                            _id: 2
+                                        },
+                                        option: 3,
+                                        subOption: 1,
+                                    }
+                                    // handleLoading(false)
+                                    messageSend(message)
+                                } else {
+                                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                                    handleOption(0)
+                                    handleSubOption(0);
+                                    message = {
+                                        createdAt: new Date(),
+                                        _id: Math.round(Math.random() * 1000000),
+                                        text: text,
+                                        user: {
+                                            _id: 2
+                                        },
+                                        // quickReplies: {
+                                        //     type: 'radio',
+                                        //     values: [
+                                        //         {
+                                        //             title: '현물조회',
+                                        //             value: '현물조회',
+                                        //         },
+                                        //         {
+                                        //             title: '샘플신청',
+                                        //             value: '샘플신청',
+                                        //         },
+                                        //         {
+                                        //             title: '아이템 정보',
+                                        //             value: '아이템 정보',
+                                        //         },
+                                        //     ],
+                                        // },
+                                        option: 0,
+                                        subOption: 0,
+                                    }
+                                    // handleLoading(false)
+                                    messageSend(message)
+                                }
+                            })
+                        }).catch((err) => {
+                            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                            handleOption(0)
+                            handleSubOption(0);
+                            message = {
+                                createdAt: new Date(),
+                                _id: Math.round(Math.random() * 1000000),
+                                text: text,
+                                user: {
+                                    _id: 2
+                                },
+                                // quickReplies: {
+                                //     type: 'radio',
+                                //     values: [
+                                //         {
+                                //             title: '현물조회',
+                                //             value: '현물조회',
+                                //         },
+                                //         {
+                                //             title: '샘플신청',
+                                //             value: '샘플신청',
+                                //         },
+                                //         {
+                                //             title: '아이템 정보',
+                                //             value: '아이템 정보',
+                                //         },
+                                //     ],
+                                // },
+                                option: 0,
+                                subOption: 0,
+                            }
+                            // handleLoading(false)
+                            messageSend(message)
+                        })
                 }
-                // 샘플 신청
-                if(sentence[i].includes(sampleAplly[j])){
-                    menu = '샘플 신청'
-
-                    // 정수, 소수를 제외한 문자열 제거 정규식
-                    // let qty=str.replace(/[^\d.-]/g,'');
-
-                    if(userInfo.role === 'client'|| userInfo.role==='partner'){
-                        itemListCount = parseInt(i/3)
-                        // 아이템 명 뒤에 컬러번호가 입력되지 않은 경우
-                        // 한가지 아이템만 주문한 경우
-                        if(itemListCount < 2){
-                            let item = ''
-                            item += sentence[0]
-
-                            if(isNaN(Number(sentence[1].replace(',','')))){
-                                // 샘플 신청으로 보내기
-                                subMenu = '샘플 신청'
-                            }
-                            // 아이템 명 뒤에 컬러번호가 입력된 경우
-                            if(!isNaN(Number(sentence[1].replace(',','')))){
-                                item += ' ' + sentence[1].replace(',','')
-                                // 수량을 입력하지 않은 경우
-                                if(!numCheck(sentence[2].replace(/[^\d.-]/g,''))){
-                                    subMenu = '샘플 신청'
+                if (userInfo.role === 'partner') {
+                    handleLoading(true)
+                    axios.post(url + `/api/searchItem.dab`,
+                        {
+                            itemName: itemName
+                        }).then((response) => {
+                            let itemCode = response.data.itemCode;
+                            axios.post(url + `/api/itemSpecInfo.dab`,
+                                {
+                                    itemCode: itemCode
                                 }
-                                // 수량을 입력한 경우
-                                if(numCheck(sentence[2].replace(/[^\d.-]/g,''))){
-                                    item += ' ' + sentence[2].replace(/[^\d.-]/g,'')
-                                    subMenu = '배송 방법'
+                            ).then((response) => {
+                                let spec = response.data;
+                                let specItemName = spec.itemName;
+                                let itemNo = spec.itemNo;
+                                let price = spec.price.split('.')
+                                let check = spec.dry_friction === null
+                                text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+
+                                handleOption(0)
+                                handleSubOption(0)
+                                message = {
+                                    createdAt: new Date(),
+                                    _id: Math.round(Math.random() * 1000000),
+                                    text: text,
+                                    user: {
+                                        _id: 2
+                                    },
+                                    // quickReplies: {
+                                    //     type: 'radio',
+                                    //     values: [
+                                    //         {
+                                    //             title: '현물조회',
+                                    //             value: '현물조회',
+                                    //         },
+                                    //         {
+                                    //             title: '샘플신청',
+                                    //             value: '샘플신청',
+                                    //         },
+                                    //         {
+                                    //             title: '아이템 정보',
+                                    //             value: '아이템 정보',
+                                    //         },
+                                    //         {
+                                    //             title: '문의사항',
+                                    //             value: '문의사항',
+                                    //         }
+                                    //     ],
+                                    // },
+                                    option: 0,
+                                    subOption: 0
                                 }
+                                // handleLoading(false)
+                                messageSend(message)
+                                Keyboard.dismiss()
+                                //로그입력
+                                axios.post(url + `/api/insertLog.dab`, {
+                                    log_gb: '03',
+                                    item_code: itemCode,
+                                    item_name: response.data.itemName,
+                                    user_name: userInfo.user_name,
+                                    role: userInfo.role,
+                                    cust_name: userInfo.company_name
+                                })
+                            }).catch((err) => {
+                                if (err.message.includes('spec.prodList[0]')) {
+                                    text = `${text}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`;
+                                    handleOption(3)
+                                    handleSubOption(1);
+                                    message = {
+                                        createdAt: new Date(),
+                                        _id: Math.round(Math.random() * 1000000),
+                                        text: text,
+                                        user: {
+                                            _id: 2
+                                        },
+                                        option: 3,
+                                        subOption: 1,
+                                    }
+                                    // handleLoading(false)
+                                    messageSend(message)
+                                } else {
+                                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                                    handleOption(0)
+                                    handleSubOption(0);
+                                    message = {
+                                        createdAt: new Date(),
+                                        _id: Math.round(Math.random() * 1000000),
+                                        text: text,
+                                        user: {
+                                            _id: 2
+                                        },
+                                        // quickReplies: {
+                                        //     type: 'radio',
+                                        //     values: [
+                                        //         {
+                                        //             title: '현물조회',
+                                        //             value: '현물조회',
+                                        //         },
+                                        //         {
+                                        //             title: '샘플신청',
+                                        //             value: '샘플신청',
+                                        //         },
+                                        //         {
+                                        //             title: '아이템 정보',
+                                        //             value: '아이템 정보',
+                                        //         },
+                                        //     ],
+                                        // },
+                                        option: 0,
+                                        subOption: 0,
+                                    }
+                                    // handleLoading(false)
+                                    messageSend(message)
+                                }
+                            })
+                        }).catch((err) => {
+                            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                            handleOption(0)
+                            handleSubOption(0);
+                            message = {
+                                createdAt: new Date(),
+                                _id: Math.round(Math.random() * 1000000),
+                                text: text,
+                                user: {
+                                    _id: 2
+                                },
+                                // quickReplies: {
+                                //     type: 'radio',
+                                //     values: [
+                                //         {
+                                //             title: '현물조회',
+                                //             value: '현물조회',
+                                //         },
+                                //         {
+                                //             title: '샘플신청',
+                                //             value: '샘플신청',
+                                //         },
+                                //         {
+                                //             title: '아이템 정보',
+                                //             value: '아이템 정보',
+                                //         },
+                                //     ],
+                                // },
+                                option: 0,
+                                subOption: 0,
                             }
-                            else {
-                                subMenu = '샘플 신청'
+                            // handleLoading(false)
+                            messageSend(message)
+                        })
+                } // 스펙 조회 끝
+
+                // 현물 조회
+                // handleLoading(true)
+                axios.post(url + '/api/currentInventory.dab',
+                    {
+                        itemName: itemName,
+                        includeYN: 0
+                    }).then((resoponse) => {
+                        let r = resoponse.data;
+
+                        if (r !== undefined) {
+                            let lastIndex = r.length - 1;
+                            text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
+                            r.map((i, index) => {
+                                index === lastIndex ?
+                                    text += `${i.coloryw}\n${i.jaeqty}YD`
+                                    :
+                                    text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                            })
+
+                            message = {
+                                createdAt: new Date(),
+                                _id: Math.round(Math.random() * 1000000),
+                                text: text,
+                                user: {
+                                    _id: 2
+                                },
+                                quickReplies: {
+                                    type: 'radio',
+                                    values: [
+                                        {
+                                            title: '현물조회',
+                                            value: '현물조회',
+                                        },
+                                        {
+                                            title: '샘플신청',
+                                            value: '샘플신청',
+                                        },
+                                        {
+                                            title: '아이템 정보',
+                                            value: '아이템 정보',
+                                        },
+                                        {
+                                            title: '문의사항',
+                                            value: '문의사항',
+                                        }
+                                    ],
+                                },
+                                option: 0,
+                                subOption: 0,
                             }
-                            if(!itemArr.includes(item)){
-                                itemArr.push(item)
-                            }
+                            handleOption(0)
+                            handleSubOption(0)
+                            handleLoading(false)
+                            messageSend(message)
+                            //로그입력
+                            axios.post(url + `/api/insertLog.dab`, {
+                                log_gb: '01',
+                                item_code: r[0].itemcode,
+                                item_name: r[0].itemname,
+                                color_name: '전칼라',
+                                user_name: userInfo.user_name,
+                                role: userInfo.role,
+                                cust_name: userInfo.company_name,
+                            })
                         }
-                        // 여러 아이템 주문한 경우
-                        if(itemListCount >= 2){
-                            if(isNaN(Number(sentence[1].replace(',','')))){
-                                // 샘플 신청으로 보내기
-                                subMenu = '샘플 신청'
+                    }).catch((err) => {
+                        text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                        handleOption(0)
+                        handleSubOption(0);
+                        message = {
+                            createdAt: new Date(),
+                            _id: Math.round(Math.random() * 1000000),
+                            text: text,
+                            user: {
+                                _id: 2
+                            },
+                            quickReplies: {
+                                type: 'radio',
+                                values: [
+                                    {
+                                        title: '현물조회',
+                                        value: '현물조회',
+                                    },
+                                    {
+                                        title: '샘플신청',
+                                        value: '샘플신청',
+                                    },
+                                    {
+                                        title: '아이템 정보',
+                                        value: '아이템 정보',
+                                    },
+                                    {
+                                        title: '문의사항',
+                                        value: '문의사항',
+                                    }
+                                ],
+                            },
+                            option: 0,
+                            subOption: 0,
+                        }
+                        handleLoading(false)
+                        messageSend(message)
+                    })
+                Keyboard.dismiss()
+                // 현물 조회 끝
+            }
+            // 직원
+            if (userInfo.role === 'employee') {
+                // 스펙 조회
+                handleLoading(true)
+                axios.post(url + `/api/searchItem.dab`,
+                    {
+                        itemName: itemName
+                    }).then((response) => {
+                        let itemCode = response.data.itemCode;
+                        axios.post(url + `/api/itemSpecInfo.dab`,
+                            {
+                                itemCode: itemCode
                             }
-                            if(!isNaN(Number(sentence[1].replace(',','')))){
-                                // 수량을 입력하지 않은 경우
-                                if(!numCheck(sentence[2].replace(/[^\d.-]/g,''))){
+                        ).then((response) => {
+                            let spec = response.data;
+                            let specItemName = spec.itemName;
+                            let itemNo = spec.itemNo;
+                            let price = spec.price.split('.')
+                            let check = spec.dry_friction === null
+                            text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+
+                            handleOption(3)
+                            handleSubOption(2)
+                            message = {
+                                createdAt: new Date(),
+                                _id: Math.round(Math.random() * 1000000),
+                                text: text,
+                                user: {
+                                    _id: 2
+                                },
+                                // quickReplies: {
+                                //     type: 'radio',
+                                //     values: [
+                                //         {
+                                //             title: '업차지',
+                                //             value: '업차지',
+                                //         },
+                                //         {
+                                //             title: '스펙과 단가',
+                                //             value: '스펙과 단가',
+                                //         },
+                                //         {
+                                //             title: '다른 아이템 조회',
+                                //             value: '다른 아이템 조회'
+                                //         },
+                                //         {
+                                //             title: '처음 단계로',
+                                //             value: '처음 단계로',
+                                //         },
+                                //     ],
+                                // },
+                                option: 3,
+                                subOption: 2
+                            }
+                            // handleLoading(false)
+                            messageSend(message)
+                            Keyboard.dismiss()
+
+                            //로그입력
+                            axios.post(url + `/api/insertLog.dab`, {
+                                log_gb: '03',
+                                item_code: itemCode,
+                                item_name: itemName,
+                                user_name: userInfo.user_name,
+                                role: userInfo.role,
+                                cust_name: userInfo.company_name
+                            })
+                        }).catch((err) => {
+                            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                            handleOption(0)
+                            handleSubOption(0);
+                            message = {
+                                createdAt: new Date(),
+                                _id: Math.round(Math.random() * 1000000),
+                                text: text,
+                                user: {
+                                    _id: 2
+                                },
+                                // quickReplies: {
+                                //     type: 'radio',
+                                //     values: [
+                                //         {
+                                //             title: '현물조회',
+                                //             value: '현물조회',
+                                //         },
+                                //         {
+                                //             title: '샘플신청',
+                                //             value: '샘플신청',
+                                //         },
+                                //         {
+                                //             title: '아이템 정보',
+                                //             value: '아이템 정보',
+                                //         },
+                                //     ],
+                                // },
+                                option: 0,
+                                subOption: 0,
+                            }
+                            // handleLoading(false)
+                            messageSend(message)
+                        })
+                    }).catch((err) => {
+                        text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                        handleOption(0)
+                        handleSubOption(0);
+                        message = {
+                            createdAt: new Date(),
+                            _id: Math.round(Math.random() * 1000000),
+                            text: text,
+                            user: {
+                                _id: 2
+                            },
+                            // quickReplies: {
+                            //     type: 'radio',
+                            //     values: [
+                            //         {
+                            //             title: '현물조회',
+                            //             value: '현물조회',
+                            //         },
+                            //         {
+                            //             title: '샘플신청',
+                            //             value: '샘플신청',
+                            //         },
+                            //         {
+                            //             title: '아이템 정보',
+                            //             value: '아이템 정보',
+                            //         },
+                            //     ],
+                            // },
+                            option: 0,
+                            subOption: 0,
+                        }
+                        // handleLoading(false)
+                        messageSend(message)
+                    }) // 스펙 조회 끝
+                // 현물 조회
+                // handleLoading(true)
+                axios.post(url + '/api/currentInventory.dab',
+                    {
+                        itemName: itemName,
+                        includeYN: 0
+                    }).then((response) => {
+
+                        if (response.data.length === 0) {
+                            text = `${itemName}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`
+                            handleOption(1)
+                            handleSubOption(1)
+                            message = {
+                                createdAt: new Date(),
+                                _id: Math.round(Math.random() * 1000000),
+                                text: text,
+                                user: {
+                                    _id: 2
+                                },
+                                option: 1,
+                                subOption: 1,
+                            }
+                            handleLoading(false)
+                            messageSend(message)
+                        } else {
+                            axios.post(url + '/api/currentInventory.dab',
+                                {
+                                    itemName: itemName,
+                                    includeYN: 0
+                                }).then((resoponse) => {
+                                    let r = resoponse.data;
+
+                                    if (r !== undefined) {
+                                        let lastIndex = r.length - 1;
+                                        text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
+                                        r.map((i, index) => {
+                                            index === lastIndex ?
+                                                text += `${i.coloryw}\n${i.jaeqty}YD`
+                                                :
+                                                text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                                        })
+
+                                        message = {
+                                            createdAt: new Date(),
+                                            _id: Math.round(Math.random() * 1000000),
+                                            text: text,
+                                            user: {
+                                                _id: 2
+                                            },
+                                            quickReplies: {
+                                                type: 'radio',
+                                                values: [
+                                                    {
+                                                        title: '현물조회',
+                                                        value: '현물조회',
+                                                    },
+                                                    {
+                                                        title: '샘플신청',
+                                                        value: '샘플신청',
+                                                    },
+                                                    {
+                                                        title: '아이템 정보',
+                                                        value: '아이템 정보',
+                                                    },
+                                                ],
+                                            },
+                                            option: 0,
+                                            subOption: 0,
+                                        }
+                                        handleOption(0)
+                                        handleSubOption(0)
+                                        handleLoading(false)
+                                        messageSend(message)
+                                        //로그입력
+                                        axios.post(url + `/api/insertLog.dab`, {
+                                            log_gb: '01',
+                                            item_code: r[0].itemcode,
+                                            item_name: r[0].itemname,
+                                            color_name: '전칼라',
+                                            user_name: userInfo.user_name,
+                                            role: userInfo.role,
+                                            cust_name: userInfo.company_name,
+                                        })
+                                    }
+                                }).catch((err) => {
+                                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                                    handleOption(0)
+                                    handleSubOption(0);
+                                    message = {
+                                        createdAt: new Date(),
+                                        _id: Math.round(Math.random() * 1000000),
+                                        text: text,
+                                        user: {
+                                            _id: 2
+                                        },
+                                        quickReplies: {
+                                            type: 'radio',
+                                            values: [
+                                                {
+                                                    title: '현물조회',
+                                                    value: '현물조회',
+                                                },
+                                                {
+                                                    title: '샘플신청',
+                                                    value: '샘플신청',
+                                                },
+                                                {
+                                                    title: '아이템 정보',
+                                                    value: '아이템 정보',
+                                                },
+                                            ],
+                                        },
+                                        option: 0,
+                                        subOption: 0,
+                                    }
+                                    handleLoading(false)
+                                    messageSend(message)
+                                })
+                            Keyboard.dismiss()
+                        }
+                    }).catch((err) => {
+                        text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                        handleOption(0)
+                        handleSubOption(0);
+                        message = {
+                            createdAt: new Date(),
+                            _id: Math.round(Math.random() * 1000000),
+                            text: text,
+                            user: {
+                                _id: 2
+                            },
+                            quickReplies: {
+                                type: 'radio',
+                                values: [
+                                    {
+                                        title: '현물조회',
+                                        value: '현물조회',
+                                    },
+                                    {
+                                        title: '샘플신청',
+                                        value: '샘플신청',
+                                    },
+                                    {
+                                        title: '아이템 정보',
+                                        value: '아이템 정보',
+                                    },
+                                ],
+                            },
+                            option: 0,
+                            subOption: 0,
+                        }
+                        handleLoading(false)
+                        messageSend(message)
+                    }) // 현물 조회 끝
+            }
+        }
+        // 나머지
+        else{
+            // menu 및 기본 정보 확인
+            if(includesMenu){
+                if(!numCheck(sentence[1])&&!all.includes(sentence[1])){
+                    itemName = sentence[0]+sentence[1]
+                    let tmp = [itemName]
+                    for(var i = 2; i < sentence.length; i++){
+                        tmp.push(sentence[i])
+                    }
+                    sentence = tmp
+                }
+            }
+            for (var i in sentence) {
+                for (var j in itemInfo) {
+                    // 현물 조회
+                    if (sentence[i].includes(inventorySearch[j])) {
+                        itemName = sentence[0]
+                        menu = '현물 조회'
+                        // 아이템 명만 입력된 경우
+                        if (isNaN(Number(sentence[i - 1].replace(',', '')))) {
+                            cYW = -1
+                        }
+                        // 컬러도 입력된 경우
+                        if (!isNaN(Number(sentence[i - 1].replace(',', '')))) {
+                            cYW = sentence[i - 1].replace(',', '')
+                        }
+                    }
+                    // 샘플 신청
+                    if (sentence[i].includes(sampleAplly[j])) {
+                        menu = '샘플 신청'
+
+                        // 정수, 소수를 제외한 문자열 제거 정규식
+                        // let qty=str.replace(/[^\d.-]/g,'');
+
+                        if (userInfo.role === 'client' || userInfo.role === 'partner') {
+                            itemListCount = parseInt(i / 3)
+                            // 아이템 명 뒤에 컬러번호가 입력되지 않은 경우
+                            // 한가지 아이템만 주문한 경우
+                            if (itemListCount < 2) {
+                                let item = ''
+                                item += sentence[0]
+
+                                if (isNaN(Number(sentence[1].replace(',', '')))) {
+                                    // 샘플 신청으로 보내기
                                     subMenu = '샘플 신청'
                                 }
-                                // 수량을 입력한 경우
-                                if(numCheck(sentence[2].replace(/[^\d.-]/g,''))){
-                                    subMenu = '배송 방법'
+                                // 아이템 명 뒤에 컬러번호가 입력된 경우
+                                if (!isNaN(Number(sentence[1].replace(',', '')))) {
+                                    item += ' ' + sentence[1].replace(',', '')
+                                    // 수량을 입력하지 않은 경우
+                                    if (!numCheck(sentence[2].replace(/[^\d.-]/g, ''))) {
+                                        subMenu = '샘플 신청'
+                                    }
+                                    // 수량을 입력한 경우
+                                    if (numCheck(sentence[2].replace(/[^\d.-]/g, ''))) {
+                                        item += ' ' + sentence[2].replace(/[^\d.-]/g, '')
+                                        subMenu = '배송 방법'
+                                    }
                                 }
-                            }
-                            for (let k = 0; k < itemListCount; k++) {
-                                let item = ''
-                                item += sentence[k*3+0]
-                                item += ' ' + sentence[k*3+1].replace(',','')
-                                item += ' ' + sentence[k*3+2].replace(/[^\d.-]/g,'')
-                                if(!itemArr.includes(item)){
+                                else {
+                                    subMenu = '샘플 신청'
+                                }
+                                if (!itemArr.includes(item)) {
                                     itemArr.push(item)
                                 }
                             }
-                        }
-                        
-                    }
-                    if(userInfo.role === 'employee'){
-                        cName = sentence[0]
-                        subMenu = "수량 입력"
-                    }
-                }
-                // 아이템 정보
-                if(sentence[i].includes(itemInfo[j])){
-                    itemName = sentence[0]
-                    menu = '아이템 정보'
-                    let specInfo = ['스펙', '단가', '아이템']
-                    if(specInfo.includes(itemInfo[j])){
-                        subMenu = '스펙과 단가'
-                    }
-                    if(itemInfo[j]==='업' && userInfo.role === 'employee'){
-                        subMenu = '업차지'
-                    }
-                }
-                // 설명
-                if(sentence[i].includes(explanation[j])){
+                            // 여러 아이템 주문한 경우
+                            if (itemListCount >= 2) {
+                                if (isNaN(Number(sentence[1].replace(',', '')))) {
+                                    // 샘플 신청으로 보내기
+                                    subMenu = '샘플 신청'
+                                }
+                                if (!isNaN(Number(sentence[1].replace(',', '')))) {
+                                    // 수량을 입력하지 않은 경우
+                                    if (!numCheck(sentence[2].replace(/[^\d.-]/g, ''))) {
+                                        subMenu = '샘플 신청'
+                                    }
+                                    // 수량을 입력한 경우
+                                    if (numCheck(sentence[2].replace(/[^\d.-]/g, ''))) {
+                                        subMenu = '배송 방법'
+                                    }
+                                }
+                                for (let k = 0; k < itemListCount; k++) {
+                                    let item = ''
+                                    item += sentence[k * 3 + 0]
+                                    item += ' ' + sentence[k * 3 + 1].replace(',', '')
+                                    item += ' ' + sentence[k * 3 + 2].replace(/[^\d.-]/g, '')
+                                    if (!itemArr.includes(item)) {
+                                        itemArr.push(item)
+                                    }
+                                }
+                            }
 
+                        }
+                        if (userInfo.role === 'employee') {
+                            cName = sentence[0]
+                            subMenu = "수량 입력"
+                        }
+                    }
+                    // 아이템 정보
+                    if (sentence[i].includes(itemInfo[j])&&text!=='스펙과 단가'&&text!=='업차지') {
+                        itemName = sentence[0]
+                        menu = '아이템 정보'
+                        let specInfo = ['스펙', '단가', '아이템','정보']
+                        if (specInfo.includes(itemInfo[j])) {
+                            subMenu = '스펙과 단가'
+                        }
+                        if (itemInfo[j] === '업' && userInfo.role === 'employee') {
+                            subMenu = '업차지'
+                        }
+                    }
                 }
             }
-        }
             // 메뉴별 서버요청
-            // console.log(menu)
-            // console.log(subMenu)
             // 현물조회
-            if(menu === '현물 조회'){
+            if (menu === '현물 조회') {
                 // 아이템 명만 입력된 경우
-                if(cYW === -1){
+                if (cYW === -1) {
                     // 직원
                     if (userInfo.role === 'employee') {
+                        handleLoading(true)
                         axios.post(url + '/api/currentInventory.dab',
                             {
                                 itemName: itemName,
                                 includeYN: 0
                             }).then((response) => {
-                                
                                 if (response.data.length === 0) {
                                     text = `${itemName}의 명칭을 가진 아이템이 없습니다.\n다시 입력해 주세요.`
                                     handleOption(1)
@@ -3926,37 +4885,132 @@ ${method} ${time === undefined ? '' : time}
                                         option: 1,
                                         subOption: 1,
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                 } else {
-                                    text = `용도를 선택해 주세요.`;
-                                    handleOption(1)
-                                    handleSubOption(2)
-                                    handleItem(itemName)
-                                    message = {
-                                        createdAt: new Date(),
-                                        _id: Math.round(Math.random() * 1000000),
-                                        text: text,
-                                        user: {
-                                            _id: 2
-                                        },
-                                        quickReplies: {
-                                            type: 'radio',
-                                            values: [
-                                                {
-                                                    title: '업체용',
-                                                    value: '업체용',
-                                                },
-                                                {
-                                                    title: '직원용',
-                                                    value: '직원용'
+                                    axios.post(url + '/api/currentInventory.dab',
+                                        {
+                                            itemName: itemName,
+                                            includeYN: 0
+                                        }).then((resoponse) => {
+                                            let r = resoponse.data;
+                                            if (r !== undefined) {
+                                                let lastIndex = r.length - 1;
+                                                text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
+                                                r.map((i, index) => {
+                                                    index === lastIndex ?
+                                                        text += `${i.coloryw}\n${i.jaeqty}YD`
+                                                        :
+                                                        text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                                                })
+
+                                                message = {
+                                                    createdAt: new Date(),
+                                                    _id: Math.round(Math.random() * 1000000),
+                                                    text: text,
+                                                    user: {
+                                                        _id: 2
+                                                    },
+                                                    quickReplies: {
+                                                        type: 'radio',
+                                                        values: [
+                                                            {
+                                                                title: '현물조회',
+                                                                value: '현물조회',
+                                                            },
+                                                            {
+                                                                title: '샘플신청',
+                                                                value: '샘플신청',
+                                                            },
+                                                            {
+                                                                title: '아이템 정보',
+                                                                value: '아이템 정보',
+                                                            },
+                                                        ],
+                                                    },
+                                                    option: 0,
+                                                    subOption: 0,
                                                 }
-                                            ]
-                                        },
-                                        option: 1,
-                                        subOption: 2,
-                                    }
-                                    messageSend(message)
+                                                handleOption(0)
+                                                handleSubOption(0)
+                                                handleLoading(false)
+                                                messageSend(message)
+                                                //로그입력
+                                                axios.post(url + `/api/insertLog.dab`, {
+                                                    log_gb: '01',
+                                                    item_code: r[0].itemcode,
+                                                    item_name: r[0].itemname,
+                                                    color_name: '전칼라',
+                                                    user_name: userInfo.user_name,
+                                                    role: userInfo.role,
+                                                    cust_name: userInfo.company_name,
+                                                })
+                                            }
+                                        }).catch((err) => {
+                                            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                                            handleOption(0)
+                                            handleSubOption(0);
+                                            message = {
+                                                createdAt: new Date(),
+                                                _id: Math.round(Math.random() * 1000000),
+                                                text: text,
+                                                user: {
+                                                    _id: 2
+                                                },
+                                                quickReplies: {
+                                                    type: 'radio',
+                                                    values: [
+                                                        {
+                                                            title: '현물조회',
+                                                            value: '현물조회',
+                                                        },
+                                                        {
+                                                            title: '샘플신청',
+                                                            value: '샘플신청',
+                                                        },
+                                                        {
+                                                            title: '아이템 정보',
+                                                            value: '아이템 정보',
+                                                        },
+                                                    ],
+                                                },
+                                                option: 0,
+                                                subOption: 0,
+                                            }
+                                            handleLoading(false)
+                                            messageSend(message)
+                                        })
                                     Keyboard.dismiss()
+                                    // // 용도 선택
+                                    // text = `용도를 선택해 주세요.`;
+                                    // handleOption(1)
+                                    // handleSubOption(2)
+                                    // handleItem(itemName)
+                                    // message = {
+                                    //     createdAt: new Date(),
+                                    //     _id: Math.round(Math.random() * 1000000),
+                                    //     text: text,
+                                    //     user: {
+                                    //         _id: 2
+                                    //     },
+                                    //     quickReplies: {
+                                    //         type: 'radio',
+                                    //         values: [
+                                    //             {
+                                    //                 title: '업체용',
+                                    //                 value: '업체용',
+                                    //             },
+                                    //             {
+                                    //                 title: '직원용',
+                                    //                 value: '직원용'
+                                    //             }
+                                    //         ]
+                                    //     },
+                                    //     option: 1,
+                                    //     subOption: 2,
+                                    // }
+                                    // messageSend(message)
+                                    // Keyboard.dismiss()
                                 }
                             }).catch((err) => {
                                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -3989,11 +5043,13 @@ ${method} ${time === undefined ? '' : time}
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
                     }
                     // 고객 or 파트너
-                    if(userInfo.role === 'client'|| userInfo.role==='partner'){
+                    if (userInfo.role === 'client' || userInfo.role === 'partner') {
+                        handleLoading(true)
                         axios.post(url + '/api/currentInventory.dab',
                             {
                                 itemName: itemName,
@@ -4044,6 +5100,7 @@ ${method} ${time === undefined ? '' : time}
                                     }
                                     handleOption(0)
                                     handleSubOption(0)
+                                    handleLoading(false)
                                     messageSend(message)
                                     //로그입력
                                     axios.post(url + `/api/insertLog.dab`, {
@@ -4091,6 +5148,7 @@ ${method} ${time === undefined ? '' : time}
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
                         Keyboard.dismiss()
@@ -4100,7 +5158,8 @@ ${method} ${time === undefined ? '' : time}
                 // 컬러도 입력된 경우
                 else {
                     // 직원
-                    if(userInfo.role === 'employee'){
+                    if (userInfo.role === 'employee') {
+                        handleLoading(true)
                         axios.post(url + '/api/currentInventory.dab',
                             {
                                 itemName: itemName,
@@ -4188,6 +5247,7 @@ ${method} ${time === undefined ? '' : time}
                                                             subOption: 0,
                                                         }
                                                     }
+                                                    handleLoading(false)
                                                     messageSend(message)
                                                     //로그입력
                                                     axios.post(url + `/api/insertLog.dab`, {
@@ -4234,6 +5294,7 @@ ${method} ${time === undefined ? '' : time}
                                                         option: 0,
                                                         subOption: 0,
                                                     }
+                                                    handleLoading(false)
                                                     messageSend(message)
                                                 })
                                             }
@@ -4268,6 +5329,7 @@ ${method} ${time === undefined ? '' : time}
                                                 option: 0,
                                                 subOption: 0,
                                             }
+                                            handleLoading(false)
                                             messageSend(message)
                                         })
                                 } else {
@@ -4284,6 +5346,7 @@ ${method} ${time === undefined ? '' : time}
                                         option: 1,
                                         subOption: 1,
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                 }
                             }).catch((err) => {
@@ -4317,14 +5380,16 @@ ${method} ${time === undefined ? '' : time}
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
                         Keyboard.dismiss()
                     }
 
                     // 고객 or 파트너
-                    if(userInfo.role === 'client'|| userInfo.role==='partner'){
+                    if (userInfo.role === 'client' || userInfo.role === 'partner') {
                         let color = cYW
+                        handleLoading(true)
                         axios.post(url + '/api/currentInventory.dab',
                             {
                                 itemName: itemName,
@@ -4378,6 +5443,7 @@ ${method} ${time === undefined ? '' : time}
                                                 }
                                                 handleOption(0)
                                                 handleSubOption(0)
+                                                handleLoading(false)
                                                 messageSend(message)
                                             }
                                             if (colorList.length > 0) {
@@ -4416,6 +5482,7 @@ ${method} ${time === undefined ? '' : time}
                                                 }
                                                 handleOption(0)
                                                 handleSubOption(0)
+                                                handleLoading(false)
                                                 messageSend(message)
                                             }
                                         } else {
@@ -4459,6 +5526,7 @@ ${method} ${time === undefined ? '' : time}
                                             handleItem(itemName)
                                             handleItemName(itemName)
                                             handleColor(color)
+                                            handleLoading(false)
                                             messageSend(message)
                                         }
                                         //로그입력
@@ -4512,6 +5580,7 @@ ${method} ${time === undefined ? '' : time}
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
                         Keyboard.dismiss()
@@ -4520,16 +5589,17 @@ ${method} ${time === undefined ? '' : time}
             } // 현물조회 끝
 
             // 샘플신청
-            if(menu === '샘플 신청'){
+            if (menu === '샘플 신청') {
                 // 분류 하지 못한 경우
-                if(subMenu === '샘플 신청'){
+                if (subMenu === '샘플 신청') {
                     text = `원하시는 아이템명, 컬러명, 수량을\n입력해주세요.\n\n예시) ${userInfo.promotion_Item} ${userInfo.promotion_Color} 10`;
                     option = 2;
                     subOption = 3;
                     create(text, option, subOption)
                 }
                 // 직원 수량 입력
-                if(subMenu === '수량 입력'){
+                if (subMenu === '수량 입력') {
+                    handleLoading(true)
                     axios.post(url + '/api/searchCustmors.dab',
                         { custName: cName }
                     )
@@ -4552,6 +5622,7 @@ ${method} ${time === undefined ? '' : time}
                                     subOption: 2,
                                     company: c
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             }
                             if (companyList.length > 1) {
@@ -4565,14 +5636,17 @@ ${method} ${time === undefined ? '' : time}
                                     option: 2,
                                     subOption: 1,
                                 }
+                                handleOption(2)
+                                handleSubOption(1)
+                                handleLoading(false)
                                 messageSend(message)
                                 handleCompany(companyList)
                                 selectCompany(companyList)
                                 Keyboard.dismiss()
                             }
                             if (companyList.length === 0) {
-                                handleOption = 2;
-                                handleSubOption = 1;
+                                handleOption(2);
+                                handleSubOption(1);
                                 message = {
                                     createdAt: new Date(),
                                     _id: Math.round(Math.random() * 1000000),
@@ -4583,6 +5657,7 @@ ${method} ${time === undefined ? '' : time}
                                     option: 2,
                                     subOption: 1,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             }
                         }).catch((err) => {
@@ -4616,26 +5691,27 @@ ${method} ${time === undefined ? '' : time}
                                 option: 0,
                                 subOption: 0,
                             }
+                            handleLoading(false)
                             messageSend(message)
                         })
                 }
                 // 전부다 입력된 경우
-                if(subMenu === '배송 방법'){
+                if (subMenu === '배송 방법') {
                     let textArr = true;
 
                     itemArr.forEach((text) => {
                         let strArr = text.split(' ')
-                        if (userInfo.role==="employee" && strArr.length < 3 && strArr.length > 4) {
+                        if (userInfo.role === "employee" && strArr.length < 3 && strArr.length > 4) {
                             text = `잘못 입력 하셨습니다. 다시 입력해 주세요.`
                             create(text, 2, 2)
                             textArr = false;
                         }
-                        if (userInfo.role==="client" && strArr.length > 3) {
+                        if (userInfo.role === "client" && strArr.length > 3) {
                             text = `잘못 입력 하셨습니다. 다시 입력해 주세요.`
                             create(text, 2, 2)
                             textArr = false;
                         }
-                        if (userInfo.role==='partner' && strArr.length >3){
+                        if (userInfo.role === 'partner' && strArr.length > 3) {
                             text = `잘못 입력 하셨습니다. 다시 입력해 주세요.`
                             create(text, 2, 2)
                             textArr = false;
@@ -4653,7 +5729,7 @@ ${method} ${time === undefined ? '' : time}
                         }
                     })
 
-                    if(textArr){
+                    if (textArr) {
                         let itemList = [];
                         itemArr.forEach((text) => {
                             let strArr = text.split(' ')
@@ -4665,6 +5741,7 @@ ${method} ${time === undefined ? '' : time}
                                 amount: ``,
                                 price: ``
                             }
+                            handleLoading(true)
                             axios.post(url + `/api/searchItem.dab`,
                                 {
                                     itemName: strArr[0]
@@ -4721,6 +5798,7 @@ ${method} ${time === undefined ? '' : time}
                                                                     option: 0,
                                                                     subOption: 0,
                                                                 }
+                                                                handleLoading(false)
                                                                 messageSend(message)
                                                             })
                                                     }
@@ -4755,7 +5833,24 @@ ${method} ${time === undefined ? '' : time}
                                                             subOption: 4,
                                                             item: itemList
                                                         }
+                                                        handleLoading(false)
                                                         messageSend(message)
+
+                                                        // 고객일시 영업사원 전달 바로 보내기
+                                                        if(userInfo.role==='client'||userInfo.role==='partner'){
+                                                            message = {
+                                                                createdAt: new Date(),
+                                                                _id: Math.round(Math.random() * 1000000),
+                                                                text: `영업사원전달`,
+                                                                user: {
+                                                                    _id: 1
+                                                                },
+                                                                option: 2,
+                                                                subOption: 4,
+                                                                item: itemList
+                                                            }
+                                                            messageSend(message)
+                                                        }
                                                         Keyboard.dismiss()
                                                     }
                                                 }
@@ -4770,6 +5865,7 @@ ${method} ${time === undefined ? '' : time}
                                                         option: 2,
                                                         subOption: 2,
                                                     }
+                                                    handleLoading(false)
                                                     messageSend(message)
                                                 }
                                             }).catch((err) => {
@@ -4803,6 +5899,7 @@ ${method} ${time === undefined ? '' : time}
                                                     option: 0,
                                                     subOption: 0,
                                                 }
+                                                handleLoading(false)
                                                 messageSend(message)
                                             })
                                     }
@@ -4817,6 +5914,7 @@ ${method} ${time === undefined ? '' : time}
                                             option: 2,
                                             subOption: 2,
                                         }
+                                        handleLoading(false)
                                         messageSend(message)
                                     }
                                 }).catch((err) => {
@@ -4850,6 +5948,7 @@ ${method} ${time === undefined ? '' : time}
                                         option: 0,
                                         subOption: 0,
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                 })
                         })
@@ -4857,10 +5956,11 @@ ${method} ${time === undefined ? '' : time}
                 } // 배송 방법 끝
             } // 샘플신청 끝
             // 아이템 정보
-            if(menu === '아이템 정보'){
+            if (menu === '아이템 정보') {
                 // 스펙과 단가
-                if(subMenu === '스펙과 단가'){
-                    if(userInfo.role === 'client'){
+                if (subMenu === '스펙과 단가') {
+                    if (userInfo.role === 'client') {
+                        handleLoading(true)
                         axios.post(url + `/api/searchItem.dab`,
                             {
                                 itemName: itemName
@@ -4911,6 +6011,7 @@ ${method} ${time === undefined ? '' : time}
                                         option: 0,
                                         subOption: 0
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                     Keyboard.dismiss()
                                     //로그입력
@@ -4937,6 +6038,7 @@ ${method} ${time === undefined ? '' : time}
                                             option: 3,
                                             subOption: 1,
                                         }
+                                        handleLoading(false)
                                         messageSend(message)
                                     } else {
                                         text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -4969,6 +6071,7 @@ ${method} ${time === undefined ? '' : time}
                                             option: 0,
                                             subOption: 0,
                                         }
+                                        handleLoading(false)
                                         messageSend(message)
                                     }
                                 })
@@ -5003,10 +6106,12 @@ ${method} ${time === undefined ? '' : time}
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
                     }
-                    if(userInfo.role === 'partner'){
+                    if (userInfo.role === 'partner') {
+                        handleLoading(true)
                         axios.post(url + `/api/searchItem.dab`,
                             {
                                 itemName: itemName
@@ -5057,6 +6162,7 @@ ${method} ${time === undefined ? '' : time}
                                         option: 0,
                                         subOption: 0
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                     Keyboard.dismiss()
                                     //로그입력
@@ -5083,6 +6189,7 @@ ${method} ${time === undefined ? '' : time}
                                             option: 3,
                                             subOption: 1,
                                         }
+                                        handleLoading(false)
                                         messageSend(message)
                                     } else {
                                         text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
@@ -5115,6 +6222,7 @@ ${method} ${time === undefined ? '' : time}
                                             option: 0,
                                             subOption: 0,
                                         }
+                                        handleLoading(false)
                                         messageSend(message)
                                     }
                                 })
@@ -5149,10 +6257,12 @@ ${method} ${time === undefined ? '' : time}
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
                     }
-                    if(userInfo.role === 'employee'){
+                    if (userInfo.role === 'employee') {
+                        handleLoading(true)
                         axios.post(url + `/api/searchItem.dab`,
                             {
                                 itemName: itemName
@@ -5170,8 +6280,10 @@ ${method} ${time === undefined ? '' : time}
                                     let check = spec.dry_friction === null
                                     text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
-                                    handleOption(3)
+                                    handleOption(0)
                                     handleSubOption(2)
+                                    handleCompany('스펙정보')
+                                    handleItem(itemName)
                                     message = {
                                         createdAt: new Date(),
                                         _id: Math.round(Math.random() * 1000000),
@@ -5200,9 +6312,10 @@ ${method} ${time === undefined ? '' : time}
                                                 },
                                             ],
                                         },
-                                        option: 3,
+                                        option: 0,
                                         subOption: 2
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                     Keyboard.dismiss()
 
@@ -5246,6 +6359,7 @@ ${method} ${time === undefined ? '' : time}
                                         option: 0,
                                         subOption: 0,
                                     }
+                                    handleLoading(false)
                                     messageSend(message)
                                 })
                             }).catch((err) => {
@@ -5279,134 +6393,105 @@ ${method} ${time === undefined ? '' : time}
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
                     }
                 } // 스펙과 단가 끝
-                
+
                 // 업차지
-                if(subMenu === '업차지'){
+                if (subMenu === '업차지') {
+                    handleLoading(true)
                     axios.post(url + `/api/searchItem.dab`,
-                            {
-                                itemName: itemName
-                            }).then((response) => {
-                                let itemCode = response.data.itemCode;
-                                axios.post(url + `/api/itemSpecInfo.dab`,
-                                    {
-                                        itemCode: itemCode
-                                    }
-                                ).then((response) => {
-                                    let spec = response.data;
+                        {
+                            itemName: itemName
+                        }).then((response) => {
+                            let itemCode = response.data.itemCode;
+                            axios.post(url + `/api/itemSpecInfo.dab`,
+                                {
+                                    itemCode: itemCode
+                                }
+                            ).then((response) => {
+                                let spec = response.data;
 
 
-                                    let text;
-                                    let custName = spec.custName
+                                let text;
+                                let custName = spec.custName
 
-                                    switch (custName) {
-                                        case '지사(대구)':
-                                            if (spec.dyeingGbn === '선염') {
-                                                text = `1000이하 45만원\n예) 500 - 900원\n900 - 500원`
-                                            } else {
-                                                text = `500이하 30만\n500~700사이 400원`
-                                            }
-                                            break;
-                                        case '성재패브릭(외주가공)':
-                                            text = `500이하 30만\n500~700사이 400`
-                                            break;
-                                        case `유나이텍스`:
-                                            text = `200~400사이 30만\n500~600사이 300원\n600~700사이 200원\n700이상 업차지 무`;
-                                            break;
-                                        case '케이디에프':
-                                            text = `300이하 30만\n300~500사이 500원\n500 이상 업차지 무`;
-                                            break;
-                                        case `(주)삼용`:
-                                            text = `300~700이하 20만\n700이상 업차지 무`;
-                                            break;
-                                        case `케이비텍스타일(KB TEXTILE)`:
-                                            text = `100~400사이 20만\n400이상 업챠지 무`;
-                                            break;
-                                        case '에스디텍스(SD)':
-                                            text = `100~500사이 20만`;
-                                            break;
-                                        case '자미보':
-                                            text = `300이하 20만\n300~500사이 10만\n500이상 업차지 무`
-                                            break;
-                                        case '(주)앤디아이(임가공)':
-                                            text = `500이하 20만`;
-                                            break;
-                                        default:
-                                            text = '업차지 정보가 입력되어있지 않습니다.'
-                                            break;
-                                    }
-                                    handleOption(3)
-                                    handleSubOption(2)
-
-                                    message = {
-                                        createdAt: new Date(),
-                                        _id: Math.round(Math.random() * 1000000),
-                                        text: text,
-                                        user: {
-                                            _id: 2
-                                        },
-                                        quickReplies: {
-                                            type: 'radio',
-                                            values: [
-                                                {
-                                                    title: '업차지',
-                                                    value: '업차지',
-                                                },
-                                                {
-                                                    title: '스펙과 단가',
-                                                    value: '스펙과 단가',
-                                                },
-                                                {
-                                                    title: '다른 아이템 조회',
-                                                    value: '다른 아이템 조회'
-                                                },
-                                                {
-                                                    title: '처음 단계로',
-                                                    value: '처음 단계로',
-                                                },
-                                            ],
-                                        },
-                                        option: 3,
-                                        subOption: 2
-                                    }
-                                    messageSend(message)
-                                    Keyboard.dismiss()
-                                }).catch((err) => {
-                                    text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
-                                    handleOption(0)
-                                    handleSubOption(0);
-                                    message = {
-                                        createdAt: new Date(),
-                                        _id: Math.round(Math.random() * 1000000),
-                                        text: text,
-                                        user: {
-                                            _id: 2
-                                        },
-                                        quickReplies: {
-                                            type: 'radio',
-                                            values: [
-                                                {
-                                                    title: '현물조회',
-                                                    value: '현물조회',
-                                                },
-                                                {
-                                                    title: '샘플신청',
-                                                    value: '샘플신청',
-                                                },
-                                                {
-                                                    title: '아이템 정보',
-                                                    value: '아이템 정보',
-                                                },
-                                            ],
-                                        },
-                                        option: 0,
-                                        subOption: 0,
-                                    }
-                                    messageSend(message)
-                                })
+                                switch (custName) {
+                                    case '지사(대구)':
+                                        if (spec.dyeingGbn === '선염') {
+                                            text = `1000이하 45만원\n예) 500 - 900원\n900 - 500원`
+                                        } else {
+                                            text = `500이하 30만\n500~700사이 400원`
+                                        }
+                                        break;
+                                    case '성재패브릭(외주가공)':
+                                        text = `500이하 30만\n500~700사이 400`
+                                        break;
+                                    case `유나이텍스`:
+                                        text = `200~400사이 30만\n500~600사이 300원\n600~700사이 200원\n700이상 업차지 무`;
+                                        break;
+                                    case '케이디에프':
+                                        text = `300이하 30만\n300~500사이 500원\n500 이상 업차지 무`;
+                                        break;
+                                    case `(주)삼용`:
+                                        text = `300~700이하 20만\n700이상 업차지 무`;
+                                        break;
+                                    case `케이비텍스타일(KB TEXTILE)`:
+                                        text = `100~400사이 20만\n400이상 업챠지 무`;
+                                        break;
+                                    case '에스디텍스(SD)':
+                                        text = `100~500사이 20만`;
+                                        break;
+                                    case '자미보':
+                                        text = `300이하 20만\n300~500사이 10만\n500이상 업차지 무`
+                                        break;
+                                    case '(주)앤디아이(임가공)':
+                                        text = `500이하 20만`;
+                                        break;
+                                    default:
+                                        text = '업차지 정보가 입력되어있지 않습니다.'
+                                        break;
+                                }
+                                handleOption(0)
+                                handleSubOption(2)
+                                handleCompany('스펙정보')
+                                handleItem(itemName)
+                                message = {
+                                    createdAt: new Date(),
+                                    _id: Math.round(Math.random() * 1000000),
+                                    text: text,
+                                    user: {
+                                        _id: 2
+                                    },
+                                    quickReplies: {
+                                        type: 'radio',
+                                        values: [
+                                            {
+                                                title: '업차지',
+                                                value: '업차지',
+                                            },
+                                            {
+                                                title: '스펙과 단가',
+                                                value: '스펙과 단가',
+                                            },
+                                            {
+                                                title: '다른 아이템 조회',
+                                                value: '다른 아이템 조회'
+                                            },
+                                            {
+                                                title: '처음 단계로',
+                                                value: '처음 단계로',
+                                            },
+                                        ],
+                                    },
+                                    option: 0,
+                                    subOption: 2
+                                }
+                                handleLoading(false)
+                                messageSend(message)
+                                Keyboard.dismiss()
                             }).catch((err) => {
                                 text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
                                 handleOption(0)
@@ -5438,13 +6523,50 @@ ${method} ${time === undefined ? '' : time}
                                     option: 0,
                                     subOption: 0,
                                 }
+                                handleLoading(false)
                                 messageSend(message)
                             })
+                        }).catch((err) => {
+                            text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                            handleOption(0)
+                            handleSubOption(0);
+                            message = {
+                                createdAt: new Date(),
+                                _id: Math.round(Math.random() * 1000000),
+                                text: text,
+                                user: {
+                                    _id: 2
+                                },
+                                quickReplies: {
+                                    type: 'radio',
+                                    values: [
+                                        {
+                                            title: '현물조회',
+                                            value: '현물조회',
+                                        },
+                                        {
+                                            title: '샘플신청',
+                                            value: '샘플신청',
+                                        },
+                                        {
+                                            title: '아이템 정보',
+                                            value: '아이템 정보',
+                                        },
+                                    ],
+                                },
+                                option: 0,
+                                subOption: 0,
+                            }
+                            handleLoading(false)
+                            messageSend(message)
+                        })
                 } // 업차지 끝
             } // 아이템 정보 끝
 
         // text = '음성인식 중입니다.'
         // create(text, 0, 0, 1)
+        }
+        
     }
 
     if (text === '처음 단계로' || option === 5) {
