@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { StyleSheet, View, Dimensions, Platform, Text} from 'react-native';
+import { StyleSheet, View, Dimensions, Platform, Text, BackHandler} from 'react-native';
 import { FAB, DataTable, Portal } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import Fab from 'rn-fab';
@@ -256,7 +256,8 @@ function NoticeMain({ navigation }) {
             navigation.navigate('QNA', userInfo)
           }
           if (name == "btn_test") {
-            showTest()
+            console.log('눌림')
+            _exitApp()
           }
         }}
       />
