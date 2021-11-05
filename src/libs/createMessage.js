@@ -694,10 +694,30 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     let lastIndex = r.length - 1;
                     text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                     r.map((i, index) => {
-                        index === lastIndex ?
-                            text += `${i.coloryw}\n${i.jaeqty}YD`
+                        let gayoung = i.gayoungqty !== '0.00' ? `, 지사 ${i.gayoungqty}YD` : ''
+                        let product = i.productqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : ''
+                        let jae = parseFloat(i.jaeqty) //- parseFloat(i.holdqty)
+                        if(i.jaeqty > 1){
+                            index === lastIndex ?
+
+                            text += `${i.coloryw}\n현물 ${jae}YD${gayoung}${product}`
                             :
-                            text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                            text += `${i.coloryw}\n현물 ${jae}YD${gayoung}${product}\n\n`
+                        }
+                        if(i.jaeqty < 1 && i.jaeqty >=0){
+                            if(i.gayoungqty !== '0.00' || i.productqty !== '0.00'){
+                                gayoung = i.gayoungqty !== '0.00' ? `지사 ${i.gayoungqty}YD` : ''
+                                product = i.productqty !== '0.00' ? i.gayoungqty !== '0.00' ?`, 작업중 ${i.productqty}YD` : `작업중 ${i.productqty}YD` : ''
+                                index === lastIndex ?
+                                text += `${i.coloryw}\n${gayoung}${product}`
+                                :
+                                text += `${i.coloryw}\n${gayoung}${product}\n\n`
+                            }
+                        }
+                        // index === lastIndex ?
+                        //     text += `${i.coloryw}\n${i.jaeqty}YD`
+                        //     :
+                        //     text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
                     })
 
                     message = {
@@ -800,12 +820,14 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     let lastIndex = r.length - 1;
                     text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                     r.map((i, index) => {
+                        let gayoung = i.gayoungqty!=='0.00' ? `, 지사 ${i.gayoungqty}YD` : ''
+                        let product = i.productqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : ''
+                        let jae = parseFloat(i.jaeqty) //- parseFloat(i.holdqty)
                         index === lastIndex ?
-                            text += `${i.coloryw} (${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD`
+                            text += `${i.coloryw} (${i.colorname})\n현물 ${jae.toFixed(2)}YD${gayoung}${product}`
                             :
-                            text += `${i.coloryw} (${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD\n\n`
+                            text += `${i.coloryw} (${i.colorname})\n현물 ${jae.toFixed(2)}YD${gayoung}${product}\n\n`
                     })
-
                     message = {
                         createdAt: new Date(),
                         _id: Math.round(Math.random() * 1000000),
@@ -889,7 +911,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
-                    includeYN: 0
+                    includeYN: 1
             }).then((resoponse) => {
                 let r = resoponse.data;
 
@@ -897,11 +919,26 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     let lastIndex = r.length - 1;
                     text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                     r.map((i, index) => {
-                        index === lastIndex ?
+                        let gayoung = i.gayoungqty !== '0.00' ? `, 지사 ${i.gayoungqty}YD` : ''
+                        let product = i.productqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : ''
+                        let jae = parseFloat(i.jaeqty) //- parseFloat(i.holdqty)
+                        if(i.jaeqty > 1){
+                            index === lastIndex ?
 
-                            text += `${i.coloryw} (${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD`
+                            text += `${i.coloryw} (${i.colorname})\n현물 ${jae.toFixed(2)}YD${gayoung}${product}`
                             :
-                            text += `${i.coloryw} (${i.colorname})\n현물 ${parseInt(i.jaeqty) + parseInt(i.gayoungqty) - parseInt(i.holdqty)}YD\n\n`
+                            text += `${i.coloryw} (${i.colorname})\n현물 ${jae.toFixed(2)}YD${gayoung}${product}\n\n`
+                        }
+                        if(i.jaeqty < 1 && i.jaeqty >=0){
+                            if(i.gayoungqty !== '0.00' || i.productqty !== '0.00'){
+                                gayoung = i.gayoungqty !== '0.00' ? `지사 ${i.gayoungqty}YD` : ''
+                                product = i.productqty !== '0.00' ? i.gayoungqty !== '0.00' ?`, 작업중 ${i.productqty}YD` : `작업중 ${i.productqty}YD` : ''
+                                index === lastIndex ?
+                                text += `${i.coloryw} (${i.colorname})\n${gayoung}${product}`
+                                :
+                                text += `${i.coloryw} (${i.colorname})\n${gayoung}${product}\n\n`
+                            }
+                        }
                     })
 
                     message = {
@@ -1088,18 +1125,39 @@ function createMessage(text, option, subOption, item, userInfo, company, message
         axios.post(url + '/api/currentInventory.dab',
             {
                     itemName: item,
-                    includeYN: 0
+                    includeYN: 1
             }).then((resoponse) => {
                 let r = resoponse.data;
 
                 if (r !== undefined) {
+                    
                     let lastIndex = r.length - 1;
                     text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                     r.map((i, index) => {
-                        index === lastIndex ?
-                            text += `${i.coloryw}\n${i.jaeqty}YD`
+                        let gayoung = i.gayoungqty !== '0.00' ? `, 지사 ${i.gayoungqty}YD` : ''
+                        let product = i.productqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : ''
+                        let jae = parseFloat(i.jaeqty) //- parseFloat(i.holdqty)
+                        if(i.jaeqty > 1){
+                            index === lastIndex ?
+
+                            text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}`
                             :
-                            text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                            text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}\n\n`
+                        }
+                        if(i.jaeqty < 1 && i.jaeqty >=0){
+                            if(i.gayoungqty !== '0.00' || i.productqty !== '0.00'){
+                                gayoung = i.gayoungqty !== '0.00' ? `지사 ${i.gayoungqty}YD` : ''
+                                product = i.productqty !== '0.00' ? i.gayoungqty !== '0.00' ?`, 작업중 ${i.productqty}YD` : `작업중 ${i.productqty}YD` : ''
+                                index === lastIndex ?
+                                text += `${i.coloryw}\n${gayoung}${product}`
+                                :
+                                text += `${i.coloryw}\n${gayoung}${product}\n\n`
+                            }
+                        }
+                        // index === lastIndex ?
+                        //     text += `${i.coloryw}\n${i.jaeqty}YD`
+                        //     :
+                        //     text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
                     })
 
                     message = {
@@ -1203,148 +1261,294 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                 let r = res.filter(item => item.coloryw===color);
                 if (res !== undefined) {
                     if(r.length !== 0){
-                    if (parseInt(r[0].jaeqty) < 1) {
-                        let similarColor = color.substring(0,3)
-                        let recommend = res.filter(item=> item.coloryw.includes(similarColor))
-                        let colorList =[];
-                        recommend.forEach(item => {
-                            if(item.jaeqty>0){
-                                colorList.push({coloryw:item.coloryw,jaeqty:item.jaeqty})
+                        if (parseInt(r[0].jaeqty) < 1) {
+                            let similarColor = color.substring(0,3)
+                            let recommend = res.filter(item=> item.coloryw.includes(similarColor))
+                            let colorList =[];
+
+                            recommend.forEach(item => {
+                                if(item.jaeqty>0){
+                                    colorList.push({coloryw:item.coloryw,jaeqty:item.jaeqty})
+                                }
+                            })
+
+                            // 대체 아이템 조회
+                            let replaceItemList = '';
+
+                            axios.post(url + '/api/ReplaceItemList.dab', {
+                                item_name: item,
+                            }).then((response) => {
+
+                                let replaceItem = response.data;
+
+                                if(replaceItem.length > 0){
+                                    
+                                    let re = [];
+                                    let si = [];
+
+                                    replaceItem.forEach(item =>{
+                                        if(item.replace_gb === 'R'){
+                                            re.push(item.replace_item)
+                                        }
+                                        if(item.replace_gb === 'S'){
+                                            si.push(item.replace_item)
+                                        }
+                                    })
+                                    if(re.length>0){
+                                        replaceItemList += `대체 아이템은 "`
+
+                                        let setReList = new Set(re)
+                                        let uniqueReList = [...setReList]
+                                        
+                                        uniqueReList.forEach((item, i) => {
+                                            if(uniqueReList.length !== i+1){
+                                                replaceItemList += `${item}, `
+                                            }
+                                            else{
+                                                replaceItemList += si.length > 0 ? `${item}"\n` : `${item}" 입니다.`
+                                            }
+                                        })
+                                    }
+                                    if(si.length>0){
+
+                                        replaceItemList += `유사 아이템은 "`
+
+                                        let setSiList = new Set(si)
+                                        let uniqueSiList = [...setSiList]
+                                        uniqueSiList.forEach((item, i) => {
+                                            if(uniqueSiList.length !== i+1){
+                                                replaceItemList += `${item}, `
+                                            }
+                                            else{
+                                                replaceItemList += `${item}" 입니다.`
+                                            }
+                                        })
+                                    }
+                                }
+
+                                if(colorList.length===0){
+                                    // 유사컬러, 대체아이템도 없는경우
+                                    if(replaceItemList === ''){
+                                        message = {
+                                            createdAt: new Date(),
+                                            _id: Math.round(Math.random() * 1000000),
+                                            text: `${r[0].itemname}\n${r[0].coloryw}\n\n현물없음`,
+                                            user: {
+                                                _id: 2
+                                            },
+                                            quickReplies: {
+                                                type: 'radio',
+                                                values: [
+                                                    {
+                                                        title: '빠른수배 요청',
+                                                        value: '빠른수배 요청',
+                                                    },
+                                                    {
+                                                        title: '샘플신청',
+                                                        value: '샘플신청',
+                                                    },
+                                                    {
+                                                        title: '다시 선택',
+                                                        value: '다시 선택',
+                                                    },
+                                                    {
+                                                        title: '처음 단계로',
+                                                        value: '처음 단계로',
+                                                    },
+                                                ],
+                                            },
+                                            option: 0,
+                                            subOption: 0,
+                                        }
+                                        handleOption(0)
+                                        handleSubOption(0)
+                                        handleLoading(false)
+                                        messageSend(message)
+                                    }
+                                    else {
+                                        // 유사칼라만 없는 경우
+                                        message = {
+                                            createdAt: new Date(),
+                                            _id: Math.round(Math.random() * 1000000),
+                                            text: `현재 ${r[0].itemname}의 ${r[0].coloryw} 칼라는\n재고가 없습니다.\n\n`+replaceItemList +'\n위 아이템을 검색해보시길 추천드립니다.',
+                                            user: {
+                                                _id: 2
+                                            },
+                                            quickReplies: {
+                                                type: 'radio',
+                                                values: [
+                                                    {
+                                                        title: '빠른수배 요청',
+                                                        value: '빠른수배 요청',
+                                                    },
+                                                    {
+                                                        title: '샘플신청',
+                                                        value: '샘플신청',
+                                                    },
+                                                    {
+                                                        title: '다시 선택',
+                                                        value: '다시 선택',
+                                                    },
+                                                    {
+                                                        title: '처음 단계로',
+                                                        value: '처음 단계로',
+                                                    },
+                                                ],
+                                            },
+                                            option: 0,
+                                            subOption: 0,
+                                        }
+                                        handleOption(0)
+                                        handleSubOption(0)
+                                        handleLoading(false)
+                                        messageSend(message)
+                                    }
+                                }
+                                // 유사칼라가 있는 경우
+                                if(colorList.length>0){
+                                    // 대체아이템이 없는 경우
+                                    if(replaceItemList === ''){
+                                        let rcText='';
+                                        colorList.forEach(item=> rcText += `${item.coloryw} (${item.jaeqty})YD\n`)
+                                        message = {
+                                            createdAt: new Date(),
+                                            _id: Math.round(Math.random() * 1000000),
+                                            text: `현재 ${r[0].itemname}의 ${r[0].coloryw} 칼라는\n재고가 없습니다.\n\n유사한 칼라(재고)는\n${rcText}입니다.`,
+                                            user: {
+                                                _id: 2
+                                            },
+                                            quickReplies: {
+                                                type: 'radio',
+                                                values: [
+                                                    {
+                                                        title: '빠른수배 요청',
+                                                        value: '빠른수배 요청',
+                                                    },
+                                                    {
+                                                        title: '샘플신청',
+                                                        value: '샘플신청',
+                                                    },
+                                                    {
+                                                        title: '다시 선택',
+                                                        value: '다시 선택',
+                                                    },
+                                                    {
+                                                        title: '처음 단계로',
+                                                        value: '처음 단계로',
+                                                    },
+                                                ],
+                                            },
+                                            option: 0,
+                                            subOption: 0,
+                                        }
+                                        handleOption(0)
+                                        handleSubOption(0)
+                                        handleLoading(false)
+                                        messageSend(message)
+                                    }
+                                    // 대체 아이템이 있는경우
+                                    else {
+                                        let rcText='';
+                                        colorList.forEach(item=> rcText += `${item.coloryw} (${item.jaeqty})YD\n`)
+                                        message = {
+                                            createdAt: new Date(),
+                                            _id: Math.round(Math.random() * 1000000),
+                                            text: `현재 ${r[0].itemname}의 ${r[0].coloryw} 칼라는\n재고가 없습니다.\n\n유사한 칼라(재고)는\n${rcText}\n`+replaceItemList +'\n위 아이템을 검색해보시길 추천드립니다.',
+                                            user: {
+                                                _id: 2
+                                            },
+                                            quickReplies: {
+                                                type: 'radio',
+                                                values: [
+                                                    {
+                                                        title: '빠른수배 요청',
+                                                        value: '빠른수배 요청',
+                                                    },
+                                                    {
+                                                        title: '샘플신청',
+                                                        value: '샘플신청',
+                                                    },
+                                                    {
+                                                        title: '다시 선택',
+                                                        value: '다시 선택',
+                                                    },
+                                                    {
+                                                        title: '처음 단계로',
+                                                        value: '처음 단계로',
+                                                    },
+                                                ],
+                                            },
+                                            option: 0,
+                                            subOption: 0,
+                                        }
+                                        handleOption(0)
+                                        handleSubOption(0)
+                                        handleLoading(false)
+                                        messageSend(message)
+                                    }
+                                }
+                            })
+                        } else {
+                            message = {
+                                createdAt: new Date(),
+                                _id: Math.round(Math.random() * 1000000),
+                                text: `${r[0].itemname}\n${r[0].coloryw}\n\n현물 ${r[0].jaeqty}YD`,
+                                user: {
+                                    _id: 2
+                                },
+                                quickReplies: {
+                                    type: 'radio',
+                                    values: [
+                                        {
+                                            title: '빠른수배 요청',
+                                            value: '빠른수배 요청',
+                                        },
+                                        {
+                                            title: '빠른 샘플신청',
+                                            value: '빠른 샘플신청',
+                                        },
+                                        {
+                                            title: '장바구니 담기',
+                                            value: '장바구니 담기'
+                                        },
+                                        {
+                                            title: '대체 아이템',
+                                            value: '대체 아이템',
+                                        },
+                                        {
+                                            title: '다시 선택',
+                                            value: '다시 선택',
+                                        },
+                                        {
+                                            title: '처음 단계로',
+                                            value: '처음 단계로',
+                                        },
+                                    ],
+                                },
+                                option: 0,
+                                subOption: 0,
                             }
+                            handleOption(0)
+                            handleSubOption(0)
+                            handleItemName(item)
+                            handleColor(color)
+                            handleLoading(false)
+                            messageSend(message)
+                        }
+                        //로그입력
+                        axios.post(url+`/api/insertLog.dab`,{
+                            log_gb:'01',
+                            item_code:r[0].itemcode,
+                            item_name:r[0].itemname,
+                            color_name:r[0].coloryw,
+                            hq_cnt:r[0].jaeqty,
+                            deagu_cnt:r[0].gayoungqty,
+                            prod_cnt:r[0].productqty,
+                            hold_cnt:r[0].holdqty,
+                            user_name:userInfo.user_name,
+                            role: userInfo.role,
+                            cust_name:userInfo.company_name,
                         })
-                        if(colorList.length===0){
-                            message = {
-                                createdAt: new Date(),
-                                _id: Math.round(Math.random() * 1000000),
-                                text: `${r[0].itemname}\n${r[0].coloryw}\n\n현물없음`,
-                                user: {
-                                    _id: 2
-                                },
-                                quickReplies: {
-                                    type: 'radio',
-                                    values: [
-                                        {
-                                            title: '빠른수배 요청',
-                                            value: '빠른수배 요청',
-                                        },
-                                        {
-                                            title: '샘플신청',
-                                            value: '샘플신청',
-                                        },
-                                        {
-                                            title: '다시 선택',
-                                            value: '다시 선택',
-                                        },
-                                        {
-                                            title: '처음 단계로',
-                                            value: '처음 단계로',
-                                        },
-                                    ],
-                                },
-                                option: 0,
-                                subOption: 0,
-                            }
-                            handleOption(0)
-                            handleSubOption(0)
-                            handleLoading(false)
-                            messageSend(message)
-                        }
-                        if(colorList.length>0){
-                            let rcText='';
-                            colorList.forEach(item=> rcText += `${item.coloryw} (${item.jaeqty})YD\n`)
-                            message = {
-                                createdAt: new Date(),
-                                _id: Math.round(Math.random() * 1000000),
-                                text: `현재 ${r[0].itemname}의\n${r[0].coloryw} 칼라는\n재고가 없습니다.\n\n유사한 칼라(재고)는\n${rcText}입니다.`,
-                                user: {
-                                    _id: 2
-                                },
-                                quickReplies: {
-                                    type: 'radio',
-                                    values: [
-                                        {
-                                            title: '빠른수배 요청',
-                                            value: '빠른수배 요청',
-                                        },
-                                        {
-                                            title: '샘플신청',
-                                            value: '샘플신청',
-                                        },
-                                        {
-                                            title: '다시 선택',
-                                            value: '다시 선택',
-                                        },
-                                        {
-                                            title: '처음 단계로',
-                                            value: '처음 단계로',
-                                        },
-                                    ],
-                                },
-                                option: 0,
-                                subOption: 0,
-                            }
-                            handleOption(0)
-                            handleSubOption(0)
-                            handleLoading(false)
-                            messageSend(message)
-                        }
-                    } else{
-                        message = {
-                            createdAt: new Date(),
-                            _id: Math.round(Math.random() * 1000000),
-                            text: `${r[0].itemname}\n${r[0].coloryw}\n\n현물 ${r[0].jaeqty}YD`,
-                            user: {
-                                _id: 2
-                            },
-                            quickReplies: {
-                                type: 'radio',
-                                values: [
-                                    {
-                                        title: '빠른수배 요청',
-                                        value: '빠른수배 요청',
-                                    },
-                                    {
-                                        title: '빠른 샘플신청',
-                                        value: '빠른 샘플신청',
-                                    },
-                                    {
-                                        title: '장바구니 담기',
-                                        value: '장바구니 담기'
-                                    },
-                                    {
-                                        title: '다시 선택',
-                                        value: '다시 선택',
-                                    },
-                                    {
-                                        title: '처음 단계로',
-                                        value: '처음 단계로',
-                                    },
-                                ],
-                            },
-                            option: 0,
-                            subOption: 0,
-                        }
-                        handleOption(0)
-                        handleSubOption(0)
-                        handleItemName(item)
-                        handleColor(color)
-                        handleLoading(false)
-                        messageSend(message)
-                    }
-                    //로그입력
-                    axios.post(url+`/api/insertLog.dab`,{
-                        log_gb:'01',
-                        item_code:r[0].itemcode,
-                        item_name:r[0].itemname,
-                        color_name:r[0].coloryw,
-                        hq_cnt:r[0].jaeqty,
-                        deagu_cnt:r[0].gayoungqty,
-                        prod_cnt:r[0].productqty,
-                        hold_cnt:r[0].holdqty,
-                        user_name:userInfo.user_name,
-                        role: userInfo.role,
-                        cust_name:userInfo.company_name,
-                    })
                 }
             }
             }).catch((err)=>{
@@ -1505,6 +1709,293 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                 messageSend(message)
             })
         Keyboard.dismiss()
+    }
+
+    if (text === '대체 아이템') {
+        handleLoading(true);
+        axios.post(url + '/api/currentInventory.dab',
+            {
+                    itemName: item,
+                    // colorYW: color,
+                    includeYN: 1
+            }).then((response) => {
+                let res = response.data
+                let r = res.filter(item => item.coloryw===color);
+                if (res !== undefined) {
+                    if(r.length !== 0){
+                            let similarColor = color.substring(0,3)
+                            let recommend = res.filter(item=> item.coloryw.includes(similarColor))
+                            let colorList =[];
+
+                            recommend.forEach(item => {
+                                if(item.jaeqty>0){
+                                    colorList.push({coloryw:item.coloryw,jaeqty:item.jaeqty})
+                                }
+                            })
+
+                            // 대체 아이템 조회
+                            let replaceItemList = '';
+
+                            axios.post(url + '/api/ReplaceItemList.dab', {
+                                item_name: item,
+                            }).then((response) => {
+
+                                let replaceItem = response.data;
+
+                                if(replaceItem.length > 0){
+                                    
+                                    let re = [];
+                                    let si = [];
+
+                                    replaceItem.forEach(item =>{
+                                        if(item.replace_gb === 'R'){
+                                            re.push(item.replace_item)
+                                        }
+                                        if(item.replace_gb === 'S'){
+                                            si.push(item.replace_item)
+                                        }
+                                    })
+                                    if(re.length>0){
+                                        replaceItemList += `대체 아이템은 "`
+
+                                        let setReList = new Set(re)
+                                        let uniqueReList = [...setReList]
+                                        
+                                        uniqueReList.forEach((item, i) => {
+                                            if(uniqueReList.length !== i+1){
+                                                replaceItemList += `${item}, `
+                                            }
+                                            else{
+                                                replaceItemList += si.length > 0 ? `${item}"\n` : `${item}" 입니다.`
+                                            }
+                                        })
+                                    }
+                                    if(si.length>0){
+
+                                        replaceItemList += `유사 아이템은 "`
+
+                                        let setSiList = new Set(si)
+                                        let uniqueSiList = [...setSiList]
+                                        uniqueSiList.forEach((item, i) => {
+                                            if(uniqueSiList.length !== i+1){
+                                                replaceItemList += `${item}, `
+                                            }
+                                            else{
+                                                replaceItemList += `${item}" 입니다.`
+                                            }
+                                        })
+                                    }
+                                }
+
+                                // if(colorList.length===0){
+                                //     // 유사컬러, 대체아이템도 없는경우
+                                //     if(replaceItemList === ''){
+                                //         message = {
+                                //             createdAt: new Date(),
+                                //             _id: Math.round(Math.random() * 1000000),
+                                //             text: `${r[0].itemname}\n${r[0].coloryw}\n\n현물없음`,
+                                //             user: {
+                                //                 _id: 2
+                                //             },
+                                //             quickReplies: {
+                                //                 type: 'radio',
+                                //                 values: [
+                                //                     {
+                                //                         title: '빠른수배 요청',
+                                //                         value: '빠른수배 요청',
+                                //                     },
+                                //                     {
+                                //                         title: '샘플신청',
+                                //                         value: '샘플신청',
+                                //                     },
+                                //                     {
+                                //                         title: '다시 선택',
+                                //                         value: '다시 선택',
+                                //                     },
+                                //                     {
+                                //                         title: '처음 단계로',
+                                //                         value: '처음 단계로',
+                                //                     },
+                                //                 ],
+                                //             },
+                                //             option: 0,
+                                //             subOption: 0,
+                                //         }
+                                //         handleOption(0)
+                                //         handleSubOption(0)
+                                //         handleLoading(false)
+                                //         messageSend(message)
+                                //     }
+                                //     else {
+                                //         // 유사칼라만 없는 경우
+                                //         message = {
+                                //             createdAt: new Date(),
+                                //             _id: Math.round(Math.random() * 1000000),
+                                //             text: `현재 ${r[0].itemname}의 ${r[0].coloryw} 칼라는\n재고가 없습니다.\n\n`+replaceItemList +'\n위 아이템을 검색해보시길 추천드립니다.',
+                                //             user: {
+                                //                 _id: 2
+                                //             },
+                                //             quickReplies: {
+                                //                 type: 'radio',
+                                //                 values: [
+                                //                     {
+                                //                         title: '빠른수배 요청',
+                                //                         value: '빠른수배 요청',
+                                //                     },
+                                //                     {
+                                //                         title: '샘플신청',
+                                //                         value: '샘플신청',
+                                //                     },
+                                //                     {
+                                //                         title: '다시 선택',
+                                //                         value: '다시 선택',
+                                //                     },
+                                //                     {
+                                //                         title: '처음 단계로',
+                                //                         value: '처음 단계로',
+                                //                     },
+                                //                 ],
+                                //             },
+                                //             option: 0,
+                                //             subOption: 0,
+                                //         }
+                                //         handleOption(0)
+                                //         handleSubOption(0)
+                                //         handleLoading(false)
+                                //         messageSend(message)
+                                //     }
+                                // }
+
+                                // 유사칼라가 있는 경우
+                                if(colorList.length>0){
+                                    // 대체아이템이 없는 경우
+                                    if(replaceItemList === ''){
+                                        let rcText='';
+                                        colorList.forEach(item=> rcText += `${item.coloryw} (${item.jaeqty})YD\n`)
+                                        message = {
+                                            createdAt: new Date(),
+                                            _id: Math.round(Math.random() * 1000000),
+                                            text: `해당 아이템은 대체 아이템 및 유사 아이템이 없습니다.`,
+                                            user: {
+                                                _id: 2
+                                            },
+                                            quickReplies: {
+                                                type: 'radio',
+                                                values: [
+                                                    {
+                                                        title: '빠른수배 요청',
+                                                        value: '빠른수배 요청',
+                                                    },
+                                                    {
+                                                        title: '다시 선택',
+                                                        value: '다시 선택',
+                                                    },
+                                                    {
+                                                        title: '처음 단계로',
+                                                        value: '처음 단계로',
+                                                    },
+                                                ],
+                                            },
+                                            option: 0,
+                                            subOption: 0,
+                                        }
+                                        handleOption(0)
+                                        handleSubOption(0)
+                                        handleLoading(false)
+                                        messageSend(message)
+                                    }
+                                    // 대체 아이템이 있는경우
+                                    else {
+                                        let rcText='';
+                                        colorList.forEach(item=> rcText += `${item.coloryw} (${item.jaeqty})YD\n`)
+                                        message = {
+                                            createdAt: new Date(),
+                                            _id: Math.round(Math.random() * 1000000),
+                                            text: `${r[0].itemname}의\n`+replaceItemList,
+                                            user: {
+                                                _id: 2
+                                            },
+                                            quickReplies: {
+                                                type: 'radio',
+                                                values: [
+                                                    {
+                                                        title: '빠른수배 요청',
+                                                        value: '빠른수배 요청',
+                                                    },
+                                                    {
+                                                        title: '다시 선택',
+                                                        value: '다시 선택',
+                                                    },
+                                                    {
+                                                        title: '처음 단계로',
+                                                        value: '처음 단계로',
+                                                    },
+                                                ],
+                                            },
+                                            option: 0,
+                                            subOption: 0,
+                                        }
+                                        handleOption(0)
+                                        handleSubOption(0)
+                                        handleLoading(false)
+                                        messageSend(message)
+                                    }
+                                }
+                            })
+                        //로그입력
+                        axios.post(url+`/api/insertLog.dab`,{
+                            log_gb:'01',
+                            item_code:r[0].itemcode,
+                            item_name:r[0].itemname,
+                            color_name:r[0].coloryw,
+                            hq_cnt:r[0].jaeqty,
+                            deagu_cnt:r[0].gayoungqty,
+                            prod_cnt:r[0].productqty,
+                            hold_cnt:r[0].holdqty,
+                            user_name:userInfo.user_name,
+                            role: userInfo.role,
+                            cust_name:userInfo.company_name,
+                        })
+                }
+            }
+            }).catch((err)=>{
+                text = '문제가 발생하였습니다. 담당자에게 문의하세요.';
+                handleOption(0)
+                handleSubOption(0);
+                message = {
+                    createdAt: new Date(),
+                    _id: Math.round(Math.random() * 1000000),
+                    text: text,
+                    user: {
+                        _id: 2
+                    },
+                    quickReplies : {
+                        type: 'radio',
+                        values: [
+                            {
+                                title: '현물조회',
+                                value: '현물조회',
+                            },
+                            {
+                                title: '샘플신청',
+                                value: '샘플신청',
+                            },
+                            {
+                                title: '아이템 정보',
+                                value: '아이템 정보',
+                            },
+                            {
+                                title: '문의사항',
+                                value: '문의사항',
+                            }
+                        ],
+                    },
+                    option: 0,
+                    subOption: 0,
+                }
+                handleLoading(false)
+                messageSend(message)
+            })
     }
 
     // 샘플신청
@@ -1809,10 +2300,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                             title: '영업사원전달',
                                                             value: '영업사원전달',
                                                         },
-                                                        {
-                                                            title: '거래처(택배)',
-                                                            value: '거래처(택배)'
-                                                        }
+                                                        // {
+                                                        //     title: '거래처(택배)',
+                                                        //     value: '거래처(택배)'
+                                                        // }
                                                     ],
                                                 },
                                                 option: 2,
@@ -1975,6 +2466,7 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                     {
                             itemName: strArr[0]
                     }).then((response) => {
+                        
                         if (response.data.itemCode !== null) {
                             item.item_name = response.data.itemName;
                             item.item_code = response.data.itemCode;
@@ -2054,10 +2546,10 @@ function createMessage(text, option, subOption, item, userInfo, company, message
                                                             title: '영업사원전달',
                                                             value: '영업사원전달',
                                                         },
-                                                        {
-                                                            title: '거래처(택배)',
-                                                            value: '거래처(택배)'
-                                                        }
+                                                        // {
+                                                        //     title: '거래처(택배)',
+                                                        //     value: '거래처(택배)'
+                                                        // }
                                                     ],
                                                 },
                                                 option: 2,
@@ -2667,7 +3159,7 @@ ${method} ${time === undefined ? '' : time}
                 let check = spec.dry_friction===null
 
                 
-                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
+                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
                 
                 handleOption(0)
                 handleSubOption(0)
@@ -2819,7 +3311,7 @@ ${method} ${time === undefined ? '' : time}
                 let itemNo = spec.itemNo;
                 let price = spec.price.split('.')
                 let check = spec.dry_friction===null
-                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
+                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}\n${userInfo.specGB==='Y'?`경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
                 
                 handleOption(0)
                 handleSubOption(0)
@@ -3256,7 +3748,7 @@ ${method} ${time === undefined ? '' : time}
                 let price = spec.price.split('.');
                 let check = spec.dry_friction===null
 
-                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}${userInfo.specGB==='Y'?`\n경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
+                text = `${itemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level==='3'?`\n단가 : ${spec.priceC}원\n`:''}${userInfo.specGB==='Y'?`\n경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n`:''}${check?'':`*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB==='Y'?`\n\n매입단가\n${spec.custName} : ${price[0]}원`:''}`
 
                 message = {
                     createdAt: new Date(),
@@ -3395,7 +3887,7 @@ ${method} ${time === undefined ? '' : time}
 
     //                     let price = spec.price.split('.')
     //                     let check = spec.dry_friction === null
-    //                     text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+    //                     text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
     //                     handleOption(0)
     //                     handleSubOption(0)
@@ -3545,7 +4037,7 @@ ${method} ${time === undefined ? '' : time}
 
     //                     let price = spec.price.split('.')
     //                     let check = spec.dry_friction === null
-    //                     text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+    //                     text = `${text} 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
     //                     handleOption(0)
     //                     handleSubOption(0)
@@ -4000,7 +4492,7 @@ ${method} ${time === undefined ? '' : time}
     }
     // 음성인식
     passOp = [0, 7]
-    let basicMenu = ['현물조회', '샘플신청', '아이템 정보','문의사항','아이템정보', '다시 선택']
+    let basicMenu = ['현물조회', '샘플신청', '아이템 정보','문의사항','아이템정보', '다시 선택','대체 아이템']
     if(text==undefined){
         text = '로그아웃 하여 중간에 text가 사라져 text.length에 에러가 생겨서 추가합니다.'
     }
@@ -4040,7 +4532,15 @@ ${method} ${time === undefined ? '' : time}
         }
         // 아이템명만 입력한 경우
         if(sentence.length===1 && text !== '업차지'){
-            itemName = sentence[0];
+            if(text === "안녕하세요"){
+                handleQuestion(text)
+                text = `"${text}"를 문의 하시겠습니까?`
+                option = 6;
+                subOption = 2;
+                quick = 6;
+                create(text, option, subOption, quick);
+            } else {
+                itemName = sentence[0];
             // 고객
             if(userInfo.role === 'client'|| userInfo.role === 'partner'){
                 // 스펙 조회
@@ -4061,7 +4561,7 @@ ${method} ${time === undefined ? '' : time}
                                 let itemNo = spec.itemNo;
                                 let price = spec.price.split('.')
                                 let check = spec.dry_friction === null
-                                text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+                                text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                                 handleOption(0)
                                 handleSubOption(0)
@@ -4212,7 +4712,7 @@ ${method} ${time === undefined ? '' : time}
                                 let itemNo = spec.itemNo;
                                 let price = spec.price.split('.')
                                 let check = spec.dry_friction === null
-                                text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+                                text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                                 handleOption(0)
                                 handleSubOption(0)
@@ -4352,7 +4852,7 @@ ${method} ${time === undefined ? '' : time}
                 axios.post(url + '/api/currentInventory.dab',
                     {
                         itemName: itemName,
-                        includeYN: 0
+                        includeYN: 1
                     }).then((resoponse) => {
                         let r = resoponse.data;
 
@@ -4360,10 +4860,30 @@ ${method} ${time === undefined ? '' : time}
                             let lastIndex = r.length - 1;
                             text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                             r.map((i, index) => {
-                                index === lastIndex ?
-                                    text += `${i.coloryw}\n${i.jaeqty}YD`
-                                    :
-                                    text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                                let gayoung = i.gayoungqty !== '0.00' ? `, 지사 ${i.gayoungqty}YD` : ''
+                                let product = i.productqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : ''
+                                let jae = parseFloat(i.jaeqty) //- parseFloat(i.holdqty)
+                                if (i.jaeqty > 1) {
+                                    index === lastIndex ?
+
+                                        text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}`
+                                        :
+                                        text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}\n\n`
+                                }
+                                if (i.jaeqty < 1 && i.jaeqty >= 0) {
+                                    if (i.gayoungqty !== '0.00' || i.productqty !== '0.00') {
+                                        gayoung = i.gayoungqty !== '0.00' ? `지사 ${i.gayoungqty}YD` : ''
+                                        product = i.productqty !== '0.00' ? i.gayoungqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : `작업중 ${i.productqty}YD` : ''
+                                        index === lastIndex ?
+                                            text += `${i.coloryw}\n${gayoung}${product}`
+                                            :
+                                            text += `${i.coloryw}\n${gayoung}${product}\n\n`
+                                    }
+                                }
+                                // index === lastIndex ?
+                                //     text += `${i.coloryw}\n${i.jaeqty}YD`
+                                //     :
+                                //     text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
                             })
 
                             message = {
@@ -4472,7 +4992,7 @@ ${method} ${time === undefined ? '' : time}
                             let itemNo = spec.itemNo;
                             let price = spec.price.split('.')
                             let check = spec.dry_friction === null
-                            text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+                            text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                             handleOption(3)
                             handleSubOption(2)
@@ -4616,7 +5136,7 @@ ${method} ${time === undefined ? '' : time}
                             axios.post(url + '/api/currentInventory.dab',
                                 {
                                     itemName: itemName,
-                                    includeYN: 0
+                                    includeYN: 1
                                 }).then((resoponse) => {
                                     let r = resoponse.data;
 
@@ -4624,10 +5144,30 @@ ${method} ${time === undefined ? '' : time}
                                         let lastIndex = r.length - 1;
                                         text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                                         r.map((i, index) => {
-                                            index === lastIndex ?
-                                                text += `${i.coloryw}\n${i.jaeqty}YD`
-                                                :
-                                                text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                                            let gayoung = i.gayoungqty !== '0.00' ? `, 지사 ${i.gayoungqty}YD` : ''
+                                            let product = i.productqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : ''
+                                            let jae = parseFloat(i.jaeqty) //- parseFloat(i.holdqty)
+                                            if (i.jaeqty > 1) {
+                                                index === lastIndex ?
+
+                                                    text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}`
+                                                    :
+                                                    text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}\n\n`
+                                            }
+                                            if (i.jaeqty < 1 && i.jaeqty >= 0) {
+                                                if (i.gayoungqty !== '0.00' || i.productqty !== '0.00') {
+                                                    gayoung = i.gayoungqty !== '0.00' ? `지사 ${i.gayoungqty}YD` : ''
+                                                    product = i.productqty !== '0.00' ? i.gayoungqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : `작업중 ${i.productqty}YD` : ''
+                                                    index === lastIndex ?
+                                                        text += `${i.coloryw}\n${gayoung}${product}`
+                                                        :
+                                                        text += `${i.coloryw}\n${gayoung}${product}\n\n`
+                                                }
+                                            }
+                                            // index === lastIndex ?
+                                            //     text += `${i.coloryw}\n${i.jaeqty}YD`
+                                            //     :
+                                            //     text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
                                         })
 
                                         message = {
@@ -4742,6 +5282,7 @@ ${method} ${time === undefined ? '' : time}
                         handleLoading(false)
                         messageSend(message)
                     }) // 현물 조회 끝
+            }
             }
         }
         // 나머지
@@ -4891,17 +5432,37 @@ ${method} ${time === undefined ? '' : time}
                                     axios.post(url + '/api/currentInventory.dab',
                                         {
                                             itemName: itemName,
-                                            includeYN: 0
+                                            includeYN: 1
                                         }).then((resoponse) => {
                                             let r = resoponse.data;
                                             if (r !== undefined) {
                                                 let lastIndex = r.length - 1;
                                                 text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                                                 r.map((i, index) => {
-                                                    index === lastIndex ?
-                                                        text += `${i.coloryw}\n${i.jaeqty}YD`
-                                                        :
-                                                        text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                                                    let gayoung = i.gayoungqty !== '0.00' ? `, 지사 ${i.gayoungqty}YD` : ''
+                                                    let product = i.productqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : ''
+                                                    let jae = parseFloat(i.jaeqty) //- parseFloat(i.holdqty)
+                                                    if (i.jaeqty > 1) {
+                                                        index === lastIndex ?
+
+                                                            text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}`
+                                                            :
+                                                            text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}\n\n`
+                                                    }
+                                                    if (i.jaeqty < 1 && i.jaeqty >= 0) {
+                                                        if (i.gayoungqty !== '0.00' || i.productqty !== '0.00') {
+                                                            gayoung = i.gayoungqty !== '0.00' ? `지사 ${i.gayoungqty}YD` : ''
+                                                            product = i.productqty !== '0.00' ? i.gayoungqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : `작업중 ${i.productqty}YD` : ''
+                                                            index === lastIndex ?
+                                                                text += `${i.coloryw}\n${gayoung}${product}`
+                                                                :
+                                                                text += `${i.coloryw}\n${gayoung}${product}\n\n`
+                                                        }
+                                                    }
+                                                    // index === lastIndex ?
+                                                    //     text += `${i.coloryw}\n${i.jaeqty}YD`
+                                                    //     :
+                                                    //     text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
                                                 })
 
                                                 message = {
@@ -5053,7 +5614,7 @@ ${method} ${time === undefined ? '' : time}
                         axios.post(url + '/api/currentInventory.dab',
                             {
                                 itemName: itemName,
-                                includeYN: 0
+                                includeYN: 1
                             }).then((resoponse) => {
                                 let r = resoponse.data;
 
@@ -5061,10 +5622,30 @@ ${method} ${time === undefined ? '' : time}
                                     let lastIndex = r.length - 1;
                                     text = `${r[0].itemname} (${r[0].itemnocode})\n칼라별 수량\n\n`
                                     r.map((i, index) => {
-                                        index === lastIndex ?
-                                            text += `${i.coloryw}\n${i.jaeqty}YD`
-                                            :
-                                            text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
+                                        let gayoung = i.gayoungqty !== '0.00' ? `, 지사 ${i.gayoungqty}YD` : ''
+                                        let product = i.productqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : ''
+                                        let jae = parseFloat(i.jaeqty) //- parseFloat(i.holdqty)
+                                        if (i.jaeqty > 1) {
+                                            index === lastIndex ?
+
+                                                text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}`
+                                                :
+                                                text += `${i.coloryw}\n현물 ${jae.toFixed(2)}YD${gayoung}${product}\n\n`
+                                        }
+                                        if (i.jaeqty < 1 && i.jaeqty >= 0) {
+                                            if (i.gayoungqty !== '0.00' || i.productqty !== '0.00') {
+                                                gayoung = i.gayoungqty !== '0.00' ? `지사 ${i.gayoungqty}YD` : ''
+                                                product = i.productqty !== '0.00' ? i.gayoungqty !== '0.00' ? `, 작업중 ${i.productqty}YD` : `작업중 ${i.productqty}YD` : ''
+                                                index === lastIndex ?
+                                                    text += `${i.coloryw}\n${gayoung}${product}`
+                                                    :
+                                                    text += `${i.coloryw}\n${gayoung}${product}\n\n`
+                                            }
+                                        }
+                                        // index === lastIndex ?
+                                        //     text += `${i.coloryw}\n${i.jaeqty}YD`
+                                        //     :
+                                        //     text += `${i.coloryw}\n${i.jaeqty}YD\n\n`
                                     })
 
                                     message = {
@@ -5976,7 +6557,7 @@ ${method} ${time === undefined ? '' : time}
                                     let itemNo = spec.itemNo;
                                     let price = spec.price.split('.')
                                     let check = spec.dry_friction === null
-                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                                     handleOption(0)
                                     handleSubOption(0)
@@ -6127,7 +6708,7 @@ ${method} ${time === undefined ? '' : time}
                                     let itemNo = spec.itemNo;
                                     let price = spec.price.split('.')
                                     let check = spec.dry_friction === null
-                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                                     handleOption(0)
                                     handleSubOption(0)
@@ -6278,7 +6859,7 @@ ${method} ${time === undefined ? '' : time}
                                     let itemNo = spec.itemNo;
                                     let price = spec.price.split('.')
                                     let check = spec.dry_friction === null
-                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   FINISH : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
+                                    text = `${specItemName}(${itemNo}) 스펙\n\n염색 : ${spec.dyeingGbn}\n혼용률 : ${spec.composition}\n사용폭 : ${spec.width}±2%,   중량 : ${spec.weight} g/yd\n조직도 : ${spec.organization},   후가공 : ${spec.finish}\n${userInfo.access_level === '3' ? `\n단가 : ${spec.priceC}원\n` : ''}\n${userInfo.specGB === 'Y' ? `경사사종/번수\n - ${spec.ksajong}\n위사사종/번수\n - ${spec.wsajong}\n경사밀도 : ${spec.kdensity}\n위사밀도 : ${spec.wdensity}\n\n` : ''}${check ? '' : `*견뢰도*\n건마찰 : ${spec.dry_friction},     습마찰 : ${spec.swrat_friction}\n세   탁 : ${spec.cleaning},     드라이 : ${spec.dry}\n땀 : ${spec.sweat}`}${userInfo.priceGB === 'Y' ? `\n\n매입단가\n${spec.custName} : ${price[0]}원` : ''}`
 
                                     handleOption(0)
                                     handleSubOption(2)
@@ -6563,8 +7144,6 @@ ${method} ${time === undefined ? '' : time}
                 } // 업차지 끝
             } // 아이템 정보 끝
 
-        // text = '음성인식 중입니다.'
-        // create(text, 0, 0, 1)
         }
         
     }

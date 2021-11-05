@@ -3,7 +3,7 @@ import { Image, Text, View, Dimensions } from 'react-native';
 import { Button, Paragraph, Dialog,} from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 
-function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
+function Notice({ visible, hideNotice, notice, img, role, specGB, inventoryInquiry}){
   function wp (percentage) {
     const value = (percentage * viewportWidth) / 100;
     return Math.round(value);
@@ -14,7 +14,6 @@ function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
   const slideWidth = wp(80);
   const iPad = slideWidth > 800
   const iPhone8 = viewportHeight < 812
-
     return (
         <Dialog visible={visible} onDismiss={hideNotice}>
           <Dialog.Title style={iPad?{padding:30}:{}}><Text style={iPad?{fontSize:40, lineHeight:40}:{}}>{notice.title}</Text></Dialog.Title>
@@ -100,19 +99,28 @@ function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
               :undefined
             }
             {
-              notice.noty_gb === 'N' && role ==='employee' ? 
+              specGB === 'Y' ?
+              <>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>{notice.content_side}</Paragraph>
+                <Paragraph></Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>혼용률 : {notice.mix_ratio}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>사용폭 : {notice.use_width},     중량 : {notice.weight_yard}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>후가공 : {notice.finish}</Paragraph>
+                <Paragraph></Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사사종 : {notice.logt_name}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>위사사종 : {notice.latt_name}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사본수 : {notice.logt_num}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사밀도 : {notice.logt_deny},     위사밀도 : {notice.latt_deny}</Paragraph>
+              </> : 
+              specGB ==='N' && notice.noty_gb === 'N' && role ==='employee' ? 
               // 신아이템 직원
               <>
                 <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>{notice.content_side}</Paragraph>
                 <Paragraph></Paragraph>
                 <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>혼용률 : {notice.mix_ratio}</Paragraph>
                 <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>사용폭 : {notice.use_width},     중량 : {notice.weight_yard}</Paragraph>
-                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>Finish : {notice.finish}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>후가공 : {notice.finish}</Paragraph>
                 <Paragraph></Paragraph>
-                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사사종 : {notice.logt_name}</Paragraph>
-                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>위사사종 : {notice.latt_name}</Paragraph>
-                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사본수 : {notice.logt_num}</Paragraph>
-                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>경사밀도 : {notice.logt_deny},     위사밀도 : {notice.latt_deny}</Paragraph>
               </> : 
               notice.noty_gb === 'N' && role !== 'employee' ?
               // 신아이템 고객
@@ -121,7 +129,7 @@ function Notice({ visible, hideNotice, notice, img, role, inventoryInquiry}){
                 <Paragraph></Paragraph>
                 <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>혼용률 : {notice.mix_ratio}</Paragraph>
                 <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>사용폭 : {notice.use_width},     중량 : {notice.weight_yard}</Paragraph>
-                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>Finish : {notice.finish}</Paragraph>
+                <Paragraph style={iPad?{fontSize:25, lineHeight:45, marginLeft:35}:{}}>후가공 : {notice.finish}</Paragraph>
               </> :
               // 신컬러
               <Paragraph></Paragraph>

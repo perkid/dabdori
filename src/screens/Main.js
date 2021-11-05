@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import getUrl from '../config/environment';
+
 import { StyleSheet, View, Clipboard, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { FAB, Snackbar, DataTable, Button, Dialog, Portal, RadioButton, Divider,Paragraph } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,7 +12,7 @@ import createMessage from '../libs/createMessage';
 import Fab from 'rn-fab';
 import Tab from '../components/Tab';
 import getActions from '../static/FABaction';
-import { registerForPushNotificationsAsync, sendPushNotification} from '../libs/push';
+import { sendPushNotification} from '../libs/push';
 import STTButton from '../components/STTButton';
 
 function Main({ navigation }) {
@@ -22,9 +21,10 @@ function Main({ navigation }) {
   const t = Platform.OS==='ios' ? 45 : 25;
   const iPhone8 = viewportHeight < 812
   const iPad = r > 85
-  const url = getUrl();
+
   const userInfo = useSelector(state => state.authentication.user);
-  const messages = useSelector(state => state.messagesApp.messages)
+  const messages = useSelector(state => state.messagesApp.messages);
+
   const dispatch = useDispatch()
   const onSend = message => dispatch(sendMessage(message))
   const [snackState, setSnackState] = useState(false);
@@ -33,14 +33,13 @@ function Main({ navigation }) {
   const [item, setItem] = useState('');
   const [itemName, setItemName] = useState('');
   const [company, setCompany] = useState('');
-  const [pToken, setToken] = useState('');
   const [color, setColor] = useState('');
   const [price, setPrice] = useState('');
   const [question, setQuestion] = useState('')
   const [stop, setStop] = useState(0);
   const [transcript, setTranscript] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   // 음성인식 설명
   const handleExplanation = () => {
     if(option===0){
@@ -138,11 +137,11 @@ function Main({ navigation }) {
 
   const hideTest = () => setTestVisible(false);
 
-  const handleToken = (token) => {
-    setToken(token)
-  }
+  // const handleToken = (token) => {
+  //   setToken(token)
+  // }
 
-  registerForPushNotificationsAsync(handleToken)
+  // registerForPushNotificationsAsync(handleToken)
   
   useEffect(() => {
     if (userInfo.status === undefined) {
@@ -151,21 +150,7 @@ function Main({ navigation }) {
   }, [userInfo])
   
   // console.log('담당자 토큰 : '+userInfo.manager_firebase_token)
-  useEffect(()=>{
-    if (userInfo.role === 'employee') {
-      if(pToken !== ''){
-        axios.post(url + `/api/setToken.dab`,
-        {
-          user_id: userInfo.user_id,
-          firebase_token: pToken
-        }).then((response) => {
-          // console.log('저장되는 토큰 : '+pToken)
-        }).catch((err)=>{
-          // console.log(err)
-        })
-      }
-    }
-  }, [pToken])
+  
 
   const handleOptionReset = () => {
     setOption(0);
@@ -430,13 +415,13 @@ function Main({ navigation }) {
                 onPress={() => sendPushNotification('ExponentPushToken[VuX1tiM4uIGTHHcVMgDKjP]','테스트','테스트중 입니다.')}
               /> */}
         {/* STT Test 버튼 */}
-        <STTButton
+        {/* <STTButton
           handleTranscript={handleTranscript}
           handleTest={handleTest}
           handleExplanation={handleExplanation}
           handleStop={handleStop}
           stop = {stop}
-        />
+        /> */}
       </View>
        {/* 상단 FAB */}
        <Fab

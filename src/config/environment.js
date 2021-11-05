@@ -8,7 +8,7 @@ export default function getUrl(){
         // case 'DEV':
         //     return 'http://210.120.6.28:80/dabdori-admin'
         case 'DEV':
-            return 'http://192.168.1.210:8080/dabdori-admin'
+            return 'http://10.0.3.248:8080/dabdori-admin'
         case 'PROD':
             return 'http://admin.youngwoo.co/dabdori-admin'
     }

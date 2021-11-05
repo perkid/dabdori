@@ -22,12 +22,11 @@ export default function getActions(boolean){
               name: "btn_qna",
               color: '#ffffff'
             },
-            
-            {
-              icon: <Image source={require('../../assets/cart.png')} style={styles.icon}/>,
-              name: "btn_cart",
-              color: '#ffffff'
-            },
+            // {
+            //   icon: <Image source={require('../../assets/cart.png')} style={styles.icon}/>,
+            //   name: "btn_cart",
+            //   color: '#ffffff'
+            // },
           ]
     }
     if(!boolean){
@@ -49,6 +48,11 @@ export default function getActions(boolean){
               name: "btn_qna",
               color: '#ffffff'
             },
+            // {
+            //   icon: <MaterialCommunityIcons name='stop'  size={30} style={styles.icon} />,
+            //   name: "btn_test",
+            //   color: '#ffffff'
+            // },
             
           ]
     }

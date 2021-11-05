@@ -135,7 +135,6 @@ export function createOrderRequest(order, userInfo){
             }
 
         }).catch((err)=>{
-            console.log(err)
             dispatch(createOrderFailure())
         })
     }

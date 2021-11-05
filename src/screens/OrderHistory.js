@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { View, StyleSheet, Text, Image, Platform, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Image, Platform, Dimensions, Alert } from 'react-native';
 import { Button, Searchbar, Divider } from 'react-native-paper';
 import Header from '../components/Header';
 import Order from '../components/Order';
@@ -12,6 +12,7 @@ import Tab from '../components/Tab';
 import Fab from 'rn-fab';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import getActions from '../static/FABaction';
+// import * as Updates from 'expo-updates';
 
 function OrderHistory({ navigation }) {
 
@@ -128,7 +129,25 @@ function OrderHistory({ navigation }) {
 
 const actions = getActions(user.role!=='employee')
     
-const version = user.user_name==='이성재'||user.user_name==='고유준'?'v4.0.7':''
+const version = user.user_name==='이성재'||user.user_name==='고유준'?'v4.0.85':''
+
+// async function updateCheck() {
+//   try {
+//     const update = await Updates.checkForUpdateAsync();
+//     if (update.isAvailable) {
+//       // Alert.alert('','Preparing to update')
+//       await Updates.fetchUpdateAsync();
+//       Alert.alert('',"update completed");
+//       Updates.reloadAsync();
+//     } else {
+//       Alert.alert('','Already the latest version!')
+//     }
+//   } catch (e) {
+//       Alert.alert('',e)
+//     // handle or log error
+//   }
+
+// }
 
   return (
     <>
@@ -177,6 +196,12 @@ const version = user.user_name==='이성재'||user.user_name==='고유준'?'v4.0
           ))}
         </ScrollView>
       {version!==''?<View style={{alignItems:'flex-end'}}><Text>{version}</Text></View>:undefined}
+      {/* {user.user_name==='이성재'||user.user_name==='고유준'?
+      <Button
+        color='white'
+        onPress={()=>updateCheck()}
+        labelStyle={{ color: '#1E388D', textDecorationLine: 'underline', fontSize: 15 }}
+      >업데이트 확인</Button>:undefined} */}
       </View>
       <Tab navigation={navigation}/>
       <Fab

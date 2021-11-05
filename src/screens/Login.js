@@ -2,30 +2,59 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Image, Keyboard, TouchableWithoutFeedback, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { loginRequest, login } from '../redux/authentication';
+import { loginRequest } from '../redux/authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import * as Updates from 'expo-updates';
+
 
 function Login({ navigation }) {
 
     const [id, setID] = useState('');
     const [password, SetPassword] = useState('');
+    const [userData, setUserData] = useState(false);
+    
     const loginState = useSelector(state => state.authentication.login.status, []);
+
+
     const dispatch = useDispatch();
 
     const handleLogin = (id, password) => {
         dispatch(loginRequest(id, password));
     }
 
+    // 업데이트 체크 
+    async function updateCheck() {
+        try {
+          const update = await Updates.checkForUpdateAsync();
+          if (update.isAvailable) {
+            // Alert.alert('','Preparing to update')
+            await Updates.fetchUpdateAsync();
+            Updates.reloadAsync();
+          } else {
+          }
+        } catch (e) {
+          // handle or log error
+        }
+      
+    }
+
+    
     useEffect(() => {
+        updateCheck()
         if (loginState === 'SUCCESS' && id !== '') {
-            let user = {
-                email: id,
-                pass: password
-            }
-            let data = JSON.stringify(user);
-            AsyncStorage.setItem("AUTH", data, () => {
+            if(!userData){
+                let user = {
+                    email: id,
+                    pass: password
+                }
+                let data = JSON.stringify(user);
+                AsyncStorage.setItem("AUTH", data, () => {
+                    navigation.navigate('App');
+                })
+            } else {
                 navigation.navigate('App');
-            })
+            }
         }
         if (loginState === 'FAILURE') {
             Alert.alert('', '아이디 혹은 패스워드가 일치하지 않습니다.');
@@ -34,8 +63,8 @@ function Login({ navigation }) {
 
     // 로컬 저장소에 저장된 아이디가 있는지 체크하여 자동 로그인
     useEffect(()=>{
+        updateCheck()
         if(loginState!=='WAITING'){
-
           AsyncStorage.getItem("AUTH", (err, data) => {
             if (err == null) {
                 if (data !== null) {
@@ -43,15 +72,15 @@ function Login({ navigation }) {
                     let user = JSON.parse(data);
                     let email = user.email;
                     let password = user.pass;
+                    setUserData(true)
+                    setID(email)
                     dispatch(loginRequest(email, password))
-
-                    navigation.navigate('App', 'Main');
+                    // navigation.navigate('App', 'Main');
                 }
             }
         });
     }
     }, [])
-
 
     return (
         <>

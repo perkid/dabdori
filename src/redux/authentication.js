@@ -41,7 +41,6 @@ export function loginRequest(email, password) {
                     dispatch(loginFailure())
                 }
             }).catch((error) => {
-                console.log(error)
                 // FAILED
                 dispatch(loginFailure());
             });
@@ -99,7 +98,6 @@ export function forgotPassRequest(email) {
             .then((response) => {
                 //SUCCE
                 let text = response.data;
-                console.log(text)
                 dispatch(forgotPassSuccess(text));
                 //FAILED
             }).catch((error) => {

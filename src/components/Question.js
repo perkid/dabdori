@@ -10,6 +10,8 @@ function Question({ role, question, insertQNA }) {
         return time[0];
     }
     
+    let token = question.qetn_fireabse_token != null ? question.qetn_fireabse_token : '';
+
     return (
         <Card>
             <Card.Content style={{maxWidth:'95%'}}>
@@ -59,7 +61,7 @@ function Question({ role, question, insertQNA }) {
                                     Alert.alert('','답변이 입력되지 않았습니다.')
                                 }
                                 if(answer!==''){
-                                    insertQNA(answer, question.qna_id)
+                                    insertQNA(answer, question.qna_id, token)
                                 }
                             }}
                         >

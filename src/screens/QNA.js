@@ -22,8 +22,8 @@ function QNA({ navigation }) {
         dispatch(getQNAListRequest(userInfo));
     }
     
-    const insertQNA = (content, qna_id) => {
-        dispatch(insertQNARequest(userInfo, content, qna_id));
+    const insertQNA = (content, qna_id, token) => {
+        dispatch(insertQNARequest(userInfo, content, qna_id, token));
         getQNA();
     }
 
@@ -44,6 +44,7 @@ function QNA({ navigation }) {
     const answeredQuestions = sortedQuestions.filter(question =>
         question.qna_gb==='Y'
     )
+    
 
     return (
         <>

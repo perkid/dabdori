@@ -6,10 +6,11 @@ import cart from './cart';
 import notice from './notice';
 import route from './route';
 import qna from './qna';
+import pushToken from './pushToken';
 import ReduxThunk from "redux-thunk";
 
 const appReducer = combineReducers({
-    messagesApp, authentication, order, cart, route, notice, qna
+    messagesApp, authentication, order, cart, route, notice, qna, pushToken
 })
 
 const store = createStore(appReducer, applyMiddleware(ReduxThunk));

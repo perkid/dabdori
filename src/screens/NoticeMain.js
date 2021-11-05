@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { StyleSheet, View, Dimensions, Platform, Text, BackHandler} from 'react-native';
+import axios from 'axios';
+import getUrl from '../config/environment';
+import { StyleSheet, View, Dimensions, Platform, Text} from 'react-native';
 import { FAB, DataTable, Portal } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import Fab from 'rn-fab';
@@ -14,9 +16,11 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import { sendMessage } from '../redux/messagesApp';
 import Notice from '../components/Notice';
 import { setNoticeTopListRequest, setNoticeBodyListRequest, getNotyDetailRequest, getNotyDetail } from '../redux/notice';
+import { registerForPushNotificationsAsync } from '../libs/push';
+import { setToken } from '../redux/pushToken';
 
 function NoticeMain({ navigation }) {
-
+  const url = getUrl();
   const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
   const r = viewportWidth/12;
@@ -27,6 +31,7 @@ function NoticeMain({ navigation }) {
   const topList = useSelector(state => state.notice.notice.topList);
   const bodyList = useSelector(state => state.notice.notice.bodyList);
   const detail = useSelector(state => state.notice.notice.notyDetail);
+  const pToken = useSelector(state => state.pushToken.pToken);
 
   const actions = getActions(userInfo.role !== 'employee');
 
@@ -36,6 +41,29 @@ function NoticeMain({ navigation }) {
     dispatch(setNoticeTopListRequest(userInfo.role));
     dispatch(setNoticeBodyListRequest(userInfo.role));
   }, []);
+
+  const handleToken = (token) => {
+    dispatch(setToken(token))
+  }
+
+  registerForPushNotificationsAsync(handleToken)
+
+  // pushToken 저장
+  useEffect(()=>{
+    // if (userInfo.role === 'employee') {
+      if(pToken !== ''){
+        axios.post(url + `/api/setToken.dab`,
+        {
+          user_id: userInfo.user_id,
+          firebase_token: pToken
+        }).then((response) => {
+          // console.log('저장되는 토큰 : '+pToken)
+        }).catch((err)=>{
+          // console.log(err)
+        })
+      }
+    // }
+  }, [pToken])
 
   // Carousel 공지
   const firstItem = 0;
@@ -185,6 +213,7 @@ function NoticeMain({ navigation }) {
             hideNotice={hideNotice}
             notice={topList[noticeIndex]}
             role={userInfo.role}
+            specGB={userInfo.specGB}
             inventoryInquiry={inventoryInquiry}
           /> : undefined
         }
@@ -255,10 +284,9 @@ function NoticeMain({ navigation }) {
           if (name == "btn_qna") {
             navigation.navigate('QNA', userInfo)
           }
-          if (name == "btn_test") {
-            console.log('눌림')
-            _exitApp()
-          }
+          // if (name == "btn_test") {
+          //   console.log('눌림')
+          // }
         }}
       />
       {/* 탭 네비게이션 */}

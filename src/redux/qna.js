@@ -10,6 +10,8 @@ export const INSERT_QNA = "INSERT_QNA";
 export const INSERT_QNA_SUCCESS = "INSERT_QNA_SUCCESS";
 export const INSERT_QNA_FAILURE = "INSERT_QNA_FAILURE";
 
+import { sendPushNotification } from '../libs/push';
+
 const url = getUrl();
 
 export function getQNAListRequest(userInfo){
@@ -35,7 +37,7 @@ export const getQNAListSuccess = (qna) => ({ type: GET_QNA_LIST_SUCCESS , qna});
 export const getQNAListFailure = () => ({ type: GET_QNA_LIST_FAILURE });
 
 
-export function insertQNARequest(userInfo, content, qna_id){
+export function insertQNARequest(userInfo, content, qna_id, token){
     return (dispatch) => {
         dispatch(insertQNA())
         if(userInfo.role!=='employee'){
@@ -43,9 +45,11 @@ export function insertQNARequest(userInfo, content, qna_id){
             {
                 role: userInfo.role,
                 user_id: userInfo.user_id,
-                content: content
+                content: content,
+                qetn_fireabse_token: userInfo.firebase_token,
             }).then((response) => {
                 dispatch(insertQNASuccess(response.data))
+                sendPushNotification(userInfo.manager_firebase_token,'신규문의',`${userInfo.company_name}의 문의 사항이 등록 되었습니다.`)
             }).catch((err) => {
                 dispatch(insertQNAFailure())
             })
@@ -58,10 +62,11 @@ export function insertQNARequest(userInfo, content, qna_id){
                 content: content,
                 qna_id:qna_id
             }).then((response) => {
-                console.log(response.data)
                 dispatch(insertQNASuccess(response.data))
+                if(token !==''){
+                    sendPushNotification(token,'답변등록','문의 사항에 답변이 등록 되었습니다.')
+                }
             }).catch((err) => {
-                console.log(err)
                 dispatch(insertQNAFailure())
             })
         }
